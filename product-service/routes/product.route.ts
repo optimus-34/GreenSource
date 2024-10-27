@@ -19,7 +19,7 @@ router.get('/products', async (req, res, next) => {
   }
 });
 
-router.get('/products/:id', async (req, res, next) => {
+router.get('/product/:id', async (req, res, next) => {
   try {
     await res.locals.controller.getProduct(req, res);
   } catch (error) {
