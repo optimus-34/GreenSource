@@ -30,6 +30,23 @@ export class OrderController {
     }
   }
 
+  async updateOrder(req: Request, res: Response): Promise<void> {
+    try {
+      const order = await this.orderService.updateOrder(
+        req.params.id,
+        req.body
+      );
+      if (!order) {
+        res.status(404).json({ error: "Order not found" });
+        return;
+      }
+      res.json(order);
+    } catch (error: unknown) {
+      if (error instanceof Error) res.json({ error: error.message });
+      else res.status(500).json({ error: "unknown error occured" });
+    }
+  }
+
   async getOrder(req: Request, res: Response): Promise<void> {
     try {
       const order = await this.orderService.getOrderById(req.params.id);
@@ -39,8 +56,7 @@ export class OrderController {
       }
       res.json(order);
     } catch (error: unknown) {
-      if (error instanceof Error)
-        res.status(400).json({ error: error.message });
+      if (error instanceof Error) res.json({ error: error.message });
       else res.status(500).json({ error: "unknown error occured" });
     }
   }

@@ -20,6 +20,15 @@ export class OrderService {
     return await Order.findOne({ id: orderId });
   }
 
+  async updateOrder(
+    orderId: string,
+    orderData: Partial<IOrder>
+  ): Promise<IOrder | null> {
+    return await Order.findOneAndUpdate({ id: orderId }, orderData, {
+      new: true,
+    });
+  }
+
   async cancelOrder(orderId: string): Promise<IOrder | null> {
     return await Order.findOneAndUpdate(
       { id: orderId },
