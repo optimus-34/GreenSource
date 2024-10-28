@@ -179,7 +179,7 @@ export const addUserAddress = async (req: Request, res: Response) => {
 // Update user name
 export const updateUserName = async (req: Request, res: Response) => {
     try {
-        const user = await User.findByIdAndUpdate(req.params.user_id, { name: req.body.name }, { new: true });
+        const user = await User.findByIdAndUpdate(req.params.user_id, { first_name: req.body.firstName,last_name: req.body.lastName }, { new: true });
         if (!user) {
             res.status(404).json({ message: 'User not found' });
         }
@@ -221,8 +221,8 @@ export const updateUserEmail = async (req: Request, res: Response) => {
 // Update user address by ID
 export const updateUserAddress = async (req: Request, res: Response) => {
     try {
-        const { user_id, id } = req.params;
-        const updatedAddress = await Address.findByIdAndUpdate(id, req.body, { new: true });
+        
+        const updatedAddress = await Address.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedAddress) {
             res.status(404).json({ message: 'Address not found' });
         }
@@ -236,7 +236,7 @@ export const updateUserAddress = async (req: Request, res: Response) => {
 // Update user password
 export const updateUserPassword = async (req: Request, res: Response) => {
     try {
-        const user = await User.findByIdAndUpdate(req.params.user_id, { password: req.body.password }, { new: true });
+        const user = await User.findByIdAndUpdate(req.params.user_id, { password_hash: req.body.password }, { new: true });
         if (!user) {
             res.status(404).json({ message: 'User not found' });
         }
