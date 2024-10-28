@@ -1,12 +1,15 @@
 import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+
+import userRoutes from './routes/user.route';
+import './config/db.config';  // Connect to MongoDB
 
 const app = express();
-const port = 5000;
+app.use(cors()); // Enable CORS
 
-app.get('/', (req, res) => {
-  res.send('Hello, TypeScript Node Express!');
-});
+app.use(express.json());
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+app.use('/api', userRoutes);
+
+export default app;
