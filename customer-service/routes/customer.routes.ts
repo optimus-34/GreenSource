@@ -23,7 +23,11 @@ router.get(
   // authenticate,
   customerController.getCustomerProfile
 );
-router.post("/:id/addresses", authenticate, customerController.addAddress);
+router.post(
+  "/:id/addresses",
+  // authenticate,
+  customerController.addAddress
+);
 router.put(
   "/:id/addresses/:addressId",
   // authenticate,
