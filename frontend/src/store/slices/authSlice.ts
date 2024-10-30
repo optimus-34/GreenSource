@@ -71,10 +71,41 @@ const authSlice = createSlice({
       // Update localStorage when user data changes
       localStorage.setItem("user", JSON.stringify(state.user));
     },
+    signupStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    signupSuccess: (
+      state,
+      action: PayloadAction<{ user: User; token: string }>
+    ) => {
+      state.isAuthenticated = true;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.loading = false;
+      state.error = null;
+      localStorage.setItem("token", action.payload.token);
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+    },
+    signupFailure: (state, action: PayloadAction<string>) => {
+      state.isAuthenticated = false;
+      state.user = initialState.user;
+      state.token = null;
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
-export const { loginStart, loginSuccess, loginFailure, logout, updateUser } =
-  authSlice.actions;
+export const {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  logout,
+  updateUser,
+  signupStart,
+  signupSuccess,
+  signupFailure,
+} = authSlice.actions;
 
 // Add a selector to easily access auth state
 export const selectAuth = (state: { auth: AuthState }) => state.auth;

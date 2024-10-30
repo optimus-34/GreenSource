@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginStart, loginFailure } from "../store/slices/authSlice";
 import axios from "axios";
@@ -30,7 +30,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/consumer/login",
+        "http://localhost:3000/api/auth/login",
         formData,
         {
           headers: {
@@ -131,6 +131,17 @@ const Login = () => {
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
+        <div>
+          <p className="text-center mt-4">
+            Don't have an account?{" "}
+            <NavLink
+              to="/register"
+              className="text-blue-500 underline underline-offset-1"
+            >
+              Sign up
+            </NavLink>
+          </p>
+        </div>
       </div>
     </div>
   );
