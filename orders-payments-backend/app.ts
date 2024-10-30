@@ -19,7 +19,7 @@ app.use("/api/payments", paymentRoutes);
 mongoose
   .connect(process.env.MONGO_URI || "")
   .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .catch((err: any) => console.error("MongoDB connection error:", err));
 
 // Start server
 app.listen(PORT, () => {
