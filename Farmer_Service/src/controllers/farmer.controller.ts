@@ -107,22 +107,56 @@ export const deleteFarmer = async (req: Request, res: Response) => {
 
 // Add Product - communicates with product service
 export const addProduct = async (req: Request, res: Response) => {
-  try {
-    const productData = req.body; // Get product data from request body
-
-    // Send POST request to product service
-    const response = await axios.post('http://localhost:3001/api/products', productData);
-    res.status(201).json(response.data);
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('Error communicating with product service:', error.message);
-      res.status(500).json({ message: 'Error communicating with product service', error: error.message });
-    } else {
-      console.error('Unexpected error:', error);
-      res.status(500).json({ message: 'An unexpected error occurred' });
+    try {
+      const productData = req.body; // Get product data from request body
+      const farmerId = req.params.id; // Get farmer ID from request parameters
+      // Include the farmer ID in the product data
+      productData.farmerId = farmerId;
+      // Send POST request to product service
+      const response = await axios.post('http://localhost:3001/api/products', productData);
+      // Update the Farmer's list_products with the new product ID
+      const productId = response.data._id; // Assuming the product ID is returned in the response
+      await Farmer.findByIdAndUpdate(farmerId, { $push: { list_products: productId } });
+      res.status(201).json(response.data);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error communicating with product service:', error.message);
+        res.status(500).json({ message: 'Error communicating with product service', error: error.message });
+      } else {
+        console.error('Unexpected error:', error);
+        res.status(500).json({ message: 'An unexpected error occurred' });
+      }
     }
-  }
+  };
+
+  export const getProducts = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params; // Get Farmer ID from request parameters
+        // Find the farmer and retrieve their product IDs
+        const farmer = await Farmer.findById(id);
+        if (!farmer) {
+            res.status(404).json({ message: 'Farmer not found' });
+            return;
+        }
+        const productIds = farmer.list_products; // Assuming this contains the product IDs
+        const products = [];
+        // Fetch products one by one
+        for (const productId of productIds) {
+            const response = await axios.get(`http://localhost:3001/api/product/${productId}`);
+            products.push(response.data); // Collect product data
+        }
+        res.json(products); // Return the fetched product data
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error('Error fetching products:', error.message);
+            res.status(500).json({ message: 'Error fetching products', error: error.message });
+        } else {
+            console.error('Unexpected error:', error);
+            res.status(500).json({ message: 'An unexpected error occurred' });
+        }
+    }
 };
+  
 
 
 
