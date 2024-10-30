@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import Farmer from '../model/farmer.model';
 import Address from '../model/address.model';
+import axios from 'axios';
+
+
 
 
 
@@ -99,6 +102,26 @@ export const deleteFarmer = async (req: Request, res: Response) => {
             res.status(500).json({ message: 'An unexpected error occurred' });
         }
     }
+};
+
+
+// Add Product - communicates with product service
+export const addProduct = async (req: Request, res: Response) => {
+  try {
+    const productData = req.body; // Get product data from request body
+
+    // Send POST request to product service
+    const response = await axios.post('http://localhost:3001/api/products', productData);
+    res.status(201).json(response.data);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Error communicating with product service:', error.message);
+      res.status(500).json({ message: 'Error communicating with product service', error: error.message });
+    } else {
+      console.error('Unexpected error:', error);
+      res.status(500).json({ message: 'An unexpected error occurred' });
+    }
+  }
 };
 
 

@@ -17,11 +17,11 @@ app.use(cors());
 app.use(express.json());
 
 // Define routes
-app.use('/auth', authRoutes);
+app.use('/', authRoutes);
 
-// Health check route
-app.get('/', (req, res) => {
-    res.send('Auth service is running');
-});
+// // Health check route
+// app.get('/', (req, res) => {
+//     res.send('Auth service is running');
+// });
 
 export default app;

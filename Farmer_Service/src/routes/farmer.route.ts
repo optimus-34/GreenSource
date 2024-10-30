@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createFarmer, getFarmers, getFarmer, updateFarmer, deleteFarmer,addFarmerAddress, updateFarmerName, updateFarmerPhone, updateFarmerAddress, updateFarmerEmail, updateFarmerVerifiedStatus} from '../controllers/farmer.controller';
+import { createFarmer, getFarmers, getFarmer, updateFarmer, deleteFarmer,addFarmerAddress, updateFarmerName, updateFarmerPhone, updateFarmerAddress, updateFarmerEmail, updateFarmerVerifiedStatus, addProduct} from '../controllers/farmer.controller';
 import { createAddress, deleteAddress, getAddress, getAddresses, updateAddress } from '../controllers/address.controller';
 
 
@@ -14,6 +14,7 @@ router.put('/farmers/id/update/phone', updateFarmerPhone);
 router.put('/farmers/update/Address/:id', updateFarmerAddress);
 router.put('/farmers/id/update/email', updateFarmerEmail);
 router.put('/farmers/id/update/is_verified', updateFarmerVerifiedStatus);
+router.post('/farmers/add/product/',addProduct);
 router.delete('/farmers/:id', deleteFarmer);
 router.post('/address', createAddress);
 router.get('/address', getAddresses);

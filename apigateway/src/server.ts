@@ -14,7 +14,7 @@ app.use('/api/auth', createProxyMiddleware({
 
 // Finance Service Proxy (protected)
 app.use('/api/farmers',authenticateJWT, createProxyMiddleware({
-    target: 'http://localhost:faremerportno',
+    target: 'http://localhost:3002',
     changeOrigin: true
 }));
 
