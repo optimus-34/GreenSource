@@ -18,6 +18,7 @@ export interface Customer {
   lastName: string;
   phone?: string;
   addresses: Address[];
+  cart: string[]; // Array of product IDs
   wishlist: string[]; // Array of product IDs
   createdAt: Date;
   updatedAt: Date;

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { CustomerService } from "../services/customer.service";
-import { AuthenticatedRequest } from "../middleware/auth.middleware";
 
 export class CustomerController {
   private customerService: CustomerService;
@@ -33,7 +32,7 @@ export class CustomerController {
   };
 
   getCustomerProfile = async (
-    req: AuthenticatedRequest,
+    req: Request,
     res: Response,
     next: NextFunction
   ) => {
@@ -48,7 +47,7 @@ export class CustomerController {
   };
 
   updateCustomerProfile = async (
-    req: AuthenticatedRequest,
+    req: Request,
     res: Response,
     next: NextFunction
   ) => {
@@ -64,7 +63,7 @@ export class CustomerController {
   };
 
   deleteCustomerProfile = async (
-    req: AuthenticatedRequest,
+    req: Request,
     res: Response,
     next: NextFunction
   ) => {
@@ -76,11 +75,18 @@ export class CustomerController {
     }
   };
 
-  addAddress = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getAddresses = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const customer = await this.customerService.getCustomerById(
+        req.params.id
+      );
+      res.json({ success: true, data: customer.addresses });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  addAddress = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.addAddress(
         req.params.id,
@@ -92,11 +98,7 @@ export class CustomerController {
     }
   };
 
-  updateAddress = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
+  updateAddress = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.updateAddress(
         req.params.id,
@@ -109,11 +111,7 @@ export class CustomerController {
     }
   };
 
-  deleteAddress = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
+  deleteAddress = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.deleteAddress(
         req.params.id,
@@ -125,11 +123,7 @@ export class CustomerController {
     }
   };
 
-  getWishlist = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getWishlist = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const wishlist = await this.customerService.getWishlist(req.params.id);
       res.json({ success: true, data: wishlist });
@@ -138,11 +132,7 @@ export class CustomerController {
     }
   };
 
-  addToWishlist = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
+  addToWishlist = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.addToWishlist(
         req.params.id,
@@ -155,7 +145,7 @@ export class CustomerController {
   };
 
   removeFromWishlist = async (
-    req: AuthenticatedRequest,
+    req: Request,
     res: Response,
     next: NextFunction
   ) => {
