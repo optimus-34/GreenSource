@@ -10,13 +10,13 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-green-50 mt-16">
       {/* Hero Section */}
-      <div className="relative bg-green-600 py-32 min-h-[40rem] flex items-center justify-center">
+      <div className="relative bg-[url('/assets/bg.jpg')] bg-cover bg-center bg-no-repeat py-32 min-h-[40rem] flex items-center justify-center">
         <div className="container mx-auto px-4">
-          <div className="text-center text-white">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+          <div className="text-center text-zinc-900 mt-14">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 mt-36 text-zinc-900">
               <span>
-                <span className="text-green-100">Green</span>
-                <span className="text-blue-200">Source</span>
+                <span className="text-zinc-900">Green</span>
+                <span className="text-zinc-900">Source</span>
               </span>{" "}
               Marketplace
             </h1>
