@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../types/error";
+import dotenv from "dotenv";
+dotenv.config();
 
 interface ErrorResponse {
   success: boolean;
