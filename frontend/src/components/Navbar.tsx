@@ -16,14 +16,23 @@ export default function Navbar() {
         </div>
         <div className="flex items-center gap-8">
           <NavLink to="/" className="hover:text-blue-500 text-xl">
-            Home 
+            Home
           </NavLink>
-          <NavLink to={user.username ? "/profile" : "/login"} className="hover:text-blue-500 text-xl">
+          <NavLink
+            to={
+              user.username
+                ? user.role === "consumer"
+                  ? "/consumer/profile"
+                  : "/farmer/profile"
+                : "/login"
+            }
+            className="hover:text-blue-500 text-xl"
+          >
             {user.username ? (
               <span>{user.username} </span>
             ) : (
               <span>
-                Login 
+                Login
                 {/* <ArrowRight className="" /> */}
               </span>
             )}

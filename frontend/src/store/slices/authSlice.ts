@@ -58,13 +58,17 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.isAuthenticated = false;
-      state.user = initialState.user;
+      state.user = {
+        id: null,
+        email: null,
+        username: null,
+        userType: null,
+      };
       state.token = null;
       state.loading = false;
       state.error = null;
       // Clear localStorage on logout
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      localStorage.clear();
     },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       state.user = { ...state.user, ...action.payload };
@@ -108,6 +112,21 @@ export const {
 } = authSlice.actions;
 
 // Add a selector to easily access auth state
-export const selectAuth = (state: { auth: AuthState }) => state.auth;
+export const selectAuth = (state: { auth: AuthState }) => {
+  // Get stored auth data from localStorage
+  const storedToken = localStorage.getItem("token");
+  const storedUser = localStorage.getItem("user");
 
+  // If there's stored data but state is empty, return merged state
+  if (storedToken && storedUser && !state.auth.token) {
+    return {
+      ...state.auth,
+      isAuthenticated: true,
+      token: storedToken,
+      user: JSON.parse(storedUser),
+    };
+  }
+
+  return state.auth;
+};
 export default authSlice.reducer;

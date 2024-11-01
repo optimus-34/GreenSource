@@ -33,6 +33,15 @@ app.use(
 );
 
 app.use(
+  "/api/customers",
+  authenticateJWT,
+  createProxyMiddleware({
+    target: "http://localhost:3001",
+    changeOrigin: true,
+  })
+);
+
+app.use(
   "/api/products",
   createProxyMiddleware({
     target: "http://localhost:3005",
