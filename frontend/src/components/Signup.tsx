@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signupStart, signupFailure } from "../store/slices/authSlice";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import type { RootState } from "../store";
 
 const Signup = () => {
@@ -93,9 +93,52 @@ const Signup = () => {
           },
         }
       );
-      console.log("Signup response:", response.data);
+      let responseData: AxiosResponse<never, never>;
+      if (userType === "farmer") {
+        responseData = await axios.post(
+          "http://localhost:3000/api/farmers/",
+          {
+            org_id: "653000000000000000000000",
+            email: formData.email,
+            username: formData.username,
+            password: formData.password,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            phone: formData.phone,
+            role: userType,
+            addresses: showAddressForm ? [formData.address] : [],
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              // "Access-Control-Allow-Origin": "*",
+            },
+          }
+        );
+      } else {
+        responseData = await axios.post(
+          "http://localhost:3000/api/customers/",
+          {
+            org_id: "653000000000000000000000",
+            email: formData.email,
+            username: formData.username,
+            password: formData.password,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            phone: formData.phone,
+            role: userType,
+            addresses: showAddressForm ? [formData.address] : [],
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              // "Access-Control-Allow-Origin": "*",
+            },
+          }
+        );
+      }
 
-      if (response.data) {
+      if (response.data && responseData.data) {
         dispatch({
           type: "auth/signupSuccess",
           payload: response.data,

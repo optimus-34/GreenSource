@@ -46,9 +46,8 @@ const Login = () => {
           },
         }
       );
-      const responseData = await axios.post(
+      const responseData = await axios.get(
         "http://localhost:3000/api/customers/",
-        loginData,
         {
           headers: {
             "Content-Type": "application/json",
@@ -65,9 +64,9 @@ const Login = () => {
 
         // Navigate based on user type
         if (formData.userType === "consumer") {
-          navigate("/consumer/");
+          navigate("/consumer/products");
         } else {
-          navigate("/farmer/");
+          navigate("/farmer/products");
         }
       }
     } catch (error) {
