@@ -15,6 +15,11 @@ export class CustomerService {
     return { customers, total };
   }
 
+  async addCustomer(data: Customer): Promise<Customer> {
+    const customer = new CustomerModel(data);
+    return customer.save();
+  }
+
   async getCustomerById(id: string): Promise<Customer> {
     const customer = await CustomerModel.findById(id);
     if (!customer) {

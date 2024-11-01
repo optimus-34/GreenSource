@@ -8,6 +8,15 @@ export class CustomerController {
     this.customerService = new CustomerService();
   }
 
+  addCustomer = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const customer = await this.customerService.addCustomer(req.body);
+      res.json({ success: true, data: customer });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getAllCustomers = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const page = parseInt(req.query.page as string) || 1;
