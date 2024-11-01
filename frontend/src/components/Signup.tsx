@@ -120,6 +120,7 @@ const Signup = () => {
             email: formData.email,
             user_id:response.data.id,
             firstName: formData.firstName,
+            user_id: response.data.user.id,
             lastName: formData.lastName,
             phone: formData.phone,
             role: userType,
@@ -143,7 +144,9 @@ const Signup = () => {
           payload: response.data,
         });
 
-        navigate(userType === "consumer" ? "/consumer/products" : "/farmer/products");
+        navigate(
+          userType === "consumer" ? "/consumer/products" : "/farmer/products"
+        );
       }
     } catch (error) {
       dispatch(
