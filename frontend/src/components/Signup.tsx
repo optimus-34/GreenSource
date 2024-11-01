@@ -71,7 +71,6 @@ const Signup = () => {
     dispatch(signupStart());
 
     const signupData = {
-      org_id: "653000000000000000000000",
       email: formData.email,
       username: formData.username,
       password: formData.password,
@@ -93,6 +92,7 @@ const Signup = () => {
           },
         }
       );
+      console.log(response.data.id);
       let responseData: AxiosResponse<never, never>;
       if (userType === "farmer") {
         responseData = await axios.post(
@@ -118,6 +118,7 @@ const Signup = () => {
           "http://localhost:3001/api/customers/",
           {
             email: formData.email,
+            user_id:response.data.id,
             firstName: formData.firstName,
             lastName: formData.lastName,
             phone: formData.phone,

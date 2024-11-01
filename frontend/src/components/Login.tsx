@@ -30,7 +30,6 @@ const Login = () => {
     dispatch(loginStart());
 
     const loginData = {
-      org_id: "653000000000000000000000",
       email: formData.identifier,
       password: formData.password,
       role: formData.userType,
@@ -57,7 +56,7 @@ const Login = () => {
       );
       console.log(response.data, validateResponse.data);
       const responseData = await axios.get(
-        `http://localhost:3000/api/customers/${validateResponse.data.user.id}`,
+        `http://localhost:3001/${validateResponse.data.user.id}`,
         {
           headers: {
             "Content-Type": "application/json",
