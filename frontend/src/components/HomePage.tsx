@@ -16,17 +16,16 @@ const HomePage: React.FC = () => {
         <div className="relative bg-[url('/assets/bg.jpg')] bg-cover bg-center bg-no-repeat py-32 min-h-[40rem] flex items-center justify-center">
           <div className="container mx-auto px-4">
             <div className="text-center text-zinc-900 mt-14">
-              <h1 className="text-4xl md:text-6xl font-bold mb-4 mt-36 text-zinc-900">
+              <h1 className="text-4xl md:text-6xl font-bold mb-10 mt-32 text-zinc-900">
                 <span>
-                  <span className="text-zinc-900">Green</span>
-                  <span className="text-zinc-900">Source</span>
+                  <span className="text-green-500">Green</span>
+                  <span className="text-blue-800">Source</span>
                 </span>{" "}
                 Marketplace
               </h1>
-              <p className="text-xl mb-8">
-                Connect directly with local farmers and get fresh produce at
-                fair prices
-              </p>
+              {/* <h3 className="text-xl mb-8 mt-4 text-zinc-900 font-extrabold font-bold">
+              Connect directly with local farmers and get fresh produce at fair prices
+              </h3> */}
               <button
                 className="bg-white text-green-600 px-8 py-3 rounded-full font-semibold hover:bg-green-100 transition-colors"
                 onClick={handleGetStarted}
