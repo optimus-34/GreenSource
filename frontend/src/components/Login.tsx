@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginStart, loginFailure } from "../store/slices/authSlice";
 import axios from "axios";
+// import bcrypt from "bcryptjs";
 import type { RootState } from "../store"; // Assuming you have this type defined
 
 const Login = () => {
@@ -28,14 +29,20 @@ const Login = () => {
     e.preventDefault();
     dispatch(loginStart());
 
+    const loginData = {
+      org_id: "653000000000000000000000",
+      email: formData.identifier,
+      password: formData.password,
+      role: formData.userType,
+    };
+
     try {
       const response = await axios.post(
         "http://localhost:3000/api/auth/login",
-        formData,
+        loginData,
         {
           headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
           },
         }
       );
@@ -49,9 +56,9 @@ const Login = () => {
 
         // Navigate based on user type
         if (formData.userType === "consumer") {
-          navigate("/consumer-dashboard");
+          navigate("/consumer/");
         } else {
-          navigate("/farmer-dashboard");
+          navigate("/farmer/");
         }
       }
     } catch (error) {
@@ -60,7 +67,6 @@ const Login = () => {
       );
     }
   };
-
   return (
     <div className="container mx-auto px-4 max-w-md">
       <div className="bg-white shadow-lg rounded-lg p-8 mt-16">

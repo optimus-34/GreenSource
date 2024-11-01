@@ -15,6 +15,7 @@ const Signup = () => {
 
   const [formData, setFormData] = useState({
     email: "",
+    username: "",
     password: "",
     confirmPassword: "",
     firstName: "",
@@ -70,20 +71,29 @@ const Signup = () => {
     dispatch(signupStart());
 
     const signupData = {
+      org_id: "653000000000000000000000",
       email: formData.email,
+      username: formData.username,
       password: formData.password,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phone: formData.phone,
-      userType,
-      addresses: showAddressForm ? [formData.address] : [],
+      // firstName: formData.firstName,
+      // lastName: formData.lastName,
+      // phone: formData.phone,
+      role: userType,
+      // addresses: showAddressForm ? [formData.address] : [],
     };
 
     try {
       const response = await axios.post(
         "http://localhost:3000/api/auth/register",
-        signupData
+        signupData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            // "Access-Control-Allow-Origin": "*",
+          },
+        }
       );
+      console.log("Signup response:", response.data);
 
       if (response.data) {
         dispatch({
@@ -91,9 +101,7 @@ const Signup = () => {
           payload: response.data,
         });
 
-        navigate(
-          userType === "consumer" ? "/consumer-dashboard" : "/farmer-dashboard"
-        );
+        navigate(userType === "consumer" ? "/consumer/" : "/farmer/");
       }
     } catch (error) {
       dispatch(
@@ -180,6 +188,24 @@ const Signup = () => {
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+              value={formData.username}
+              onChange={handleInputChange}
+              className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
 
           <div>
