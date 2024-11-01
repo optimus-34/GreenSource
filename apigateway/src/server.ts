@@ -34,6 +34,7 @@ app.use(
 
 app.use(
   "/api/products",
+  authenticateJWT,
   createProxyMiddleware({
     target: "http://localhost:3005",
     changeOrigin: true,
