@@ -1,4 +1,4 @@
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectAuth, logout } from "../store/slices/authSlice";
 import { ShoppingCart, User, Package, Heart, Clock, Menu } from "lucide-react";
@@ -7,9 +7,9 @@ import { ShoppingCart, User, Package, Heart, Clock, Menu } from "lucide-react";
 const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
   const { user } = useSelector(selectAuth);
   const navigate = useNavigate();
-  const handleSignout = () => {
+  const handleSignout = async () => {
     logout();
-    redirect("/login");
+    navigate("/login");
   };
 
   const menuItems = [
@@ -83,7 +83,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">
-                Welcome, {user.name}
+                Welcome, {user.username}
               </span>
               <button className="p-2 bg-red-500" onClick={handleSignout}>
                 Sign Out

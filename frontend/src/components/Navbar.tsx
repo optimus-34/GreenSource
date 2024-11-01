@@ -18,9 +18,9 @@ export default function Navbar() {
           <NavLink to="/" className="hover:text-blue-500 text-xl">
             Home 
           </NavLink>
-          <NavLink to={user.name ? "/profile" : "/login"} className="hover:text-blue-500 text-xl">
-            {user.name ? (
-              <span>{user.name} </span>
+          <NavLink to={user.username ? "/profile" : "/login"} className="hover:text-blue-500 text-xl">
+            {user.username ? (
+              <span>{user.username} </span>
             ) : (
               <span>
                 Login 

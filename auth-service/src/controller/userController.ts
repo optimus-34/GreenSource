@@ -118,7 +118,7 @@ export const register = async (req: Request, res: Response) => {
     role,
   });
   const nu= await newUser.save();
-  res.status(201).json({ message: "User registered successfully", id: nu._id });
+  res.status(201).json({ message: "User registered successfully"});
   return;
 };
 
@@ -134,7 +134,7 @@ export const login = async (req: Request, res: Response) => {
     SECRET_KEY as string,
     { expiresIn: "1h" }
   );
-  res.json({ token });
+  res.json({ token , user});
   return;
 };
 
