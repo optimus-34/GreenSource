@@ -92,6 +92,7 @@ const Signup = () => {
           },
         }
       );
+      console.log(response.data.id);
       let responseData: AxiosResponse<never, never>;
       if (userType === "farmer") {
         responseData = await axios.post(
@@ -99,8 +100,8 @@ const Signup = () => {
           {
             addresses: showAddressForm ? [formData.address] : [],
             email: formData.email,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
             phone: formData.phone,
             list_products: [],
             list_sales: [],
@@ -118,7 +119,6 @@ const Signup = () => {
           {
             email: formData.email,
             firstName: formData.firstName,
-            user_id: response.data.user.id,
             lastName: formData.lastName,
             phone: formData.phone,
             role: userType,

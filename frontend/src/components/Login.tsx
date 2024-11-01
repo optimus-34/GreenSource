@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginStart, loginFailure } from "../store/slices/authSlice";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 // import bcrypt from "bcryptjs";
 import type { RootState } from "../store"; // Assuming you have this type defined
 
@@ -55,14 +55,24 @@ const Login = () => {
         }
       );
       console.log(response.data, validateResponse.data);
-      const responseData = await axios.get(
-        `http://localhost:3000/api/customers/${validateResponse.data.user.id}`,
-        {
+      let url;
+      if (formData.userType === "consumer") {
+        url = `http://localhost:3001/api/customers/login`;
+      } else if (formData.userType === "farmer") {
+        url = `http://localhost:3002/api/login`; // Replace with the actual URL for farmers
+      }
+      
+      let responseData: AxiosResponse<never, never>;
+      if (url) {
+          responseData = await axios.post(url, loginData, {
           headers: {
             "Content-Type": "application/json",
           },
-        }
-      );
+        });
+      } else {
+        throw new Error("URL not defined for the specified user type");
+      }
+      
 
       if (response.data && response.data.token && responseData.data) {
         // Assuming the API returns { user, token }

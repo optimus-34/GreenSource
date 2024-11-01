@@ -28,6 +28,14 @@ export class CustomerService {
     return customer;
   }
 
+  async getCustomerByEmail(email:string): Promise<Customer> {
+    const customer = await CustomerModel.findOne({ email: email });
+    if (!customer) {
+      throw new AppError(404, "Customer not found");
+    }
+    return customer;
+  }
+
   async updateCustomer(id: string, data: Partial<Customer>): Promise<Customer> {
     const customer = await CustomerModel.findByIdAndUpdate(
       id,

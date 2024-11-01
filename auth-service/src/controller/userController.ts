@@ -117,8 +117,8 @@ export const register = async (req: Request, res: Response) => {
     password: hashedPassword,
     role,
   });
-  await newUser.save();
-  res.status(201).json({ message: "User registered successfully" });
+  const nu= await newUser.save();
+  res.status(201).json({ message: "User registered successfully", id: nu._id });
   return;
 };
 
