@@ -270,3 +270,16 @@ export const updateFarmerRole = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Error updating Farmer role', error: error instanceof Error ? error.message : 'An unexpected error occurred' });
     }
 };
+
+export const loginFarmer = async (req: Request, res: Response) => {
+    try {
+        const farmer = await Farmer.findOne({ email: req.body.email });
+        if (!farmer) {
+            res.status(400).json({ message: 'Farmer not found' });
+        }
+        res.status(200).json({ success : true });
+    } catch (error) {
+        console.error('Error logging in Farmer:', error);
+        res.status(500).json({ message: 'Error logging in Farmer', error: error instanceof Error ? error.message : 'An unexpected error occurred' });
+    }
+};

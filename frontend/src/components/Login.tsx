@@ -30,7 +30,6 @@ const Login = () => {
     dispatch(loginStart());
 
     const loginData = {
-      org_id: "653000000000000000000000",
       email: formData.identifier,
       password: formData.password,
       role: formData.userType,
@@ -56,14 +55,24 @@ const Login = () => {
         }
       );
       console.log(response.data, validateResponse.data);
-      const responseData = await axios.get(
-        `http://localhost:3000/api/customers/${validateResponse.data.user.id}`,
-        {
+      let url;
+      if (formData.userType === "consumer") {
+        url = `http://localhost:3001/api/customers/login`;
+      } else if (formData.userType === "farmer") {
+        url = `http://localhost:3002/api/login`; // Replace with the actual URL for farmers
+      }
+      
+      let responseData: AxiosResponse<never, never>;
+      if (url) {
+          responseData = await axios.post(url, loginData, {
           headers: {
             "Content-Type": "application/json",
           },
-        }
-      );
+        });
+      } else {
+        throw new Error("URL not defined for the specified user type");
+      }
+      
 
       if (response.data && response.data.token && responseData.data) {
         // Assuming the API returns { user, token }

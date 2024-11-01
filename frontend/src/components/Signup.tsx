@@ -71,7 +71,6 @@ const Signup = () => {
     dispatch(signupStart());
 
     const signupData = {
-      org_id: "653000000000000000000000",
       email: formData.email,
       username: formData.username,
       password: formData.password,
@@ -93,6 +92,7 @@ const Signup = () => {
           },
         }
       );
+      console.log(response.data.id);
       let responseData: AxiosResponse<never, never>;
       if (userType === "farmer") {
         responseData = await axios.post(
@@ -100,8 +100,8 @@ const Signup = () => {
           {
             addresses: showAddressForm ? [formData.address] : [],
             email: formData.email,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
             phone: formData.phone,
             list_products: [],
             list_sales: [],
@@ -142,7 +142,9 @@ const Signup = () => {
           payload: response.data,
         });
 
-        navigate(userType === "consumer" ? "/consumer/products" : "/farmer/products");
+        navigate(
+          userType === "consumer" ? "/consumer/products" : "/farmer/products"
+        );
       }
     } catch (error) {
       dispatch(

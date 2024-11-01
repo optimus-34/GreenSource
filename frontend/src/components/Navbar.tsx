@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+// import { ArrowRight } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../store/slices/authSlice"; // Add this import
@@ -16,14 +16,15 @@ export default function Navbar() {
         </div>
         <div className="flex items-center gap-8">
           <NavLink to="/" className="hover:text-blue-500 text-xl">
-            Home
+            Home 
           </NavLink>
-          <NavLink to={user ? "/profile" : "/login"}>
-            {user ? (
-              <span>{user.name}</span>
+          <NavLink to={user.name ? "/profile" : "/login"} className="hover:text-blue-500 text-xl">
+            {user.name ? (
+              <span>{user.name} </span>
             ) : (
               <span>
-                Login <ArrowRight className="" />
+                Login 
+                {/* <ArrowRight className="" /> */}
               </span>
             )}
           </NavLink>
