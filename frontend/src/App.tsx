@@ -9,6 +9,7 @@ import ConsumerDashboard from "./components/ConsumerDashboard";
 import FarmerDashboard from "./components/FarmerDashboard";
 import ProductsPage from "./components/ProductsPage";
 import CartPage from "./components/CartPage";
+import ConsumerProfilePage from "./components/ConsumerProfilePage";
 
 function App() {
   return (
@@ -32,6 +33,14 @@ function App() {
             element={
               <ConsumerDashboard>
                 <CartPage />
+              </ConsumerDashboard>
+            }
+          />
+          <Route
+            path="/consumer/profile"
+            element={
+              <ConsumerDashboard>
+                <ConsumerProfilePage />
               </ConsumerDashboard>
             }
           />

@@ -32,8 +32,7 @@ const ProductsPage: React.FC = () => {
   }
 
   return (
-    <div className="flex-grow p-8">
-      <h1 className="text-2xl font-bold mb-6">Products</h1>
+    <div className="flex-grow p-8 mt-10">
       <div className="flex flex-wrap justify-start items-start gap-6">
         {products.map((product) => (
           <div key={product._id}>
