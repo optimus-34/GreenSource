@@ -38,7 +38,10 @@ const ConsumerDashboard = () => {
       path: "/consumer/profile",
     },
   ];
-
+  if (!user.name) {
+    navigate("/login");
+    return;
+  }
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
