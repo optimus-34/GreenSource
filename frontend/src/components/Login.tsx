@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginStart, loginFailure } from "../store/slices/authSlice";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 // import bcrypt from "bcryptjs";
 import type { RootState } from "../store"; // Assuming you have this type defined
 
