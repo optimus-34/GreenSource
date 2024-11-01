@@ -8,7 +8,6 @@ const FarmerSchema = new Schema({
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
     addresses: [{ type: Types.ObjectId, ref: 'Address' }],
-    is_verified: { type: Boolean, default: false },
     list_products: [{ type: Types.ObjectId }],
     list_sales: [{ type: Types.ObjectId }]
 }, { timestamps: true }); 
