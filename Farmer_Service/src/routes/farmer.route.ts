@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createFarmer, getFarmers, getFarmer, updateFarmer, deleteFarmer,addFarmerAddress, updateFarmerName, updateFarmerPhone, updateFarmerAddress, updateFarmerEmail, updateFarmerVerifiedStatus, addProduct, getProducts} from '../controllers/farmer.controller';
+import { createFarmer, getFarmers, getFarmer, updateFarmer, deleteFarmer,addFarmerAddress, updateFarmerName, updateFarmerPhone, updateFarmerAddress, updateFarmerEmail, updateFarmerVerifiedStatus, addProduct, getProducts, loginFarmer} from '../controllers/farmer.controller';
 import { createAddress, deleteAddress, getAddress, getAddresses, updateAddress } from '../controllers/address.controller';
 
 
@@ -21,6 +21,7 @@ router.post('/address', createAddress);
 router.get('/address', getAddresses);
 router.get('/address/:id', getAddress);
 router.put('/address/:id', updateAddress);
+router.post('/login',loginFarmer);
 router.delete('/address/:id', deleteAddress);
 
 export default router;

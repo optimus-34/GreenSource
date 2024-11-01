@@ -100,8 +100,8 @@ const Signup = () => {
           {
             addresses: showAddressForm ? [formData.address] : [],
             email: formData.email,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
             phone: formData.phone,
             list_products: [],
             list_sales: [],
