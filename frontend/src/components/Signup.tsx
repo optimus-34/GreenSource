@@ -96,17 +96,15 @@ const Signup = () => {
       let responseData: AxiosResponse<never, never>;
       if (userType === "farmer") {
         responseData = await axios.post(
-          "http://localhost:3000/api/farmers/",
+          "http://localhost:3002/api/farmers/",
           {
-            org_id: "653000000000000000000000",
+            addresses: showAddressForm ? [formData.address] : [],
             email: formData.email,
-            username: formData.username,
-            password: formData.password,
             firstName: formData.firstName,
             lastName: formData.lastName,
             phone: formData.phone,
-            role: userType,
-            addresses: showAddressForm ? [formData.address] : [],
+            list_products: [],
+            list_sales: [],
           },
           {
             headers: {
@@ -117,16 +115,16 @@ const Signup = () => {
         );
       } else {
         responseData = await axios.post(
-          "http://localhost:3000/api/customers/",
+          "http://localhost:3001/api/customers/",
           {
-            org_id: "653000000000000000000000",
             email: formData.email,
-            username: formData.username,
-            password: formData.password,
             firstName: formData.firstName,
             lastName: formData.lastName,
             phone: formData.phone,
             role: userType,
+            cart: [],
+            wishlist: [],
+            orders: [],
             addresses: showAddressForm ? [formData.address] : [],
           },
           {
@@ -144,7 +142,7 @@ const Signup = () => {
           payload: response.data,
         });
 
-        navigate(userType === "consumer" ? "/consumer/" : "/farmer/");
+        navigate(userType === "consumer" ? "/consumer/products" : "/farmer/products");
       }
     } catch (error) {
       dispatch(
