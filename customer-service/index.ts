@@ -3,6 +3,7 @@ import express from "express";
 import { connectDatabase } from "./config/database";
 import customerRoutes from "./routes/customer.routes";
 // import { errorHandler } from "./middleware/error.middleware";
+import cors from "cors";
 
 // Load environment variables
 
@@ -14,6 +15,14 @@ connectDatabase();
 
 // Middleware
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 
 // Routes

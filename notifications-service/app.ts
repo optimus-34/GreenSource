@@ -25,7 +25,14 @@ const MONGO_URI = process.env.MONGO_URI || "";
 SocketService.getInstance(io);
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 
 // Routes
