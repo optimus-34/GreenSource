@@ -16,7 +16,6 @@ const AddressSchema = new Schema<Address>(
 const CustomerSchema = new Schema<Customer>(
   {
     email: { type: String, required: true, unique: true },
-    user_id: { type: String, required: true, unique: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     phone: { type: String },

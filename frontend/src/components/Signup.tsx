@@ -118,9 +118,7 @@ const Signup = () => {
           "http://localhost:3001/api/customers/",
           {
             email: formData.email,
-            user_id:response.data.id,
             firstName: formData.firstName,
-            user_id: response.data.user.id,
             lastName: formData.lastName,
             phone: formData.phone,
             role: userType,

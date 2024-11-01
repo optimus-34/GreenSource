@@ -55,8 +55,9 @@ const Login = () => {
         }
       );
       console.log(response.data, validateResponse.data);
-      const responseData = await axios.get(
-        `http://localhost:3001/${validateResponse.data.user.id}`,
+      const responseData = await axios.post(
+        `http://localhost:3001/api/customers/login`,
+        loginData,
         {
           headers: {
             "Content-Type": "application/json",

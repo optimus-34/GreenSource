@@ -6,7 +6,8 @@ const customerController = new CustomerController();
 
 router.post("/", customerController.addCustomer);
 router.get("/", customerController.getAllCustomers);
-router.get("/:id", customerController.getCustomerProfile);
+// router.get("/:id", customerController.getCustomerProfile);
+router.post("/login",customerController.loginCustomer);
 router.put("/:id", customerController.updateCustomerProfile);
 router.delete("/:id", customerController.deleteCustomerProfile);
 

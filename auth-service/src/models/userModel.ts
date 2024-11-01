@@ -1,10 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IUser extends Document {
-<<<<<<< HEAD
-    
-=======
->>>>>>> d6e3f3e4ffe0b1439bda2b1c205e81cbc7419388
     username: string;
     email: string;
     password: string;

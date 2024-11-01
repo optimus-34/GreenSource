@@ -84,6 +84,17 @@ export class CustomerController {
     }
   };
 
+  loginCustomer = async (req:Request, res: Response,next : NextFunction) => {
+    try {
+      const email  = req.body.email;
+      const token = await this.customerService.getCustomerByEmail(email);
+      res.json({ success: true});
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
   getAddresses = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.getCustomerById(
