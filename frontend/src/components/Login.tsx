@@ -30,7 +30,6 @@ const Login = () => {
     dispatch(loginStart());
 
     const loginData = {
-      org_id: "653000000000000000000000",
       email: formData.identifier,
       password: formData.password,
       role: formData.userType,

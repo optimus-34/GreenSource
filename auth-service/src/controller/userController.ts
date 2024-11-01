@@ -109,10 +109,9 @@ export const getAllUsers = async (
 // controllers/authController.ts
 
 export const register = async (req: Request, res: Response) => {
-  const { org_id, username, email, password, role } = req.body;
+  const { username, email, password, role } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = new User({
-    org_id,
     username,
     email,
     password: hashedPassword,

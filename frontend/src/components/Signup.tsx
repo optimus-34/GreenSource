@@ -71,7 +71,6 @@ const Signup = () => {
     dispatch(signupStart());
 
     const signupData = {
-      org_id: "653000000000000000000000",
       email: formData.email,
       username: formData.username,
       password: formData.password,
@@ -119,6 +118,7 @@ const Signup = () => {
           {
             email: formData.email,
             firstName: formData.firstName,
+            user_id: response.data.user.id,
             lastName: formData.lastName,
             phone: formData.phone,
             role: userType,
@@ -142,7 +142,9 @@ const Signup = () => {
           payload: response.data,
         });
 
-        navigate(userType === "consumer" ? "/consumer/products" : "/farmer/products");
+        navigate(
+          userType === "consumer" ? "/consumer/products" : "/farmer/products"
+        );
       }
     } catch (error) {
       dispatch(
