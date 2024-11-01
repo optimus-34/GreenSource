@@ -11,7 +11,7 @@ router.use((req, res, next) => {
 });
 
 // Product Management
-router.get('/products', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     await res.locals.controller.listProducts(req, res);
   } catch (error) {
@@ -19,7 +19,7 @@ router.get('/products', async (req, res, next) => {
   }
 });
 
-router.get('/product/:id', async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   try {
     await res.locals.controller.getProduct(req, res);
   } catch (error) {
@@ -27,7 +27,7 @@ router.get('/product/:id', async (req, res, next) => {
   }
 });
 
-router.post('/products', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
     await res.locals.controller.createProduct(req, res);
   } catch (error) {
@@ -36,7 +36,7 @@ router.post('/products', async (req, res, next) => {
   }
 });
 
-router.put('/products/:id', async (req, res, next) => {
+router.put('/:id', async (req, res, next) => {
   try {
     await res.locals.controller.updateProduct(req, res);
   } catch (error) {
@@ -44,7 +44,7 @@ router.put('/products/:id', async (req, res, next) => {
   }
 });
 
-router.delete('/products/:id', async (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     await res.locals.controller.deleteProduct(req, res);
   } catch (error) {
@@ -54,8 +54,8 @@ router.delete('/products/:id', async (req, res, next) => {
 
 
 // Product Images
-router.post('/products/:id/images', productController.addProductImage.bind(productController));
-router.delete('/products/:id/images/:imageId', async (req, res, next) => {
+router.post('/:id/images', productController.addProductImage.bind(productController));
+router.delete('/:id/images/:imageId', async (req, res, next) => {
   try {
     await productController.deleteProductImage(req, res);
   } catch (error) {
@@ -64,11 +64,11 @@ router.delete('/products/:id/images/:imageId', async (req, res, next) => {
 });
 
 // Reviews
-router.post('/products/:id/reviews', productController.addReview.bind(productController));
-router.get('/products/:id/reviews', productController.getProductReviews.bind(productController));
+router.post('/:id/reviews', productController.addReview.bind(productController));
+router.get('/:id/reviews', productController.getProductReviews.bind(productController));
 
 // Search & Filter
-router.get('/products/search', productController.searchProducts.bind(productController));
-router.get('/products/categories', productController.getCategories.bind(productController));
+router.get('/search', productController.searchProducts.bind(productController));
+router.get('/categories', productController.getCategories.bind(productController));
 
 export default router;

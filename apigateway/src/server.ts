@@ -32,6 +32,14 @@ app.use(
   })
 );
 
+app.use(
+  "/api/products",
+  createProxyMiddleware({
+    target: "http://localhost:3005",
+    changeOrigin: true,
+  })
+);
+
 app.listen(3000, () => {
   console.log("API Gateway running on port 3000");
 });
