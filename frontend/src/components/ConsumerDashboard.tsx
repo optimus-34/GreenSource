@@ -1,11 +1,15 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectAuth } from "../store/slices/authSlice";
+import { selectAuth, logout } from "../store/slices/authSlice";
 import { ShoppingCart, User, Package, Heart, Clock, Menu } from "lucide-react";
 
 const ConsumerDashboard = () => {
   const { user } = useSelector(selectAuth);
   const navigate = useNavigate();
+  const handleSignout = () => {
+    logout();
+    navigate("/");
+  };
 
   const menuItems = [
     {
@@ -71,6 +75,7 @@ const ConsumerDashboard = () => {
               <span className="text-sm text-gray-600">
                 Welcome, {user.name}
               </span>
+              <button onClick={handleSignout}>Sign Out</button>
             </div>
           </div>
         </header>
