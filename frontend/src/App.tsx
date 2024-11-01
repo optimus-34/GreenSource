@@ -11,7 +11,6 @@ import ProductsPage from "./components/ProductsPage";
 import CartPage from "./components/CartPage";
 
 function App() {
-
   return (
     <>
       <Provider store={store}>
