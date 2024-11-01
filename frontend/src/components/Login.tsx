@@ -46,8 +46,17 @@ const Login = () => {
           },
         }
       );
+      const responseData = await axios.post(
+        "http://localhost:3000/api/customers/",
+        loginData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      if (response.data) {
+      if (response.data && response.data.token && responseData.data) {
         // Assuming the API returns { user, token }
         dispatch({
           type: "auth/loginSuccess",
