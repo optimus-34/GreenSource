@@ -75,7 +75,9 @@ const ConsumerDashboard = () => {
               <span className="text-sm text-gray-600">
                 Welcome, {user.name}
               </span>
-              <button onClick={handleSignout}>Sign Out</button>
+              <button className="p-2 bg-red-500" onClick={handleSignout}>
+                Sign Out
+              </button>
             </div>
           </div>
         </header>

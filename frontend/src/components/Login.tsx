@@ -46,8 +46,18 @@ const Login = () => {
           },
         }
       );
+      const validateResponse = await axios.get(
+        "http://localhost:3000/api/auth/validate",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${response.data.token}`,
+          },
+        }
+      );
+      console.log(response.data, validateResponse.data);
       const responseData = await axios.get(
-        "http://localhost:3000/api/customers/",
+        `http://localhost:3000/api/customers/${validateResponse.data.user.id}`,
         {
           headers: {
             "Content-Type": "application/json",
