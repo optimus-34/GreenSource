@@ -1,11 +1,15 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectAuth } from "../store/slices/authSlice";
+import { selectAuth, logout } from "../store/slices/authSlice";
 import { Package, BarChart2, Clock, Settings, User, Menu } from "lucide-react";
 
 const FarmerDashboard = () => {
   const { user } = useSelector(selectAuth);
   const navigate = useNavigate();
+  const handleSignout = () => {
+    logout();
+    navigate("/");
+  };
 
   const menuItems = [
     {
@@ -71,6 +75,9 @@ const FarmerDashboard = () => {
               <span className="text-sm text-gray-600">
                 Welcome, {user.name}
               </span>
+              <button className="p-2 bg-red-500" onClick={handleSignout}>
+                Sign out
+              </button>
             </div>
           </div>
         </header>
