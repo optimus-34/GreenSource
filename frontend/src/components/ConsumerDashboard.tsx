@@ -1,14 +1,15 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectAuth, logout } from "../store/slices/authSlice";
 import { ShoppingCart, User, Package, Heart, Clock, Menu } from "lucide-react";
+// import { useEffect } from "react";
 
-const ConsumerDashboard = () => {
+const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
   const { user } = useSelector(selectAuth);
   const navigate = useNavigate();
   const handleSignout = () => {
     logout();
-    navigate("/");
+    redirect("/login");
   };
 
   const menuItems = [
@@ -38,10 +39,12 @@ const ConsumerDashboard = () => {
       path: "/consumer/profile",
     },
   ];
-  if (!user.name) {
-    navigate("/login");
-    return;
-  }
+  // useEffect(() => {
+  //   if (!user.name) {
+  //     navigate("/login");
+  //     return;
+  //   }
+  // }, [user, navigate]);
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
@@ -56,7 +59,11 @@ const ConsumerDashboard = () => {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className="flex items-center w-full px-4 py-3 mb-2 text-gray-700 rounded-lg hover:bg-gray-100"
+                className={`flex items-center w-full px-4 py-3 mb-2 rounded-lg hover:bg-gray-100 ${
+                  item.path === window.location.pathname
+                    ? "text-blue-500"
+                    : "text-gray-600"
+                }`}
               >
                 {item.icon}
                 <span className="ml-3">{item.label}</span>
@@ -86,7 +93,8 @@ const ConsumerDashboard = () => {
         </header>
 
         <main className="p-6">
-          <Outlet />
+          {/* <Outlet /> */}
+          {children}
         </main>
       </div>
     </div>

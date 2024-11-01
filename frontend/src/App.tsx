@@ -7,6 +7,8 @@ import { store } from "./store";
 import Signup from "./components/Signup";
 import ConsumerDashboard from "./components/ConsumerDashboard";
 import FarmerDashboard from "./components/FarmerDashboard";
+import ProductsPage from "./components/ProductsPage";
+import CartPage from "./components/CartPage";
 
 function App() {
   return (
@@ -17,7 +19,22 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Signup />} />
-          <Route path="/consumer" element={<ConsumerDashboard />} />
+          <Route
+            path="/consumer/products"
+            element={
+              <ConsumerDashboard>
+                <ProductsPage />
+              </ConsumerDashboard>
+            }
+          />
+          <Route
+            path="/consumer/cart"
+            element={
+              <ConsumerDashboard>
+                <CartPage />
+              </ConsumerDashboard>
+            }
+          />
           <Route path="/farmer" element={<FarmerDashboard />} />
         </Routes>
       </Provider>
