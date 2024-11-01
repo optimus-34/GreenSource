@@ -21,7 +21,7 @@ export class CustomerService {
   }
 
   async getCustomerById(id: string): Promise<Customer> {
-    const customer = await CustomerModel.findById(id);
+    const customer = await CustomerModel.findOne({ user_id: id });
     if (!customer) {
       throw new AppError(404, "Customer not found");
     }

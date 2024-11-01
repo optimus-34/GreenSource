@@ -14,6 +14,7 @@ export interface Address {
 export interface Customer {
   id: string;
   email: string;
+  user_id: string;
   firstName: string;
   lastName: string;
   phone?: string;
