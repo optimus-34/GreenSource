@@ -12,27 +12,27 @@ router.put("/:email", customerController.updateCustomerProfile);
 router.delete("/:email", customerController.deleteCustomerProfile);
 
 // Order routes
-router.post("/:id/orders", customerController.addOrder);
-router.get("/:id/orders", customerController.getOrders);
-router.post("/:id/orders/:orderId/cancel", customerController.cancelOrder);
+router.post("/:email/orders", customerController.addOrder);
+router.get("/:email/orders", customerController.getOrders);
+router.post("/:email/orders/:orderId/cancel", customerController.cancelOrder);
 
 // Cart routes
-router.get("/:id/cart", customerController.getCart);
-router.post("/:id/cart", customerController.addToCart);
-router.delete("/:id/cart/:productId", customerController.removeFromCart);
+router.get("/:email/cart", customerController.getCart);
+router.post("/:email/cart", customerController.addToCart);
+router.delete("/:email/cart/:productId", customerController.removeFromCart);
 
 // Address routes
-router.get("/:id/addresses", customerController.getAddresses);
-router.post("/:id/addresses", customerController.addAddress);
-router.put("/:id/addresses/:addressId", customerController.updateAddress);
-router.delete("/:id/addresses/:addressId", customerController.deleteAddress);
+router.get("/:email/addresses", customerController.getAddresses);
+router.post("/:email/addresses", customerController.addAddress);
+router.put("/:email/addresses/:addressId", customerController.updateAddress);
+router.delete("/:email/addresses/:addressId", customerController.deleteAddress);
 
 // Wishlist routes without authentication
-router.get("/:id/wishlist", customerController.getWishlist);
-router.get("/:id/wishlist", customerController.getWishlist);
-router.post("/:id/wishlist", customerController.addToWishlist);
+router.get("/:email/wishlist", customerController.getWishlist);
+router.get("/:email/wishlist", customerController.getWishlist);
+router.post("/:email/wishlist", customerController.addToWishlist);
 router.delete(
-  "/:id/wishlist/:productId",
+  "/:email/wishlist/:productId",
   customerController.removeFromWishlist
 );
 

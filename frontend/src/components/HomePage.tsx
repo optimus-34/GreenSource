@@ -13,15 +13,14 @@ const HomePage: React.FC = () => {
       <Navbar />
       <div className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 mt-16">
         {/* Hero Section */}
-        <div className="relative bg-[url('/assets/bg.jpg')] bg-cover bg-center bg-no-repeat py-32 min-h-[40rem] flex items-center justify-center bg-fixed">
+        <div className="relative bg-[url('/assets/bg.jpg')] bg-cover bg-top bg-no-repeat py-16 min-h-[25rem] flex items-center justify-center">
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
           <div className="container mx-auto px-4 relative">
-            <div className="text-center text-white mt-14">
-              <h1 className="text-5xl md:text-7xl font-bold mb-10 mt-32 animate-fade-in-down">
+            <div className="text-center text-white">
+              <h1 className="text-5xl md:text-7xl font-bold mb-10 animate-fade-in-down">
                 <span>
                   <span className="text-green-400">Green</span>
                   <span className="text-blue-300">Source</span>
-                  
                 </span>{" "}
                 <span className="block mt-4">Marketplace</span>
               </h1>
@@ -36,7 +35,7 @@ const HomePage: React.FC = () => {
         </div>
 
         {/* Features Section */}
-        <div className="py-24 bg-gradient-to-b from-white to-green-50">
+        <div className="py-24 bg-gradient-to-b from-white to-green-50 -mt-20">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               <div className="bg-white p-8 rounded-2xl shadow-xl transform hover:-translate-y-2 transition-all duration-300">

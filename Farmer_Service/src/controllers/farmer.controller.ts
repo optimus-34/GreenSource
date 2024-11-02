@@ -56,7 +56,7 @@ export const getFarmers = async (req: Request, res: Response) => {
 // Get a single Farmer
 export const getFarmer = async (req: Request, res: Response) => {
     try {
-        const farmer = await Farmer.findById(req.params.id);
+        const farmer = await Farmer.findOne({email:req.params.email});
         res.json(farmer);
     } catch (error) {
         if (error instanceof Error) {
@@ -73,7 +73,7 @@ export const getFarmer = async (req: Request, res: Response) => {
 // Update a Farmer
 export const updateFarmer = async (req: Request, res: Response) => {
     try {
-        const farmer = await Farmer.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const farmer = await Farmer.findOneAndUpdate({email:req.params.email}, req.body, { new: true });
         res.json(farmer);
     } catch (error) {
         if (error instanceof Error) {
@@ -90,7 +90,7 @@ export const updateFarmer = async (req: Request, res: Response) => {
 // Delete a Farmer
 export const deleteFarmer = async (req: Request, res: Response) => {
     try {
-        await Farmer.findByIdAndDelete(req.params.id);
+        await Farmer.findOneAndDelete({email:req.params.email});
         res.json({ message: 'Farmer deleted' });
     } catch (error) {
         if (error instanceof Error) {
@@ -109,14 +109,14 @@ export const deleteFarmer = async (req: Request, res: Response) => {
 export const addProduct = async (req: Request, res: Response) => {
     try {
       const productData = req.body; // Get product data from request body
-      const farmerId = req.params.id; // Get farmer ID from request parameters
+      const farmerId = req.params.email; // Get farmer ID from request parameters
       // Include the farmer ID in the product data
       productData.farmerId = farmerId;
       // Send POST request to product service
       const response = await axios.post('http://localhost:3001/api/products', productData);
       // Update the Farmer's list_products with the new product ID
       const productId = response.data._id; // Assuming the product ID is returned in the response
-      await Farmer.findByIdAndUpdate(farmerId, { $push: { list_products: productId } });
+      await Farmer.findOneAndUpdate({email:farmerId}, { $push: { list_products: productId } });
       res.status(201).json(response.data);
     } catch (error) {
       if (error instanceof Error) {
@@ -131,9 +131,9 @@ export const addProduct = async (req: Request, res: Response) => {
 
   export const getProducts = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params; // Get Farmer ID from request parameters
+         // Get Farmer ID from request parameters
         // Find the farmer and retrieve their product IDs
-        const farmer = await Farmer.findById(id);
+        const farmer = await Farmer.findOne({email:req.params.email});
         if (!farmer) {
             res.status(404).json({ message: 'Farmer not found' });
             return;
@@ -163,7 +163,7 @@ export const addProduct = async (req: Request, res: Response) => {
 
 export const addFarmerAddress = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params; // Get Farmer ID from request parameters
+        const  id  = req.params.email; // Get Farmer ID from request parameters
         const addressData = req.body; // Get address data from request body
         
         // Create a new address
@@ -171,7 +171,7 @@ export const addFarmerAddress = async (req: Request, res: Response) => {
         await newAddress.save(); // Save the address to the database
 
         // Update the Farmer to include the new address ID
-        await Farmer.findByIdAndUpdate(id, { $push: { addresses: newAddress._id } }, { new: true });
+        await Farmer.findOneAndUpdate({email:id}, { $push: { addresses: newAddress._id } }, { new: true });
 
         res.status(201).json(newAddress); // Respond with the created address
     } catch (error) {
@@ -188,7 +188,7 @@ export const addFarmerAddress = async (req: Request, res: Response) => {
 // Update Farmer name
 export const updateFarmerName = async (req: Request, res: Response) => {
     try {
-        const farmer = await Farmer.findByIdAndUpdate(req.params.id, { first_name: req.body.firstName,last_name: req.body.lastName }, { new: true });
+        const farmer = await Farmer.findOneAndUpdate({email:req.params.email}, { first_name: req.body.firstName,last_name: req.body.lastName }, { new: true });
         if (!farmer) {
             res.status(404).json({ message: 'Farmer not found' });
         }
@@ -202,7 +202,7 @@ export const updateFarmerName = async (req: Request, res: Response) => {
 // Update Farmer phone
 export const updateFarmerPhone = async (req: Request, res: Response) => {
     try {
-        const farmer = await Farmer.findByIdAndUpdate(req.params.id, { phone: req.body.phone }, { new: true });
+        const farmer = await Farmer.findOneAndUpdate({email:req.params.email}, { phone: req.body.phone }, { new: true });
         if (!farmer) {
             res.status(404).json({ message: 'Farmer not found' });
         }
@@ -216,7 +216,7 @@ export const updateFarmerPhone = async (req: Request, res: Response) => {
 // Update Farmer email
 export const updateFarmerEmail = async (req: Request, res: Response) => {
     try {
-        const farmer = await Farmer.findByIdAndUpdate(req.params.id, { email: req.body.email }, { new: true });
+        const farmer = await Farmer.findOneAndUpdate({email:req.params.email}, { email: req.body.email }, { new: true });
         if (!farmer) {
             res.status(404).json({ message: 'Farmer not found' });
         }
@@ -231,7 +231,7 @@ export const updateFarmerEmail = async (req: Request, res: Response) => {
 export const updateFarmerAddress = async (req: Request, res: Response) => {
     try {
         
-        const updatedAddress = await Address.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updatedAddress = await Address.findOneAndUpdate({email:req.params.email}, req.body, { new: true });
         if (!updatedAddress) {
             res.status(404).json({ message: 'Address not found' });
         }
@@ -246,7 +246,7 @@ export const updateFarmerAddress = async (req: Request, res: Response) => {
 // Update Farmer verified status
 export const updateFarmerVerifiedStatus = async (req: Request, res: Response) => {
     try {
-        const farmer = await Farmer.findByIdAndUpdate(req.params.id, { is_verified: req.body.is_verified }, { new: true });
+        const farmer = await Farmer.findOneAndUpdate({email:req.params.email}, { is_verified: req.body.is_verified }, { new: true });
         if (!farmer) {
             res.status(404).json({ message: 'Farmer not found' });
         }
@@ -260,7 +260,7 @@ export const updateFarmerVerifiedStatus = async (req: Request, res: Response) =>
 // Update Farmer role
 export const updateFarmerRole = async (req: Request, res: Response) => {
     try {
-        const farmer = await Farmer.findByIdAndUpdate(req.params.id, { role: req.body.role }, { new: true });
+        const farmer = await Farmer.findOneAndUpdate({email:req.params.email}, { role: req.body.role }, { new: true });
         if (!farmer) {
             res.status(404).json({ message: 'Farmer not found' });
         }

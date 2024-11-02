@@ -96,7 +96,7 @@ export class CustomerController {
 
   getAddresses = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const customer = await this.customerService.getCustomerById(
+      const customer = await this.customerService.getCustomerByEmail(
         req.params.email
       );
       res.json({ success: true, data: customer.addresses });

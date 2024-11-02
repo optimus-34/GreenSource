@@ -184,8 +184,8 @@ export class CustomerService {
     return customer;
   }
 
-  async getWishlist(customerId: string): Promise<string[]> {
-    const customer = await CustomerModel.findById(customerId);
+  async getWishlist(email: string): Promise<string[]> {
+    const customer = await CustomerModel.findOne({email:email});
     if (!customer) {
       throw new AppError(404, "Customer not found");
     }
@@ -193,11 +193,11 @@ export class CustomerService {
   }
 
   async addToWishlist(
-    customerId: string,
+    email: string,
     productId: string
   ): Promise<Customer> {
-    const customer = await CustomerModel.findByIdAndUpdate(
-      customerId,
+    const customer = await CustomerModel.findOneAndUpdate(
+      {email:email},
       { $addToSet: { wishlist: productId } },
       { new: true }
     );
@@ -208,11 +208,11 @@ export class CustomerService {
   }
 
   async removeFromWishlist(
-    customerId: string,
+    email: string,
     productId: string
   ): Promise<Customer> {
-    const customer = await CustomerModel.findByIdAndUpdate(
-      customerId,
+    const customer = await CustomerModel.findOneAndUpdate(
+      {email:email},
       { $pull: { wishlist: productId } },
       { new: true }
     );

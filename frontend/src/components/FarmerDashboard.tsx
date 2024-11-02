@@ -73,7 +73,7 @@ const FarmerDashboard = () => {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">
-                Welcome, {user.name}
+                Welcome, {user.username}
               </span>
               <button className="p-2 bg-red-500" onClick={handleSignout}>
                 Sign out
