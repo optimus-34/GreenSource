@@ -14,11 +14,14 @@ import ConsumerOrdersPage from "./components/ConsumerOrdersPage";
 import ConsumerSavedPage from "./components/ConsumerSavedPage";
 import MarketPage from "./components/MarketPage";
 import FarmerProducts from "./components/FarmerProducts";
+import FarmerOrdersPage from "./components/FarmerOrdersPage";
+import { AuthPersistence } from "./store/slices/AuthPersistence";
 
 function App() {
   return (
     <>
       <Provider store={store}>
+        <AuthPersistence />
         {/* <Navbar /> */}
         <Routes>
           <Route path="/" element={<Home />} />
@@ -77,6 +80,14 @@ function App() {
             element={
               <FarmerDashboard>
                 <FarmerProducts />
+              </FarmerDashboard>
+            }
+          />
+          <Route
+            path="/farmer/orders"
+            element={
+              <FarmerDashboard>
+                <FarmerOrdersPage />
               </FarmerDashboard>
             }
           />

@@ -22,15 +22,7 @@ const defaultUser: User = {
   userType: null,
 };
 
-const initialState: AuthState = {
-  isAuthenticated: false,
-  user: defaultUser,
-  token: null,
-  loading: false,
-  error: null,
-};
-
-// Improved helper function to safely parse JSON with better type checking
+// Helper function to safely parse JSON with better type checking
 const safeJsonParse = (json: string | null): User => {
   if (!json) return defaultUser;
   try {
@@ -59,16 +51,25 @@ const getInitialState = (): AuthState => {
 
     if (storedToken && storedUser.id) {
       return {
-        ...initialState,
         isAuthenticated: true,
-        token: storedToken,
         user: storedUser,
+        token: storedToken,
+        loading: false,
+        error: null,
       };
     }
   } catch (error) {
     console.error("Error loading initial state:", error);
   }
-  return initialState;
+
+  // Return default initial state if no stored data or error
+  return {
+    isAuthenticated: false,
+    user: defaultUser,
+    token: null,
+    loading: false,
+    error: null,
+  };
 };
 
 const authSlice = createSlice({
@@ -89,12 +90,9 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
 
-      try {
-        localStorage.setItem("token", action.payload.token);
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
-      } catch (error) {
-        console.error("Error storing auth data:", error);
-      }
+      // Store in localStorage
+      localStorage.setItem("token", action.payload.token);
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
     },
     loginFailure: (state, action: PayloadAction<string>) => {
       state.isAuthenticated = false;
@@ -102,6 +100,10 @@ const authSlice = createSlice({
       state.token = null;
       state.loading = false;
       state.error = action.payload;
+
+      // Clear localStorage on login failure
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     },
     logout: (state) => {
       state.isAuthenticated = false;
@@ -110,19 +112,24 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
 
-      try {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-      } catch (error) {
-        console.error("Error clearing auth data:", error);
-      }
+      // Clear localStorage on logout
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       state.user = { ...state.user, ...action.payload };
-      try {
-        localStorage.setItem("user", JSON.stringify(state.user));
-      } catch (error) {
-        console.error("Error updating user data:", error);
+      // Update localStorage with new user data
+      localStorage.setItem("user", JSON.stringify(state.user));
+    },
+    // Add a reducer to handle state rehydration
+    rehydrateState: (state) => {
+      const storedToken = localStorage.getItem("token");
+      const storedUser = safeJsonParse(localStorage.getItem("user"));
+
+      if (storedToken && storedUser.id) {
+        state.isAuthenticated = true;
+        state.user = storedUser;
+        state.token = storedToken;
       }
     },
     signupStart: (state) => {
@@ -162,12 +169,28 @@ export const {
   loginFailure,
   logout,
   updateUser,
+  rehydrateState,
   signupStart,
   signupSuccess,
   signupFailure,
 } = authSlice.actions;
 
-// Simplified selector that just returns the state
-export const selectAuth = (state: { auth: AuthState }): AuthState => state.auth;
+// Selector that includes rehydration check
+export const selectAuth = (state: { auth: AuthState }): AuthState => {
+  if (!state.auth.isAuthenticated) {
+    const storedToken = localStorage.getItem("token");
+    const storedUser = safeJsonParse(localStorage.getItem("user"));
+
+    if (storedToken && storedUser.id) {
+      return {
+        ...state.auth,
+        isAuthenticated: true,
+        token: storedToken,
+        user: storedUser,
+      };
+    }
+  }
+  return state.auth;
+};
 
 export default authSlice.reducer;

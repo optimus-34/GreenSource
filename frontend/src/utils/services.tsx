@@ -10,16 +10,15 @@ export const getProducts = async (token: string) => {
   return response.data;
 };
 
-export const getFarmerProducts = async (token: string) => {
+export const getFarmerProducts = async (token: string, email: string) => {
+  console.log("email", email);
+  console.log("token", token);
   const response = await axios.get(
-    "http://localhost:3000/api/farmers/api/login",
+    `http://localhost:3000/api/farmers/api/farmers/${email}/get/products`,
     {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      },
-      data: {
-        farmer_id: 101,
       },
     }
   );
