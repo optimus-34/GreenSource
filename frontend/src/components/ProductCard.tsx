@@ -1,11 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { IProduct } from "../types/Product";
+import { selectAuth } from "../store/slices/authSlice";
+import {
+  addToCartStart,
+  addToCartSuccess,
+  addToCartFailure,
+} from "../store/slices/cartSlice";
+import { addToCartService } from "../utils/services";
+// import { Toast } from "@/components/ui/toast";
+// import { useToast } from "@/components/ui/use-toast";
 
 interface ProductCardProps {
   product: IProduct;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const dispatch = useDispatch();
+  const { token } = useSelector(selectAuth);
+  const [isAdding, setIsAdding] = useState(false);
+  // const { toast } = useToast();
+
+  const handleAddToCart = async () => {
+    // if (!token) {
+    //   toast({
+    //     variant: "destructive",
+    //     title: "Error",
+    //     description: "Please login to add items to cart",
+    //   });
+    //   return;
+    // }
+
+    try {
+      setIsAdding(true);
+      dispatch(addToCartStart());
+
+      await addToCartService(product._id, token ? token : "");
+
+      dispatch(addToCartSuccess({ ...product, quantity: 1 }));
+
+      // toast({
+      //   title: "Success",
+      //   description: "Item added to cart",
+      // });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to add to cart";
+      dispatch(addToCartFailure(errorMessage));
+
+      // toast({
+      //   variant: "destructive",
+      //   title: "Error",
+      //   description: errorMessage,
+      // });
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
   return (
     <div className="max-w-[300px] max-h-[400px] h-full flex flex-col rounded-lg shadow-md bg-white">
       <div className="relative">
@@ -46,10 +98,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </span>
         </div>
         <button
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors"
+          className={`w-full py-2 rounded-md transition-colors ${
+            isAdding
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 text-white"
+          }`}
+          onClick={handleAddToCart}
+          disabled={isAdding}
           aria-label="Add to cart"
         >
-          Add to Cart
+          {isAdding ? "Adding..." : "Add to Cart"}
         </button>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectAuth, logout } from "../store/slices/authSlice";
 import {
   ShoppingCart,
@@ -16,39 +16,61 @@ import axios from "axios";
 const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
   const { user, token } = useSelector(selectAuth);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [cartCount, setCartCount] = useState(0);
   const [savedCount, setSavedCount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
 
-  const handleSignout = async () => {
-    logout();
+  const handleSignout = () => {
+    dispatch(logout());
     navigate("/login");
   };
 
   useEffect(() => {
     const fetchCustomerDetails = async () => {
+      if (!token || !user?.email) {
+        console.log("No token or email available");
+        return;
+      }
+
       try {
-        const response = await axios.post(
-          `http://localhost:3000/api/customers/login`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ email: user.email }),
+        const response = await axios({
+          method: "POST",
+          url: `http://localhost:3000/api/customers/api/customers/login`,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {
+            email: user.email,
+          },
+        });
+
+        const { cart = [], wishlist = [], orders = [] } = response.data;
+
+        setCartCount(cart.length);
+        setSavedCount(wishlist.length);
+        setOrderCount(orders.length);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error("Error fetching customer details:", {
+            message: error.message,
+            status: error.response?.status,
+            data: error.response?.data,
+          });
+
+          // Handle unauthorized access
+          if (error.response?.status === 401) {
+            dispatch(logout());
+            navigate("/login");
           }
-        );
-        const data = await response.data;
-        setCartCount(data.cart?.length || 0);
-        setSavedCount(data.wishlist?.length || 0);
-        setOrderCount(data.orders?.length || 0);
-      } catch (error: unknown) {
-        console.error("Error fetching customer details:", error);
+        } else {
+          console.error("Error fetching customer details:", error);
+        }
       }
     };
     fetchCustomerDetails();
-  }, [user.email, token]);
+  }, [user?.email, token, dispatch, navigate]);
 
   const menuItems = [
     {
@@ -82,9 +104,10 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
       path: "/consumer/market-prices",
     },
   ];
+
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
+      {/* Rest of the JSX remains the same */}
       <div className="w-64 bg-white shadow-lg">
         <div className="flex flex-col h-full">
           <div className="p-5 border-b">
@@ -143,12 +166,11 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
                   </span>
                 )}
               </button>
-            ))}{" "}
+            ))}
           </nav>
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 overflow-auto w-full">
         <header className="bg-white shadow-sm fixed top-0 z-20 w-[calc(100%-250px)]">
           <div className="flex items-center justify-between px-6 py-4">
@@ -160,7 +182,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">
-                Welcome, {user.username}
+                Welcome, {user?.username}
               </span>
               <button
                 className="px-2 pb-2 pt-1 text-white bg-red-500 rounded-md"
@@ -172,12 +194,10 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
           </div>
         </header>
 
-        <main className="p-6">
-          {/* <Outlet /> */}
-          {children}
-        </main>
+        <main className="p-6">{children}</main>
       </div>
     </div>
   );
 };
+
 export default ConsumerDashboard;

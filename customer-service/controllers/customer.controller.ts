@@ -47,7 +47,7 @@ export class CustomerController {
   ) => {
     try {
       const customer = await this.customerService.getCustomerById(
-        req.params.id
+        req.params.email
       );
       res.json({ success: true, data: customer });
     } catch (error) {
@@ -62,7 +62,7 @@ export class CustomerController {
   ) => {
     try {
       const customer = await this.customerService.updateCustomer(
-        req.params.id,
+        req.params.email,
         req.body
       );
       res.json({ success: true, data: customer });
@@ -77,28 +77,27 @@ export class CustomerController {
     next: NextFunction
   ) => {
     try {
-      await this.customerService.deleteCustomer(req.params.id);
+      await this.customerService.deleteCustomer(req.params.email);
       res.json({ success: true, data: null });
     } catch (error) {
       next(error);
     }
   };
 
-  loginCustomer = async (req:Request, res: Response,next : NextFunction) => {
+  loginCustomer = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const email  = req.body.email;
+      const email = req.body.email;
       const token = await this.customerService.getCustomerByEmail(email);
-      res.json({ success: true});
+      res.json({ success: true });
     } catch (error) {
       next(error);
     }
   };
 
-
   getAddresses = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.getCustomerById(
-        req.params.id
+        req.params.email
       );
       res.json({ success: true, data: customer.addresses });
     } catch (error) {
@@ -109,7 +108,7 @@ export class CustomerController {
   addAddress = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.addAddress(
-        req.params.id,
+        req.params.email,
         req.body
       );
       res.json({ success: true, data: customer });
@@ -121,7 +120,7 @@ export class CustomerController {
   updateAddress = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.updateAddress(
-        req.params.id,
+        req.params.email,
         req.params.addressId,
         req.body
       );
@@ -134,8 +133,74 @@ export class CustomerController {
   deleteAddress = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.deleteAddress(
-        req.params.id,
+        req.params.email,
         req.params.addressId
+      );
+      res.json({ success: true, data: customer });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  addOrder = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const order = await this.customerService.addOrder(
+        req.params.email,
+        req.body
+      );
+      res.json({ success: true, data: order });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getOrders = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const orders = await this.customerService.getOrders(req.params.email);
+      res.json({ success: true, data: orders });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  cancelOrder = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const order = await this.customerService.cancelOrder(
+        req.params.email,
+        req.params.orderId
+      );
+      res.json({ success: true, data: order });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getCart = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const customer = await this.customerService.getCart(req.params.email);
+      res.json({ success: true, data: customer });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  addToCart = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const customer = await this.customerService.addToCart(
+        req.params.email,
+        req.body
+      );
+      res.json({ success: true, data: customer });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  removeFromCart = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const customer = await this.customerService.removeFromCart(
+        req.params.email,
+        req.params.productId
       );
       res.json({ success: true, data: customer });
     } catch (error) {
@@ -145,7 +210,7 @@ export class CustomerController {
 
   getWishlist = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const wishlist = await this.customerService.getWishlist(req.params.id);
+      const wishlist = await this.customerService.getWishlist(req.params.email);
       res.json({ success: true, data: wishlist });
     } catch (error) {
       next(error);
@@ -155,7 +220,7 @@ export class CustomerController {
   addToWishlist = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.addToWishlist(
-        req.params.id,
+        req.params.email,
         req.body.productId
       );
       res.json({ success: true, data: customer });
@@ -171,7 +236,7 @@ export class CustomerController {
   ) => {
     try {
       const customer = await this.customerService.removeFromWishlist(
-        req.params.id,
+        req.params.email,
         req.params.productId
       );
       res.json({ success: true, data: customer });

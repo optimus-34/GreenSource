@@ -20,6 +20,7 @@ const CustomerSchema = new Schema<Customer>(
     lastName: { type: String, required: true },
     phone: { type: String },
     cart: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+    orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
     addresses: [AddressSchema],
     wishlist: [{ type: Schema.Types.ObjectId, ref: "Product" }],
   },

@@ -1,6 +1,7 @@
 import { CustomerModel } from "../models/customer.model";
 import { Customer, Address } from "../types/customer";
 import { AppError } from "../types/error";
+import { IOrder } from "../types/order";
 
 export class CustomerService {
   async getAllCustomers(
@@ -28,7 +29,7 @@ export class CustomerService {
     return customer;
   }
 
-  async getCustomerByEmail(email:string): Promise<Customer> {
+  async getCustomerByEmail(email: string): Promise<Customer> {
     const customer = await CustomerModel.findOne({ email: email });
     if (!customer) {
       throw new AppError(404, "Customer not found");
@@ -36,9 +37,12 @@ export class CustomerService {
     return customer;
   }
 
-  async updateCustomer(id: string, data: Partial<Customer>): Promise<Customer> {
-    const customer = await CustomerModel.findByIdAndUpdate(
-      id,
+  async updateCustomer(
+    email: string,
+    data: Partial<Customer>
+  ): Promise<Customer> {
+    const customer = await CustomerModel.findOneAndUpdate(
+      { email: email },
       { $set: data },
       { new: true, runValidators: true }
     );
@@ -49,17 +53,17 @@ export class CustomerService {
   }
 
   async deleteCustomer(id: string): Promise<void> {
-    const result = await CustomerModel.findByIdAndDelete(id);
+    const result = await CustomerModel.findOneAndDelete({ email: id });
     if (!result) {
       throw new AppError(404, "Customer not found");
     }
   }
 
   async addAddress(
-    customerId: string,
+    email: string,
     address: Omit<Address, "id" | "customerId">
   ): Promise<Customer> {
-    const customer = await CustomerModel.findById(customerId);
+    const customer = await CustomerModel.findOne({ email: email });
     if (!customer) {
       throw new AppError(404, "Customer not found");
     }
@@ -73,11 +77,11 @@ export class CustomerService {
   }
 
   async updateAddress(
-    customerId: string,
+    email: string,
     addressId: string,
     addressData: Partial<Address>
   ): Promise<Customer> {
-    const customer = await CustomerModel.findById(customerId);
+    const customer = await CustomerModel.findOne({ email: email });
     if (!customer) {
       throw new AppError(404, "Customer not found");
     }
@@ -92,11 +96,8 @@ export class CustomerService {
     return customer;
   }
 
-  async deleteAddress(
-    customerId: string,
-    addressId: string
-  ): Promise<Customer> {
-    const customer = await CustomerModel.findById(customerId);
+  async deleteAddress(email: string, addressId: string): Promise<Customer> {
+    const customer = await CustomerModel.findOne({ email: email });
     if (!customer) {
       throw new AppError(404, "Customer not found");
     }
@@ -105,6 +106,81 @@ export class CustomerService {
       (addr) => addr.id !== addressId
     );
     await customer.save();
+    return customer;
+  }
+
+  async getAddresses(email: string): Promise<Address[]> {
+    const customer = await CustomerModel.findOne({ email: email });
+    if (!customer) {
+      throw new AppError(404, "Customer not found");
+    }
+    return customer.addresses;
+  }
+
+  async getOrders(email: string): Promise<string[]> {
+    const customer = await CustomerModel.findOne({ email: email });
+    if (!customer) {
+      throw new AppError(404, "Customer not found");
+    }
+    return customer.orders;
+  }
+
+  async getCart(email: string): Promise<string[]> {
+    const customer = await CustomerModel.findOne({ email: email });
+    if (!customer) {
+      throw new AppError(404, "Customer not found");
+    }
+    return customer.cart;
+  }
+
+  async addToCart(email: string, productId: string): Promise<Customer> {
+    const customer = await CustomerModel.findByIdAndUpdate(
+      { email: email },
+      { $addToSet: { cart: productId } },
+      { new: true }
+    );
+    if (!customer) {
+      throw new AppError(404, "Customer not found");
+    }
+    return customer;
+  }
+
+  async removeFromCart(email: string, productId: string): Promise<Customer> {
+    const customer = await CustomerModel.findOneAndUpdate(
+      { email: email },
+      { $pull: { cart: productId } },
+      { new: true }
+    );
+    if (!customer) {
+      throw new AppError(404, "Customer not found");
+    }
+    return customer;
+  }
+
+  async addOrder(
+    email: string,
+    order: Omit<IOrder, "id" | "customerId">
+  ): Promise<Customer> {
+    const customer = await CustomerModel.findOneAndUpdate(
+      { email: email },
+      { $addToSet: { orders: order } },
+      { new: true }
+    );
+    if (!customer) {
+      throw new AppError(404, "Customer not found");
+    }
+    return customer;
+  }
+
+  async cancelOrder(email: string, orderId: string): Promise<Customer> {
+    const customer = await CustomerModel.findOneAndUpdate(
+      { email: email },
+      { $pull: { orders: orderId } },
+      { new: true }
+    );
+    if (!customer) {
+      throw new AppError(404, "Customer not found");
+    }
     return customer;
   }
 

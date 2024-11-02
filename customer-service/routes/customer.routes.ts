@@ -7,9 +7,19 @@ const customerController = new CustomerController();
 router.post("/", customerController.addCustomer);
 router.get("/", customerController.getAllCustomers);
 // router.get("/:id", customerController.getCustomerProfile);
-router.post("/login",customerController.loginCustomer);
-router.put("/:id", customerController.updateCustomerProfile);
-router.delete("/:id", customerController.deleteCustomerProfile);
+router.post("/login", customerController.loginCustomer);
+router.put("/:email", customerController.updateCustomerProfile);
+router.delete("/:email", customerController.deleteCustomerProfile);
+
+// Order routes
+router.post("/:id/orders", customerController.addOrder);
+router.get("/:id/orders", customerController.getOrders);
+router.post("/:id/orders/:orderId/cancel", customerController.cancelOrder);
+
+// Cart routes
+router.get("/:id/cart", customerController.getCart);
+router.post("/:id/cart", customerController.addToCart);
+router.delete("/:id/cart/:productId", customerController.removeFromCart);
 
 // Address routes
 router.get("/:id/addresses", customerController.getAddresses);
