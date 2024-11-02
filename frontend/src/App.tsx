@@ -13,6 +13,7 @@ import ConsumerProfilePage from "./components/ConsumerProfilePage";
 import ConsumerOrdersPage from "./components/ConsumerOrdersPage";
 import ConsumerSavedPage from "./components/ConsumerSavedPage";
 import MarketPage from "./components/MarketPage";
+import FarmerProducts from "./components/FarmerProducts";
 
 function App() {
   return (
@@ -71,7 +72,14 @@ function App() {
               </ConsumerDashboard>
             }
           />
-          <Route path="/farmer" element={<FarmerDashboard />} />
+          <Route
+            path="/farmer/products"
+            element={
+              <FarmerDashboard>
+                <FarmerProducts />
+              </FarmerDashboard>
+            }
+          />
         </Routes>
       </Provider>
     </>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Delete } from "lucide-react";
 import axios from "axios";
+import { selectAuth } from "../store/slices/authSlice";
+import { useSelector } from "react-redux";
 
 interface Address {
   id: number;
@@ -32,11 +34,23 @@ const ConsumerProfilePage: React.FC = () => {
     zipCode: "",
   });
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const { user, token } = useSelector(selectAuth);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/customer");
+        const response = await axios.get(
+          "http://localhost:3000/api/customers/api/customers/login",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token ? token : ""}`,
+            },
+            data: {
+              email: user.email,
+            },
+          }
+        );
         setProfile(response.data.profile);
         setAddresses(response.data.addresses);
         setPaymentMethods(response.data.paymentMethods);
@@ -45,7 +59,7 @@ const ConsumerProfilePage: React.FC = () => {
       }
     };
     fetchProfile();
-  }, []);
+  }, [token, user.email]);
 
   const handleProfileUpdate = async () => {
     try {

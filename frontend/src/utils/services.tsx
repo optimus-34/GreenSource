@@ -10,6 +10,22 @@ export const getProducts = async (token: string) => {
   return response.data;
 };
 
+export const getFarmerProducts = async (token: string) => {
+  const response = await axios.get(
+    "http://localhost:3000/api/farmers/api/login",
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        farmer_id: 101,
+      },
+    }
+  );
+  return response.data;
+};
+
 const API_URL = "http://localhost:3000/api/customers/api/customers";
 
 export const addToCartService = async (productId: string, token: string) => {

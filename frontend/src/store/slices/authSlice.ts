@@ -30,9 +30,9 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Helper function to safely parse JSON
-const safeJsonParse = (json: string | null): User | null => {
-  if (!json) return null;
+// Improved helper function to safely parse JSON with better type checking
+const safeJsonParse = (json: string | null): User => {
+  if (!json) return defaultUser;
   try {
     const parsed = JSON.parse(json);
     // Validate the parsed object has the expected shape
@@ -44,16 +44,36 @@ const safeJsonParse = (json: string | null): User | null => {
         userType: parsed.userType ?? null,
       };
     }
-    return null;
+    return defaultUser;
   } catch (error) {
     console.error("Error parsing stored user data:", error);
-    return null;
+    return defaultUser;
   }
+};
+
+// Initialize state from localStorage if available
+const getInitialState = (): AuthState => {
+  try {
+    const storedToken = localStorage.getItem("token");
+    const storedUser = safeJsonParse(localStorage.getItem("user"));
+
+    if (storedToken && storedUser.id) {
+      return {
+        ...initialState,
+        isAuthenticated: true,
+        token: storedToken,
+        user: storedUser,
+      };
+    }
+  } catch (error) {
+    console.error("Error loading initial state:", error);
+  }
+  return initialState;
 };
 
 const authSlice = createSlice({
   name: "auth",
-  initialState,
+  initialState: getInitialState(),
   reducers: {
     loginStart: (state) => {
       state.loading = true;
@@ -147,26 +167,7 @@ export const {
   signupFailure,
 } = authSlice.actions;
 
-// Improved selector with proper error handling
-export const selectAuth = (state: { auth: AuthState }): AuthState => {
-  try {
-    const storedToken = localStorage.getItem("token");
-    const storedUser = safeJsonParse(localStorage.getItem("user"));
-
-    if (storedToken && storedUser && !state.auth.token) {
-      return {
-        ...state.auth,
-        isAuthenticated: true,
-        token: storedToken,
-        user: storedUser,
-      };
-    }
-
-    return state.auth;
-  } catch (error) {
-    console.error("Error in selectAuth:", error);
-    return state.auth;
-  }
-};
+// Simplified selector that just returns the state
+export const selectAuth = (state: { auth: AuthState }): AuthState => state.auth;
 
 export default authSlice.reducer;
