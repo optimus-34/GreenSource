@@ -22,6 +22,14 @@ const defaultUser: User = {
   userType: null,
 };
 
+const initialState: AuthState = {
+  isAuthenticated: false,
+  user: JSON.parse(localStorage.getItem("user") as string) || defaultUser,
+  token: localStorage.getItem("token"),
+  loading: false,
+  error: null,
+};
+
 // Helper function to safely parse JSON with better type checking
 const safeJsonParse = (json: string | null): User => {
   if (!json) return defaultUser;
@@ -51,6 +59,7 @@ const getInitialState = (): AuthState => {
 
     if (storedToken && storedUser.id) {
       return {
+        ...initialState,
         isAuthenticated: true,
         user: storedUser,
         token: storedToken,
@@ -63,13 +72,14 @@ const getInitialState = (): AuthState => {
   }
 
   // Return default initial state if no stored data or error
-  return {
-    isAuthenticated: false,
-    user: defaultUser,
-    token: null,
-    loading: false,
-    error: null,
-  };
+  // return {
+  //   isAuthenticated: false,
+  //   user: defaultUser,
+  //   token: null,
+  //   loading: false,
+  //   error: null,
+  // };
+  return initialState;
 };
 
 const authSlice = createSlice({
@@ -169,7 +179,7 @@ export const {
   loginFailure,
   logout,
   updateUser,
-  rehydrateState,
+  //rehydrateState,
   signupStart,
   signupSuccess,
   signupFailure,
@@ -177,7 +187,6 @@ export const {
 
 // Selector that includes rehydration check
 export const selectAuth = (state: { auth: AuthState }): AuthState => {
-  if (!state.auth.isAuthenticated) {
     const storedToken = localStorage.getItem("token");
     const storedUser = safeJsonParse(localStorage.getItem("user"));
 
@@ -189,7 +198,7 @@ export const selectAuth = (state: { auth: AuthState }): AuthState => {
         user: storedUser,
       };
     }
-  }
+  
   return state.auth;
 };
 
