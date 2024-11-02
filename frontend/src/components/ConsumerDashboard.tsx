@@ -1,46 +1,54 @@
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectAuth, logout } from "../store/slices/authSlice";
-import { ShoppingCart, User, Package, Heart, Clock, Menu } from "lucide-react";
-// import { useEffect } from "react";
+import {
+  ShoppingCart,
+  User,
+  Package,
+  Heart,
+  Clock,
+  Menu,
+  Activity,
+} from "lucide-react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useSelector(selectAuth);
+  const { user, token } = useSelector(selectAuth);
   const navigate = useNavigate();
+  const [cartCount, setCartCount] = useState(0);
+  const [savedCount, setSavedCount] = useState(0);
+  const [orderCount, setOrderCount] = useState(0);
+
   const handleSignout = async () => {
     logout();
     navigate("/login");
   };
 
-  const cartCount = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/customer/${user.email}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching cart count:", error);
-      return 0;
-    }
-  };
-
-  const cartCountValue = cartCount().then((data) => {
-    return data.cart.length;
-  });
-  const orderCountValue = cartCount().then((data) => {
-    return data.orders.length;
-  });
-  const savedCountValue = cartCount().then((data) => {
-    return data.wishlist.length;
-  });
+  useEffect(() => {
+    const fetchCustomerDetails = async () => {
+      try {
+        const response = await axios.post(
+          `http://localhost:3000/api/customers/login`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ email: user.email }),
+          }
+        );
+        const data = await response.data;
+        setCartCount(data.cart?.length || 0);
+        setSavedCount(data.wishlist?.length || 0);
+        setOrderCount(data.orders?.length || 0);
+      } catch (error: unknown) {
+        console.error("Error fetching customer details:", error);
+      }
+    };
+    fetchCustomerDetails();
+  }, [user.email, token]);
 
   const menuItems = [
     {
@@ -68,13 +76,12 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
       label: "Profile",
       path: "/consumer/profile",
     },
+    {
+      icon: <Activity className="w-5 h-5" />,
+      label: "Market Prices",
+      path: "/consumer/market-prices",
+    },
   ];
-  // useEffect(() => {
-  //   if (!user.name) {
-  //     navigate("/login");
-  //     return;
-  //   }
-  // }, [user, navigate]);
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
@@ -92,27 +99,47 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`flex items-center w-full px-4 py-3 mb-2 rounded-lg hover:bg-gray-100 ${
+                className={`flex items-center justify-between w-full px-4 py-3 mb-2 rounded-lg hover:bg-gray-100 ${
                   item.path === window.location.pathname
                     ? "text-blue-500"
                     : "text-gray-600"
                 }`}
               >
-                {item.icon}
-                <span className="ml-3">{item.label}</span>
+                <div className="flex items-center justify-start">
+                  {item.icon}
+                  <span className="ml-3">{item.label}</span>
+                </div>
                 {item.path === "/consumer/cart" && (
-                  <span className="ml-1 text-gray-100 bg-green-500 rounded-full p-2">
-                    {cartCountValue.toString()}
+                  <span
+                    className={`ml-14 size-6 rounded-full float-end ${
+                      cartCount > 0
+                        ? "bg-green-500 text-gray-100"
+                        : "bg-gray-300 text-zinc-800"
+                    }`}
+                  >
+                    {cartCount}
                   </span>
                 )}
                 {item.path === "/consumer/orders" && (
-                  <span className="ml-1 text-gray-500">
-                    {orderCountValue.toString()}
+                  <span
+                    className={`ml-14 size-6 rounded-full ${
+                      orderCount > 0
+                        ? "bg-blue-500 text-gray-100"
+                        : "bg-gray-300 text-zinc-800"
+                    }`}
+                  >
+                    {orderCount}
                   </span>
                 )}
                 {item.path === "/consumer/saved" && (
-                  <span className="ml-1 text-gray-500">
-                    {savedCountValue.toString()}
+                  <span
+                    className={`ml-14 size-6 rounded-full ${
+                      savedCount > 0
+                        ? "bg-red-500 text-gray-100"
+                        : "bg-gray-300 text-zinc-800"
+                    }`}
+                  >
+                    {savedCount}
                   </span>
                 )}
               </button>
@@ -153,5 +180,4 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
     </div>
   );
 };
-
 export default ConsumerDashboard;

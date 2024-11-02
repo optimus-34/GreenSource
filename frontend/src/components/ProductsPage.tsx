@@ -2,16 +2,19 @@ import React, { useEffect, useState } from "react";
 import { IProduct } from "../types/Product";
 import { getProducts } from "../utils/services";
 import ProductCard from "./ProductCard";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../store/slices/authSlice";
 
 const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { token } = useSelector(selectAuth);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getProducts();
+        const data = await getProducts(token || "");
         setProducts(data);
         setLoading(false);
       } catch (err: unknown) {
@@ -21,7 +24,7 @@ const ProductsPage: React.FC = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [token]);
 
   if (loading) {
     return <p className="text-lg">Loading...</p>;

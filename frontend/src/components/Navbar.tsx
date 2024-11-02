@@ -21,7 +21,7 @@ export default function Navbar() {
           <NavLink
             to={
               user.username
-                ? user.role === "consumer"
+                ? user.userType === "consumer"
                   ? "/consumer/profile"
                   : "/farmer/profile"
                 : "/login"
