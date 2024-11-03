@@ -1,5 +1,6 @@
 import axios from "axios";
 // import { IProduct } from "../types/Product";
+import { IProductImage } from "../types/Product";
 
 export const getProducts = async (token: string) => {
   const response = await axios.get("http://localhost:3000/api/products", {
@@ -8,6 +9,31 @@ export const getProducts = async (token: string) => {
     },
   });
   return response.data;
+};
+
+export const createProduct = async (token: string, productData: any) => {
+  try {
+    // Then add the product to farmer's list_products
+    const productResponse = await axios.post(
+      `http://localhost:3000/api/farmers/api/farmers/${productData.farmerId}/add/product`,
+      { ...productData },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return productResponse.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "Failed to create product"
+      );
+    }
+    throw new Error("Failed to create product");
+  }
 };
 
 export const getFarmerProducts = async (token: string, email: string) => {
@@ -67,5 +93,32 @@ export const getCartItems = async (token: string) => {
       );
     }
     throw new Error("Failed to fetch cart items");
+  }
+};
+
+export const addProductImage = async (
+  token: string,
+  productId: string,
+  imageData: Partial<IProductImage>
+) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/api/products/${productId}/images`,
+      imageData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "Failed to add product image"
+      );
+    }
+    throw new Error("Failed to add product image");
   }
 };

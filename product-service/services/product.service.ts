@@ -1,7 +1,7 @@
-import { Product } from '../models/product.model';
-import { ProductImage } from '../models/product-image.model';
-import { Review } from '../models/review.model';
-import { IProduct, IProductImage, IReview } from '../types/product.types';
+import { Product } from "../models/product.model";
+import { ProductImage } from "../models/product-image.model";
+import { Review } from "../models/review.model";
+import { IProduct, IProductImage, IReview } from "../types/product.types";
 
 export class ProductService {
   async listProducts(query: any = {}) {
@@ -23,6 +23,10 @@ export class ProductService {
 
   async deleteProduct(id: string) {
     return Product.deleteOne({ _id: id });
+  }
+
+  async getProductImages(productId: string) {
+    return ProductImage.findOne({ productId: productId });
   }
 
   async addProductImage(productId: string, imageData: Partial<IProductImage>) {
@@ -47,13 +51,13 @@ export class ProductService {
     return Product.find({
       isActive: true,
       $and: [
-        { name: { $regex: query, $options: 'i' } },
-        { description: { $regex: query, $options: 'i' } }
-      ]
+        { name: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+      ],
     });
   }
 
   async getCategories() {
-    return Product.distinct('category');
+    return Product.distinct("category");
   }
 }

@@ -33,7 +33,7 @@ const FarmerProfile: React.FC = () => {
     const fetchProfile = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/farmers/profile",
+          "http://localhost:3000/api/farmers",
           {
             headers: {
               "Content-Type": "application/json",

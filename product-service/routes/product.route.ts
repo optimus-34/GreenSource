@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { ProductController } from '../controllers/product.controller';
+import { Router } from "express";
+import { ProductController } from "../controllers/product.controller";
 
 const router = Router();
 const productController = new ProductController();
@@ -11,7 +11,7 @@ router.use((req, res, next) => {
 });
 
 // Product Management
-router.get('/', async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     await res.locals.controller.listProducts(req, res);
   } catch (error) {
@@ -19,7 +19,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
     await res.locals.controller.getProduct(req, res);
   } catch (error) {
@@ -27,7 +27,7 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.post('/', async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     await res.locals.controller.createProduct(req, res);
   } catch (error) {
@@ -36,7 +36,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.put('/:id', async (req, res, next) => {
+router.put("/:id", async (req, res, next) => {
   try {
     await res.locals.controller.updateProduct(req, res);
   } catch (error) {
@@ -44,7 +44,7 @@ router.put('/:id', async (req, res, next) => {
   }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     await res.locals.controller.deleteProduct(req, res);
   } catch (error) {
@@ -52,10 +52,19 @@ router.delete('/:id', async (req, res, next) => {
   }
 });
 
-
 // Product Images
-router.post('/:id/images', productController.addProductImage.bind(productController));
-router.delete('/:id/images/:imageId', async (req, res, next) => {
+router.get("/:id/images", async (req, res, next) => {
+  try {
+    await productController.getProductImages(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+router.post(
+  "/:id/images",
+  productController.addProductImage.bind(productController)
+);
+router.delete("/:id/images/:imageId", async (req, res, next) => {
   try {
     await productController.deleteProductImage(req, res);
   } catch (error) {
@@ -64,11 +73,20 @@ router.delete('/:id/images/:imageId', async (req, res, next) => {
 });
 
 // Reviews
-router.post('/:id/reviews', productController.addReview.bind(productController));
-router.get('/:id/reviews', productController.getProductReviews.bind(productController));
+router.post(
+  "/:id/reviews",
+  productController.addReview.bind(productController)
+);
+router.get(
+  "/:id/reviews",
+  productController.getProductReviews.bind(productController)
+);
 
 // Search & Filter
-router.get('/search', productController.searchProducts.bind(productController));
-router.get('/categories', productController.getCategories.bind(productController));
+router.get("/search", productController.searchProducts.bind(productController));
+router.get(
+  "/categories",
+  productController.getCategories.bind(productController)
+);
 
 export default router;

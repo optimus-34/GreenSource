@@ -25,7 +25,7 @@ export default function FarmerEarnings() {
     const fetchEarnings = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/farmers/earnings",
+          "http://localhost:3000/api/farmers",
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -59,7 +59,7 @@ export default function FarmerEarnings() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center h-full mt-32">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
       </div>
     );
