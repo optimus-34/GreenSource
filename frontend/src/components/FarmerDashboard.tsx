@@ -36,7 +36,7 @@ const FarmerDashboard = ({ children }: { children: React.ReactNode }) => {
     },
     {
       icon: <Activity className="w-5 h-5" />,
-      label: "Activity",
+      label: "Market Prices",
       path: "/farmer/market-prices",
     },
   ];
@@ -46,12 +46,13 @@ const FarmerDashboard = ({ children }: { children: React.ReactNode }) => {
       <div className="flex">
         {/* Sidebar */}
         <div className="w-64 min-h-screen bg-white shadow-lg">
-          <div className="p-4">
-            <div className="flex items-center mb-6">
-              <span className="text-xl font-bold text-green-600">
-                Green Source
-              </span>
-            </div>
+          <div className="flex flex-col h-full">
+          <div className="p-5 border-b">
+            <h1 className="text-xl font-bold">
+              <span className="text-green-500">Green</span>
+              <span className="text-blue-800">Source</span>
+            </h1>
+          </div>
 
             <nav>
               {menuItems.map((item) => (

@@ -13,9 +13,44 @@ const Login = () => {
 
   const [formData, setFormData] = useState({
     identifier: "",
-    password: "", 
+    password: "",
     userType: "consumer",
   });
+
+  const [validationErrors, setValidationErrors] = useState({
+    identifier: "",
+    password: "",
+  });
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      return "Email is required";
+    }
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address";
+    }
+    return "";
+  };
+
+  const validatePassword = (password: string) => {
+    if (!password) {
+      return "Password is required";
+    }
+    if (password.length < 8) {
+      return "Password must be at least 8 characters long";
+    }
+    if (!/(?=.*[a-z])/.test(password)) {
+      return "Password must contain at least one lowercase letter";
+    }
+    if (!/(?=.*[A-Z])/.test(password)) {
+      return "Password must contain at least one uppercase letter";
+    }
+    if (!/(?=.*\d)/.test(password)) {
+      return "Password must contain at least one number";
+    }
+    return "";
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -23,10 +58,30 @@ const Login = () => {
       ...prevState,
       [name]: value,
     }));
+
+    // Clear validation errors when user starts typing
+    setValidationErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate form before submission
+    const emailError = validateEmail(formData.identifier);
+    const passwordError = validatePassword(formData.password);
+
+    setValidationErrors({
+      identifier: emailError,
+      password: passwordError,
+    });
+
+    if (emailError || passwordError) {
+      return;
+    }
+
     dispatch(loginStart());
 
     const loginData = {
@@ -131,16 +186,21 @@ const Login = () => {
             <div className="space-y-4">
               <div className="transform transition-all duration-200 hover:translate-x-1">
                 <input
-                  type="text"
+                  type="email"
                   id="identifier"
                   name="identifier"
                   required
                   autoFocus
                   value={formData.identifier}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
-                  placeholder="Email or Username"
+                  className={`w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border ${
+                    validationErrors.identifier ? 'border-red-500' : 'border-blue-200'
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500`}
+                  placeholder="Email"
                 />
+                {validationErrors.identifier && (
+                  <p className="mt-1 text-sm text-red-500">{validationErrors.identifier}</p>
+                )}
               </div>
               <div className="transform transition-all duration-200 hover:translate-x-1">
                 <input
@@ -151,9 +211,14 @@ const Login = () => {
                   autoComplete="current-password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
+                  className={`w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border ${
+                    validationErrors.password ? 'border-red-500' : 'border-blue-200'
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500`}
                   placeholder="Password"
                 />
+                {validationErrors.password && (
+                  <p className="mt-1 text-sm text-red-500">{validationErrors.password}</p>
+                )}
               </div>
             </div>
             <button

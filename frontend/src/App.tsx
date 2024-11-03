@@ -15,6 +15,8 @@ import ConsumerSavedPage from "./components/ConsumerSavedPage";
 import MarketPage from "./components/MarketPage";
 import FarmerProducts from "./components/FarmerProducts";
 import FarmerOrdersPage from "./components/FarmerOrdersPage";
+import FarmerProfile from "./components/FarmerProfile";
+import FarmerEarnings from "./components/FarmerEarnings";
 //import { AuthPersistence } from "./store/slices/AuthPersistence";
 
 function App() {
@@ -88,6 +90,30 @@ function App() {
             element={
               <FarmerDashboard>
                 <FarmerOrdersPage />
+              </FarmerDashboard>
+            }
+          />
+          <Route
+            path="/farmer/profile"
+            element={
+              <FarmerDashboard>
+                <FarmerProfile/>
+              </FarmerDashboard>
+            }
+          />
+          <Route
+            path="/farmer/earnings"
+            element={
+              <FarmerDashboard>
+                <FarmerEarnings/>
+              </FarmerDashboard>
+            }
+          />
+          <Route
+            path="/farmer/market-prices"
+            element={
+              <FarmerDashboard>
+                <MarketPage/>
               </FarmerDashboard>
             }
           />

@@ -32,6 +32,13 @@ const Signup = () => {
     },
   });
 
+  const [validationErrors, setValidationErrors] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone: ""
+  });
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -51,18 +58,54 @@ const Signup = () => {
         [name]: value,
       }));
     }
+
+    // Clear validation errors when user types
+    if (Object.keys(validationErrors).includes(name)) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }));
+    }
   };
 
   const validateForm = () => {
+    let isValid = true;
+    const errors = {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      phone: ""
+    };
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      errors.email = "Please enter a valid email address";
+      isValid = false;
+    }
+
+    // Password validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(formData.password)) {
+      errors.password = "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character";
+      isValid = false;
+    }
+
+    // Confirm password validation
     if (formData.password !== formData.confirmPassword) {
-      dispatch(signupFailure("Passwords don't match"));
-      return false;
+      errors.confirmPassword = "Passwords don't match";
+      isValid = false;
     }
-    if (userType === "farmer" && !formData.phone) {
-      dispatch(signupFailure("Phone number is required for farmers"));
-      return false;
+
+    // Phone validation
+    const phoneRegex = /^\+?[\d\s-]{10,}$/;
+    if (userType === "farmer" && !phoneRegex.test(formData.phone)) {
+      errors.phone = "Please enter a valid phone number";
+      isValid = false;
     }
-    return true;
+
+    setValidationErrors(errors);
+    return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -263,8 +306,13 @@ const Signup = () => {
                 required
                 value={formData.email}
                 onChange={handleInputChange}
-                className="mt-1 w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                className={`mt-1 w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border ${
+                  validationErrors.email ? 'border-red-500' : 'border-blue-200'
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200`}
               />
+              {validationErrors.email && (
+                <p className="mt-1 text-sm text-red-500">{validationErrors.email}</p>
+              )}
             </div>
 
             {(userType === "farmer" || formData.phone) && (
@@ -282,8 +330,13 @@ const Signup = () => {
                   required={userType === "farmer"}
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="mt-1 w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                  className={`mt-1 w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border ${
+                    validationErrors.phone ? 'border-red-500' : 'border-blue-200'
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200`}
                 />
+                {validationErrors.phone && (
+                  <p className="mt-1 text-sm text-red-500">{validationErrors.phone}</p>
+                )}
               </div>
             )}
 
@@ -302,8 +355,13 @@ const Signup = () => {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="mt-1 w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                  className={`mt-1 w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border ${
+                    validationErrors.password ? 'border-red-500' : 'border-blue-200'
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200`}
                 />
+                {validationErrors.password && (
+                  <p className="mt-1 text-sm text-red-500">{validationErrors.password}</p>
+                )}
               </div>
               <div className="transform transition-all duration-200 hover:translate-x-1">
                 <label
@@ -319,8 +377,13 @@ const Signup = () => {
                   required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="mt-1 w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                  className={`mt-1 w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border ${
+                    validationErrors.confirmPassword ? 'border-red-500' : 'border-blue-200'
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200`}
                 />
+                {validationErrors.confirmPassword && (
+                  <p className="mt-1 text-sm text-red-500">{validationErrors.confirmPassword}</p>
+                )}
               </div>
             </div>
 
