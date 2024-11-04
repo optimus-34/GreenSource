@@ -188,7 +188,7 @@ export class CustomerController {
     try {
       const customer = await this.customerService.addToCart(
         req.params.email,
-        req.body
+        req.body.productId
       );
       res.json({ success: true, data: customer });
     } catch (error) {

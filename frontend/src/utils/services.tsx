@@ -51,22 +51,26 @@ export const getFarmerProducts = async (token: string, email: string) => {
   return response.data;
 };
 
-const API_URL = "http://localhost:3000/api/customers/api/customers";
+const API_URL = "";
 
-export const addToCartService = async (productId: string, token: string) => {
+export const addToCartService = async (
+  productId: string,
+  token: string,
+  email: string
+) => {
   try {
-    const response = await axios({
-      method: "POST",
-      url: `${API_URL}/`,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      data: {
-        productId,
-        quantity: 1,
-      },
-    });
+    console.log(token, email, productId);
+    const productData = { productId: productId };
+    const response = await axios.post(
+      `http://localhost:3000/api/customers/api/customers/${email}/cart`,
+      productData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

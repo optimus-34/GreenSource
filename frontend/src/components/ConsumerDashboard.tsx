@@ -9,6 +9,7 @@ import {
   Clock,
   Menu,
   Activity,
+  X,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -20,6 +21,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
   const [cartCount, setCartCount] = useState(0);
   const [savedCount, setSavedCount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleSignout = () => {
     dispatch(logout());
@@ -105,12 +107,34 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
     },
   ];
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Rest of the JSX remains the same */}
-      <div className="w-64 bg-white shadow-lg">
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+      {/* Mobile Header */}
+      <div className="md:hidden bg-white shadow-lg p-4 flex justify-between items-center">
+        <h1 className="text-xl font-bold">
+          <span className="text-green-500">Green</span>
+          <span className="text-blue-800">Source</span>
+        </h1>
+        <button onClick={toggleSidebar} className="p-2">
+          {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </div>
+
+      {/* Sidebar */}
+      <div className={`
+        fixed md:sticky md:top-0
+        w-64 h-[100dvh]
+        bg-white shadow-lg 
+        transition-transform duration-300 ease-in-out
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        z-50
+      `}>
         <div className="flex flex-col h-full">
-          <div className="p-5 border-b">
+          <div className="hidden md:block p-5 border-b">
             <h1 className="text-xl font-bold">
               <span className="text-green-500">Green</span>
               <span className="text-blue-800">Source</span>
@@ -121,10 +145,13 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
             {menuItems.map((item) => (
               <button
                 key={item.path}
-                onClick={() => navigate(item.path)}
+                onClick={() => {
+                  navigate(item.path);
+                  setIsSidebarOpen(false);
+                }}
                 className={`flex items-center justify-between w-full px-4 py-3 mb-2 rounded-lg hover:bg-gray-100 ${
                   item.path === window.location.pathname
-                    ? "text-blue-500"
+                    ? "text-blue-500 bg-blue-50"
                     : "text-gray-600"
                 }`}
               >
@@ -134,7 +161,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
                 </div>
                 {item.path === "/consumer/cart" && (
                   <span
-                    className={`ml-14 size-6 rounded-full float-end ${
+                    className={`size-6 rounded-full flex items-center justify-center ${
                       cartCount > 0
                         ? "bg-green-500 text-gray-100"
                         : "bg-gray-300 text-zinc-800"
@@ -145,7 +172,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
                 )}
                 {item.path === "/consumer/orders" && (
                   <span
-                    className={`ml-14 size-6 rounded-full ${
+                    className={`size-6 rounded-full flex items-center justify-center ${
                       orderCount > 0
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 text-zinc-800"
@@ -156,7 +183,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
                 )}
                 {item.path === "/consumer/saved" && (
                   <span
-                    className={`ml-14 size-6 rounded-full ${
+                    className={`size-6 rounded-full flex items-center justify-center ${
                       savedCount > 0
                         ? "bg-red-500 text-gray-100"
                         : "bg-gray-300 text-zinc-800"
@@ -171,19 +198,17 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto w-full">
-        <header className="bg-white shadow-sm fixed top-0 z-20 w-[calc(100%-250px)]">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center gap-4">
-              <Menu className="w-6 h-6 lg:hidden" />
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">
-                Welcome, {user?.username}
+      {/* Main Content */}
+      <div className="flex-1">
+        <header className="bg-white shadow">
+          <div className="flex flex-col md:flex-row md:items-center justify-end px-4 md:px-6 py-4">
+            <div className="flex items-center space-x-4">
+              <span className="text-gray-600 text-sm md:text-base">
+                Welcome, {user?.username || "User"}
               </span>
               <button
-                className="px-2 pb-2 pt-1 text-white bg-red-500 rounded-md"
                 onClick={handleSignout}
+                className="px-3 py-1.5 md:px-4 md:py-2 text-sm text-white bg-red-500 rounded hover:bg-red-600"
               >
                 Sign Out
               </button>
@@ -191,7 +216,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
           </div>
         </header>
 
-        <main className="p-6">{children}</main>
+        <main className="p-4 md:p-6">{children}</main>
       </div>
     </div>
   );

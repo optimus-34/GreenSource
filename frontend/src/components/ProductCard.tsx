@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { IProduct } from "../types/Product";
 import { selectAuth } from "../store/slices/authSlice";
-import {
-  addToCartStart,
-  addToCartSuccess,
-  addToCartFailure,
-} from "../store/slices/cartSlice";
 import { addToCartService } from "../utils/services";
 import axios from "axios";
 // import { Toast } from "@/components/ui/toast";
@@ -17,8 +12,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const dispatch = useDispatch();
-  const { token } = useSelector(selectAuth);
+  const { user, token } = useSelector(selectAuth);
   const [isAdding, setIsAdding] = useState(false);
   // const { toast } = useToast();
 
@@ -62,11 +56,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     try {
       setIsAdding(true);
-      dispatch(addToCartStart());
+      console.log(product._id);
+      console.log(token, user.email);
 
-      await addToCartService(product._id, token ? token : "");
+      const response = await addToCartService(
+        product._id,
+        token as string,
+        user.email as string
+      );
 
-      dispatch(addToCartSuccess({ ...product, quantity: 1 }));
+      if (response) {
+        // Cart updated successfully
+        console.log("Item added to cart successfully");
+      }
 
       // toast({
       //   title: "Success",
@@ -75,7 +77,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to add to cart";
-      dispatch(addToCartFailure(errorMessage));
+      console.error(errorMessage);
 
       // toast({
       //   variant: "destructive",
@@ -121,9 +123,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
       <div className="p-4 flex-grow">
         <h2 className="text-lg font-semibold mb-2">{product.name}</h2>
-        <div className="flex justify-between items-center w-full">
-          <p className="text-sm text-gray-600 mb-4">{product.description}</p>
-          <p className="text-sm text-gray-600 mb-4">{product.farmerName}</p>
+        <div className="flex flex-col justify-between items-start w-full mb-2">
+          <span className="text-sm text-gray-600 mb-1">
+            {product.description}
+          </span>
+          <span className="text-xs text-gray-600">
+            Seller: {product.farmerName}
+          </span>
         </div>
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-semibold text-blue-600">

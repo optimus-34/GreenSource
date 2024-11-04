@@ -35,10 +35,10 @@ const CartPage: React.FC = () => {
 
   const fetchCartItems = async () => {
     try {
-      const response = await axios.get('/api/cart');
+      const response = await axios.get("/api/cart");
       setCartItems(response.data);
     } catch (error) {
-      console.error('Error fetching cart items:', error);
+      console.error("Error fetching cart items:", error);
     }
   };
 
@@ -47,16 +47,18 @@ const CartPage: React.FC = () => {
 
     try {
       const response = await axios.put(`/api/cart/${productId}`, {
-        quantity: newQuantity
+        quantity: newQuantity,
       });
-      
+
       if (response.data.success) {
         setCartItems((prevItems) =>
           prevItems.map((item) =>
             item._id === productId ? { ...item, quantity: newQuantity } : item
           )
         );
-        setStockErrors(errors => errors.filter(error => error.productId !== productId));
+        setStockErrors((errors) =>
+          errors.filter((error) => error.productId !== productId)
+        );
       }
     } catch (error) {
       if (error instanceof AxiosError && error.response?.data?.stockError) {
@@ -64,7 +66,7 @@ const CartPage: React.FC = () => {
           ...errors.filter((err) => err.productId !== productId),
           {
             productId,
-            availableStock: error.response.data.availableStock,
+            availableStock: error.response?.data.availableStock,
           },
         ]);
       }
@@ -78,17 +80,19 @@ const CartPage: React.FC = () => {
       setCartItems((prevItems) =>
         prevItems.filter((item) => item._id !== productId)
       );
-      setStockErrors(errors => errors.filter(error => error.productId !== productId));
+      setStockErrors((errors) =>
+        errors.filter((error) => error.productId !== productId)
+      );
     } catch (error) {
-      console.error('Error removing item:', error);
+      console.error("Error removing item:", error);
     }
   };
 
   const handleCheckout = async () => {
     try {
       setLoading(true);
-      const response = await axios.post('/api/checkout', {
-        items: cartItems
+      const response = await axios.post("/api/checkout", {
+        items: cartItems,
       });
 
       if (response.data.success) {
@@ -102,12 +106,12 @@ const CartPage: React.FC = () => {
           setStockErrors(error.response.data.stockErrors);
         }
       } else {
-        console.error('Unexpected error:', error);
+        console.error("Unexpected error:", error);
       }
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 mt-16">
@@ -128,9 +132,14 @@ const CartPage: React.FC = () => {
                 <p className="text-sm text-gray-500">
                   ${item.currentPrice.toFixed(2)} / {item.unit}
                 </p>
-                {stockErrors.find(error => error.productId === item._id) && (
+                {stockErrors.find((error) => error.productId === item._id) && (
                   <p className="text-red-500 text-sm">
-                    Only {stockErrors.find(error => error.productId === item._id)?.availableStock} items available in stock
+                    Only{" "}
+                    {
+                      stockErrors.find((error) => error.productId === item._id)
+                        ?.availableStock
+                    }{" "}
+                    items available in stock
                   </p>
                 )}
               </div>
@@ -181,13 +190,13 @@ const CartPage: React.FC = () => {
               <button
                 className={`bg-green-600 text-white px-6 py-3 rounded-lg transition-colors ${
                   loading || stockErrors.length > 0
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'hover:bg-green-700'
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-green-700"
                 }`}
                 onClick={handleCheckout}
                 disabled={loading || stockErrors.length > 0}
               >
-                {loading ? 'Processing...' : 'Proceed to Checkout'}
+                {loading ? "Processing..." : "Proceed to Checkout"}
               </button>
             </div>
           </div>

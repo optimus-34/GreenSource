@@ -46,7 +46,7 @@ const ProductsPage: React.FC = () => {
           ))
         ) : (
           <div className="flex flex-col items-center justify-center w-full gap-10 h-96">
-            <Frown className="size-20" />
+            <Frown className="size-20 text-gray-600" />
             <span>
               No Products available as of now. Please try again later.
             </span>

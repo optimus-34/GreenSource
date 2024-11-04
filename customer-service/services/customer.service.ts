@@ -1,3 +1,4 @@
+import { Schema } from "mongoose";
 import { CustomerModel } from "../models/customer.model";
 import { Customer, Address } from "../types/customer";
 import { AppError } from "../types/error";
@@ -134,7 +135,7 @@ export class CustomerService {
   }
 
   async addToCart(email: string, productId: string): Promise<Customer> {
-    const customer = await CustomerModel.findByIdAndUpdate(
+    const customer = await CustomerModel.findOneAndUpdate(
       { email: email },
       { $addToSet: { cart: productId } },
       { new: true }
@@ -185,19 +186,16 @@ export class CustomerService {
   }
 
   async getWishlist(email: string): Promise<string[]> {
-    const customer = await CustomerModel.findOne({email:email});
+    const customer = await CustomerModel.findOne({ email: email });
     if (!customer) {
       throw new AppError(404, "Customer not found");
     }
     return customer.wishlist;
   }
 
-  async addToWishlist(
-    email: string,
-    productId: string
-  ): Promise<Customer> {
+  async addToWishlist(email: string, productId: string): Promise<Customer> {
     const customer = await CustomerModel.findOneAndUpdate(
-      {email:email},
+      { email: email },
       { $addToSet: { wishlist: productId } },
       { new: true }
     );
@@ -212,7 +210,7 @@ export class CustomerService {
     productId: string
   ): Promise<Customer> {
     const customer = await CustomerModel.findOneAndUpdate(
-      {email:email},
+      { email: email },
       { $pull: { wishlist: productId } },
       { new: true }
     );
