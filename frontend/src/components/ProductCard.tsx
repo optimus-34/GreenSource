@@ -4,20 +4,21 @@ import { IProduct } from "../types/Product";
 import { selectAuth } from "../store/slices/authSlice";
 import { addToCartService, addToWishlistService } from "../utils/services";
 import axios from "axios";
-// import { Toast } from "@/components/ui/toast";
-// import { useToast } from "@/components/ui/use-toast";
 
 interface ProductCardProps {
   product: IProduct;
+  onAddToWishlist: () => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  onAddToWishlist,
+}) => {
   const { user, token } = useSelector(selectAuth);
   const [isAdding, setIsAdding] = useState(false);
   const [isWishing, setIsWishing] = useState(false);
-  // const { toast } = useToast();
-
   const [productImages, setProductImages] = useState<string>();
+  const [wishlist, setWishlist] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProductImages = async () => {
@@ -42,24 +43,36 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       }
     };
 
+    const fetchWishlist = async () => {
+      if (!user.email || !token) {
+        console.error("User email or token is missing.");
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/customers/api/customers/${user.email}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(response.data);
+        setWishlist(response.data.data.wishlist);
+      } catch (error) {
+        console.error("Error fetching wishlist:", error);
+      }
+    };
+
+    fetchWishlist();
     fetchProductImages();
-  }, [product._id]);
+  }, [product._id, user.email, token]);
 
   const handleAddToCart = async () => {
-    // if (!token) {
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Error",
-    //     description: "Please login to add items to cart",
-    //   });
-    //   return;
-    // }
-
     try {
       setIsAdding(true);
-      console.log(product._id);
-      console.log(token, user.email);
-
       const response = await addToCartService(
         product._id,
         token as string,
@@ -67,24 +80,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       );
 
       if (response) {
-        // Cart updated successfully
         console.log("Item added to cart successfully");
       }
-
-      // toast({
-      //   title: "Success",
-      //   description: "Item added to cart",
-      // });
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to add to cart";
       console.error(errorMessage);
-
-      // toast({
-      //   variant: "destructive",
-      //   title: "Error",
-      //   description: errorMessage,
-      // });
     } finally {
       setIsAdding(false);
     }
@@ -93,9 +94,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handleAddToWishlist = async () => {
     try {
       setIsWishing(true);
-      console.log(product._id);
-      console.log(token, user.email);
-
       const response = await addToWishlistService(
         product._id,
         token as string,
@@ -103,24 +101,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       );
 
       if (response) {
-        // Wishlist updated successfully
         console.log("Item added to wishlist successfully");
       }
-
-      // toast({
-      //   title: "Success",
-      //   description: "Item added to wishlist",
-      // });
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to add to wishlist";
       console.error(errorMessage);
-
-      // toast({
-      //   variant: "destructive",
-      //   title: "Error",
-      //   description: errorMessage,
-      // });
     } finally {
       setIsWishing(false);
     }
@@ -141,15 +127,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <button
           className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white"
           aria-label="Add to wishlist"
-          onClick={handleAddToWishlist}
+          onClick={onAddToWishlist}
           disabled={isWishing}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`h-5 w-5 text-gray-600 hover:text-red-500 ${
-              isWishing ? "animate-spin" : ""
-            }`}
-            fill="none"
+            className={`h-5 w-5 ${
+              wishlist.includes(product._id)
+                ? "text-red-500"
+                : "hover:text-red-500 text-gray-600"
+            } ${isWishing ? "animate-spin" : ""}`}
+            fill={wishlist.includes(product._id) ? "red" : "none"}
             viewBox="0 0 24 24"
             stroke="currentColor"
           >

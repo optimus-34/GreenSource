@@ -5,12 +5,15 @@ import ProductCard from "./ProductCard";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../store/slices/authSlice";
 import { Frown } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { addToWishlist } from "../store/slices/wishlistSlice";
 
 const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { token } = useSelector(selectAuth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -27,6 +30,10 @@ const ProductsPage: React.FC = () => {
     fetchProducts();
   }, [token]);
 
+  const handleAddToWishlist = (product: IProduct) => {
+    dispatch(addToWishlist(product));
+  };
+
   if (loading) {
     return <p className="text-lg">Loading...</p>;
   }
@@ -41,7 +48,10 @@ const ProductsPage: React.FC = () => {
         {products.length > 0 ? (
           products.map((product) => (
             <div key={product._id}>
-              <ProductCard product={product} />
+              <ProductCard
+                product={product}
+                onAddToWishlist={() => handleAddToWishlist(product)}
+              />
             </div>
           ))
         ) : (
