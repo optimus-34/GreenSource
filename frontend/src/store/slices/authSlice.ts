@@ -22,13 +22,6 @@ const defaultUser: User = {
   userType: null,
 };
 
-const initialState: AuthState = {
-  isAuthenticated: false,
-  user: JSON.parse(localStorage.getItem("user") as string) || defaultUser,
-  token: localStorage.getItem("token"),
-  loading: false,
-  error: null,
-};
 
 // Helper function to safely parse JSON with better type checking
 const safeJsonParse = (json: string | null): User => {
@@ -49,6 +42,13 @@ const safeJsonParse = (json: string | null): User => {
     console.error("Error parsing stored user data:", error);
     return defaultUser;
   }
+};
+const initialState: AuthState = {
+  isAuthenticated: false,
+  user: safeJsonParse(localStorage.getItem("user")),
+  token: localStorage.getItem("token"),
+  loading: false,
+  error: null,
 };
 
 // Initialize state from localStorage if available

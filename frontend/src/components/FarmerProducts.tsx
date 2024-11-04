@@ -101,6 +101,7 @@ export default function FarmerProducts() {
       const productData = {
         ...newProduct,
         farmerId: user.email,
+        farmerName: user.username,
       };
 
       const createdProduct = await createProduct(token as string, productData);

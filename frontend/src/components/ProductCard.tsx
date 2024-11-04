@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IProduct } from "../types/Product";
 import { selectAuth } from "../store/slices/authSlice";
@@ -8,6 +8,7 @@ import {
   addToCartFailure,
 } from "../store/slices/cartSlice";
 import { addToCartService } from "../utils/services";
+import axios from "axios";
 // import { Toast } from "@/components/ui/toast";
 // import { useToast } from "@/components/ui/use-toast";
 
@@ -20,6 +21,34 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { token } = useSelector(selectAuth);
   const [isAdding, setIsAdding] = useState(false);
   // const { toast } = useToast();
+
+  const [productImages, setProductImages] = useState<string>();
+
+  useEffect(() => {
+    const fetchProductImages = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/products/${product._id}/images`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.data) {
+          const images = await response.data;
+          setProductImages(
+            images.imageUrl ? images.imageUrl : "https://placehold.co/300x200"
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching product images:", error);
+      }
+    };
+
+    fetchProductImages();
+  }, [product._id]);
 
   const handleAddToCart = async () => {
     // if (!token) {
@@ -63,7 +92,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <div className="relative">
         <img
           className="w-full h-[200px] object-cover rounded-t-lg"
-          src="https://placehold.co/300x200"
+          src={
+            productImages === ""
+              ? "https://placehold.com/300x200"
+              : productImages
+          }
           alt={product.name}
         />
         <button
@@ -88,7 +121,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
       <div className="p-4 flex-grow">
         <h2 className="text-lg font-semibold mb-2">{product.name}</h2>
-        <p className="text-sm text-gray-600 mb-4">{product.description}</p>
+        <div className="flex justify-between items-center w-full">
+          <p className="text-sm text-gray-600 mb-4">{product.description}</p>
+          <p className="text-sm text-gray-600 mb-4">{product.farmerName}</p>
+        </div>
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-semibold text-blue-600">
             ${product.currentPrice.toFixed(2)}

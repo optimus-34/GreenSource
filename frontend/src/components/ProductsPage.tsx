@@ -4,6 +4,7 @@ import { getProducts } from "../utils/services";
 import ProductCard from "./ProductCard";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../store/slices/authSlice";
+import { Frown } from "lucide-react";
 
 const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -37,11 +38,20 @@ const ProductsPage: React.FC = () => {
   return (
     <div className="flex-grow p-8 mt-10">
       <div className="flex flex-wrap justify-start items-start gap-6">
-        {products.map((product) => (
-          <div key={product._id}>
-            <ProductCard product={product} />
+        {products.length > 0 ? (
+          products.map((product) => (
+            <div key={product._id}>
+              <ProductCard product={product} />
+            </div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center w-full gap-10 h-96">
+            <Frown className="size-20" />
+            <span>
+              No Products available as of now. Please try again later.
+            </span>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

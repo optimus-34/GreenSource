@@ -9,6 +9,7 @@ export enum ProductCategory {
 export interface IProduct {
   _id: string;
   farmerId: string;
+  farmerName: string;
   name: string;
   description: string;
   basePrice: number;

@@ -27,7 +27,7 @@ const FarmerProductCard: React.FC<FarmerProductCardProps> = ({ product }) => {
         if (response.data) {
           const images = await response.data;
           setProductImages(
-            images.imageUrl ? images.imageUrl : "https://placehold.co/300x4200"
+            images.imageUrl ? images.imageUrl : "https://placehold.co/300x200"
           );
         }
       } catch (error) {

@@ -33,25 +33,6 @@ const Login = () => {
     return "";
   };
 
-  const validatePassword = (password: string) => {
-    if (!password) {
-      return "Password is required";
-    }
-    if (password.length < 8) {
-      return "Password must be at least 8 characters long";
-    }
-    if (!/(?=.*[a-z])/.test(password)) {
-      return "Password must contain at least one lowercase letter";
-    }
-    if (!/(?=.*[A-Z])/.test(password)) {
-      return "Password must contain at least one uppercase letter";
-    }
-    if (!/(?=.*\d)/.test(password)) {
-      return "Password must contain at least one number";
-    }
-    return "";
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -71,14 +52,13 @@ const Login = () => {
 
     // Validate form before submission
     const emailError = validateEmail(formData.identifier);
-    const passwordError = validatePassword(formData.password);
 
     setValidationErrors({
       identifier: emailError,
-      password: passwordError,
+      password: "",
     });
 
-    if (emailError || passwordError) {
+    if (emailError) {
       return;
     }
 
@@ -211,14 +191,9 @@ const Login = () => {
                   autoComplete="current-password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border ${
-                    validationErrors.password ? 'border-red-500' : 'border-blue-200'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500`}
+                  className="w-full px-4 py-3 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
                   placeholder="Password"
                 />
-                {validationErrors.password && (
-                  <p className="mt-1 text-sm text-red-500">{validationErrors.password}</p>
-                )}
               </div>
             </div>
             <button

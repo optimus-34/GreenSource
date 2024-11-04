@@ -176,9 +176,6 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-4">
               <Menu className="w-6 h-6 lg:hidden" />
-              <h2 className="text-xl font-semibold text-gray-800">
-                {window.location.pathname.split("/")[2].toLocaleUpperCase()}
-              </h2>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">
