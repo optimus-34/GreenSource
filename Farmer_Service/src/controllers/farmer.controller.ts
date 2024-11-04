@@ -119,9 +119,17 @@ export const addProduct = async (req: Request, res: Response) => {
     const productData = req.body; // Get product data from request body
     const farmerId = req.params.email; // Get farmer ID from request parameters
     // Include the farmer ID in the product data
+
+    const farmer = await Farmer.findOne({ email: farmerId });
+   
+    const farmerName = farmer ? `${farmer.first_name} ${farmer.last_name}` : null;
+   
     productData.farmerId = farmerId;
+    productData.farmerName = farmerName;
+    
     // Send POST request to product service
     const response = await axios.post("http://localhost:3005/", productData);
+   
     // Update the Farmer's list_products with the new product ID
     const productId = response.data._id; // Assuming the product ID is returned in the response
     await Farmer.findOneAndUpdate(

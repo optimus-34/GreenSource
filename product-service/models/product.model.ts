@@ -3,6 +3,7 @@ import { IProduct, ProductCategory } from '../types/product.types';
 
 const productSchema = new Schema<IProduct>({
   farmerId: { type: String, required: true },
+  farmerName: { type: String, required: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
   basePrice: { type: Number, required: true },
