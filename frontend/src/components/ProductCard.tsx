@@ -91,21 +91,42 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const handleAddToWishlist = async () => {
+  const handleWishlistToggle = async () => {
     try {
       setIsWishing(true);
-      const response = await addToWishlistService(
-        product._id,
-        token as string,
-        user.email as string
-      );
 
-      if (response) {
-        console.log("Item added to wishlist successfully");
+      if (wishlist.includes(product._id)) {
+        // Remove from wishlist
+        const response = await axios.delete(
+          `http://localhost:3000/api/customers/api/customers/${user.email}/wishlist/${product._id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response) {
+          setWishlist((prev) => prev.filter((id) => id !== product._id));
+          onAddToWishlist(); // Notify parent component
+        }
+      } else {
+        // Add to wishlist
+        const response = await addToWishlistService(
+          product._id,
+          token as string,
+          user.email as string
+        );
+
+        if (response) {
+          setWishlist((prev) => [...prev, product._id]);
+          onAddToWishlist(); // Notify parent component
+        }
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to add to wishlist";
+        error instanceof Error ? error.message : "Failed to update wishlist";
       console.error(errorMessage);
     } finally {
       setIsWishing(false);
@@ -126,8 +147,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
         />
         <button
           className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white"
-          aria-label="Add to wishlist"
-          onClick={onAddToWishlist}
+          aria-label={
+            wishlist.includes(product._id)
+              ? "Remove from wishlist"
+              : "Add to wishlist"
+          }
+          onClick={handleWishlistToggle}
           disabled={isWishing}
         >
           <svg
@@ -137,7 +162,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 ? "text-red-500"
                 : "hover:text-red-500 text-gray-600"
             } ${isWishing ? "animate-spin" : ""}`}
-            fill={wishlist.includes(product._id) ? "red" : "none"}
+            fill={wishlist.includes(product._id) ? "currentColor" : "none"}
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
@@ -163,6 +188,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-semibold text-blue-600">
             ₹{product.currentPrice.toFixed(2)}
+            <span className="text-xs text-gray-500">/{product.unit}</span>
           </span>
           <span className="text-xs text-gray-500">
             Category: {product.category}

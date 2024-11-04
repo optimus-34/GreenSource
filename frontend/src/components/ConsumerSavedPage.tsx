@@ -1,18 +1,14 @@
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { selectAuth } from "../store/slices/authSlice";
-import { getCustomerCart } from "../utils/services"; // Importing the service function
 import { IProduct } from "../types/Product";
-import { addToWishlist, setWishlist } from "../store/slices/wishlistSlice"; // Importing the action
 import axios from "axios";
 import ProductCard from "./ProductCard";
 
 export default function ConsumerSavedPage() {
   const { user, token } = useSelector(selectAuth);
-  const dispatch = useDispatch();
-  const wishlist = useSelector(
-    (state: { wishlist: { items: IProduct[] } }) => state.wishlist.items
-  ); // Accessing wishlist from Redux state
+  const [wishlistItems, setWishlistItems] = useState<IProduct[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -22,54 +18,94 @@ export default function ConsumerSavedPage() {
       }
 
       try {
-        const response = await getCustomerCart(token, user.email); // Using the service function
-        const productIds = response.data.map(
-          (item: { productId: string }) => item.productId
+        // First, get the wishlist product IDs
+        const wishlistResponse = await axios.get(
+          `http://localhost:3000/api/customers/api/customers/${user.email}/wishlist`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
+        const productIds = wishlistResponse.data.data;
+
+        // Then fetch details for each product
         const productDetails = await Promise.all(
           productIds.map(async (productId: string) => {
             try {
-              const detailResponse = await axios.get(
+              const response = await axios.get(
                 `http://localhost:3000/api/products/${productId}`,
                 {
                   headers: {
+                    "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                   },
                 }
               );
-              return detailResponse.data;
+              return response.data;
             } catch (error) {
-              console.error(
-                `Error fetching product detail for ${productId}:`,
-                error
-              );
+              console.error(`Error fetching product ${productId}:`, error);
               return null;
             }
           })
         );
 
-        dispatch(setWishlist(productDetails.filter(Boolean))); // Set wishlist in Redux state
+        setWishlistItems(productDetails.filter(Boolean));
       } catch (error) {
         console.error("Error fetching wishlist:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchWishlist();
-  }, [user.email, token, dispatch]);
+  }, [user.email, token]);
+
+  const handleWishlistUpdate = async (product: IProduct) => {
+    try {
+      await axios.delete(
+        `http://localhost:3000/api/customers/api/customers/${user.email}/wishlist/${product._id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Remove the product from the local state
+      setWishlistItems((prev) =>
+        prev.filter((item) => item._id !== product._id)
+      );
+    } catch (error) {
+      console.error("Error removing from wishlist:", error);
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div>
-      <h1>Wishlist</h1>
-      <ul>
-        {wishlist.map((item: IProduct) => (
-          <ProductCard
-            key={item._id}
-            product={item}
-            onAddToWishlist={() => addToWishlist}
-          />
-        ))}
-      </ul>
+    <div className="flex-grow p-8 mt-10">
+      <h1 className="text-2xl font-bold mb-6">My Wishlist</h1>
+      <div className="flex flex-wrap justify-start items-start gap-6">
+        {wishlistItems.length > 0 ? (
+          wishlistItems.map((product) => (
+            <ProductCard
+              key={product._id}
+              product={product}
+              onAddToWishlist={() => handleWishlistUpdate(product)}
+            />
+          ))
+        ) : (
+          <div className="w-full text-center text-gray-500">
+            Your wishlist is empty
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -90,7 +90,7 @@ const ConsumerProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-16 max-w-3xl">
+    <div className="container mx-auto px-4 py-10 max-w-3xl">
       <h1 className="text-2xl font-bold mb-6">Consumer Profile</h1>
 
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">

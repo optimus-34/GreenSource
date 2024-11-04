@@ -9,6 +9,7 @@ import {
 } from "../utils/services";
 import { selectAuth } from "../store/slices/authSlice";
 import axios from "axios";
+import { Address } from "../types/Customer";
 
 interface ICartItem {
   productId: string;
@@ -25,6 +26,16 @@ interface StockError {
   availableStock: number;
 }
 
+interface OrderData {
+  items: {
+    productId: string;
+    quantity: number;
+    price: number;
+  }[];
+  totalAmount: number;
+  shippingAddress: Address;
+}
+
 const CartPage: React.FC = () => {
   const navigate = useNavigate();
   const { token, user } = useSelector(selectAuth);
@@ -33,10 +44,13 @@ const CartPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [stockErrors, setStockErrors] = useState<StockError[]>([]);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
   useEffect(() => {
     if (token && user.email) {
       fetchCartItems();
+      fetchAddresses();
     }
   }, [token, user.email]);
 
@@ -93,6 +107,29 @@ const CartPage: React.FC = () => {
     }
   };
 
+  const fetchAddresses = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/customers/api/customers/${user.email}/addresses`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setAddresses(response.data.data);
+      // Set default address if available
+      const defaultAddress = response.data.data.find(
+        (addr: Address) => addr.isDefault
+      );
+      if (defaultAddress) {
+        setSelectedAddress(defaultAddress);
+      }
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
+    }
+  };
+
   const updateQuantity = (productId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
 
@@ -145,28 +182,74 @@ const CartPage: React.FC = () => {
   };
 
   const handleCheckout = async () => {
+    if (!selectedAddress) {
+      setError("Please select a delivery address");
+      return;
+    }
+
     try {
       setLoading(true);
-      const orderData = {
+      const orderData: OrderData = {
         items: cartItems.map((item) => ({
           productId: item._id,
           quantity: item.quantity,
           price: item.currentPrice,
         })),
         totalAmount,
+        shippingAddress: selectedAddress,
       };
 
-      await createOrder(token!, user.email!, orderData);
+      // Create order in orders-payments-service
+      const orderResponse = await createOrder(token!, user.email!, orderData);
+
+      // Clear cart in customer service
+      await axios.delete(
+        `http://localhost:3000/api/customers/api/customers/${user.email}/cart`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       setCartItems([]);
       setError("");
-      navigate("/orders"); // Redirect to orders page after successful checkout
-    } catch (error) {
-      setError("Failed to process checkout");
+      navigate("/orders");
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Failed to process checkout");
       console.error("Error during checkout:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  const renderAddressSelection = () => (
+    <div className="mt-6 border-t pt-4">
+      <h3 className="text-lg font-semibold mb-4">Delivery Address</h3>
+      <div className="grid grid-cols-1 gap-4">
+        {addresses.map((address) => (
+          <div
+            key={address.id}
+            className={`border p-4 rounded-lg cursor-pointer ${
+              selectedAddress?.id === address.id
+                ? "border-green-500 bg-green-50"
+                : "border-gray-200"
+            }`}
+            onClick={() => setSelectedAddress(address)}
+          >
+            <p className="font-semibold">{address.street}</p>
+            <p className="text-gray-600">
+              {address.city}, {address.state} {address.zipCode}
+            </p>
+            <p className="text-gray-600">{address.country}</p>
+            {address.isDefault && (
+              <span className="text-sm text-green-600">Default Address</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   if (loading && cartItems.length === 0) {
     return (
@@ -246,6 +329,8 @@ const CartPage: React.FC = () => {
               </div>
             </div>
           ))}
+
+          {renderAddressSelection()}
 
           <div className="mt-8 border-t pt-4">
             <div className="flex justify-between items-center">
