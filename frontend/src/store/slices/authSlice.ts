@@ -151,17 +151,18 @@ const authSlice = createSlice({
       action: PayloadAction<{ user: User; token: string }>
     ) => {
       state.isAuthenticated = true;
-      state.user = action.payload.user;
-      state.token = action.payload.token;
+      // state.user = action.payload.user;
+      // state.token = action.payload.token;
       state.loading = false;
       state.error = null;
+      
 
-      try {
-        localStorage.setItem("token", action.payload.token);
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
-      } catch (error) {
-        console.error("Error storing signup data:", error);
-      }
+      // try {
+      //   localStorage.setItem("token", action.payload.token);
+      //   localStorage.setItem("user", JSON.stringify(action.payload.user));
+      // } catch (error) {
+      //   console.error("Error storing signup data:", error);
+      // }
     },
     signupFailure: (state, action: PayloadAction<string>) => {
       state.isAuthenticated = false;

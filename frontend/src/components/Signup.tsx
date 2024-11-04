@@ -132,7 +132,7 @@ const Signup = () => {
         }
       );
       console.log(response.data.id);
-      let responseData: AxiosResponse<never, never>;
+      let responseData;
       if (userType === "farmer") {
         responseData = await axios.post(
           "http://localhost:3002/api/farmers/",
@@ -180,7 +180,7 @@ const Signup = () => {
         });
 
         navigate(
-          userType === "consumer" ? "/consumer/products" : "/farmer/products"
+          "/login"
         );
       }
     } catch (error) {
