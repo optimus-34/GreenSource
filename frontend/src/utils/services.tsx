@@ -51,8 +51,6 @@ export const getFarmerProducts = async (token: string, email: string) => {
   return response.data;
 };
 
-const API_URL = "";
-
 export const addToCartService = async (
   productId: string,
   token: string,
@@ -80,11 +78,38 @@ export const addToCartService = async (
   }
 };
 
+export const addToWishlistService = async (
+  productId: string,
+  token: string,
+  email: string
+) => {
+  try {
+    console.log(token, email, productId);
+    const productData = { productId: productId };
+    const response = await axios.post(
+      `http://localhost:3000/api/customers/api/customers/${email}/wishlist`,
+      productData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "Failed to add to cart");
+    }
+    throw new Error("Failed to add to cart");
+  }
+};
+
 export const getCartItems = async (token: string) => {
   try {
     const response = await axios({
       method: "GET",
-      url: `${API_URL}/cart`,
+      url: `http://localhost:3000/api/customers/api/customers//cart`,
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { IProduct } from "../types/Product";
 import { selectAuth } from "../store/slices/authSlice";
-import { addToCartService } from "../utils/services";
+import { addToCartService, addToWishlistService } from "../utils/services";
 import axios from "axios";
 // import { Toast } from "@/components/ui/toast";
 // import { useToast } from "@/components/ui/use-toast";
@@ -14,6 +14,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { user, token } = useSelector(selectAuth);
   const [isAdding, setIsAdding] = useState(false);
+  const [isWishing, setIsWishing] = useState(false);
   // const { toast } = useToast();
 
   const [productImages, setProductImages] = useState<string>();
@@ -89,8 +90,44 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   };
 
+  const handleAddToWishlist = async () => {
+    try {
+      setIsWishing(true);
+      console.log(product._id);
+      console.log(token, user.email);
+
+      const response = await addToWishlistService(
+        product._id,
+        token as string,
+        user.email as string
+      );
+
+      if (response) {
+        // Wishlist updated successfully
+        console.log("Item added to wishlist successfully");
+      }
+
+      // toast({
+      //   title: "Success",
+      //   description: "Item added to wishlist",
+      // });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to add to wishlist";
+      console.error(errorMessage);
+
+      // toast({
+      //   variant: "destructive",
+      //   title: "Error",
+      //   description: errorMessage,
+      // });
+    } finally {
+      setIsWishing(false);
+    }
+  };
+
   return (
-    <div className="min-w-[300px] max-w-[300px] min-h-[400px] max-h-[400px] h-full flex flex-col rounded-lg shadow-md bg-white">
+    <div className="w-[300px] h-[400px] flex flex-col rounded-lg shadow-md bg-white">
       <div className="relative">
         <img
           className="w-full h-[200px] object-cover rounded-t-lg"
@@ -104,10 +141,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <button
           className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white"
           aria-label="Add to wishlist"
+          onClick={handleAddToWishlist}
+          disabled={isWishing}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-gray-600 hover:text-red-500"
+            className={`h-5 w-5 text-gray-600 hover:text-red-500 ${
+              isWishing ? "animate-spin" : ""
+            }`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
