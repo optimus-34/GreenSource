@@ -13,16 +13,15 @@ const HomePage: React.FC = () => {
       <Navbar />
       <div className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 mt-16">
         {/* Hero Section */}
-        <div className="relative bg-[url('/assets/bg.jpg')] bg-cover bg-top bg-no-repeat py-16 min-h-[25rem] flex items-center justify-center">
-          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div className="relative bg-gradient-to-b from-gray-900 to-gray-800 py-16 min-h-[25rem] flex items-center justify-center">
           <div className="container mx-auto px-4 relative">
             <div className="text-center text-white">
-              <h1 className="text-5xl md:text-7xl font-bold mb-10 animate-fade-in-down">
-                <span>
-                  <span className="text-green-400">Green</span>
-                  <span className="text-blue-300">Source</span>
+              <h1 className="text-5xl md:text-7xl font-bold mb-10">
+                <span className="inline-block animate-bounce">
+                  <span className="text-green-400 hover:text-green-300 transition-colors duration-300 animate-pulse">Green</span>
+                  <span className="text-blue-300 hover:text-blue-200 transition-colors duration-300 animate-pulse">Source</span>
                 </span>{" "}
-                <span className="block mt-4">Marketplace</span>
+                <span className="block mt-4 text-white opacity-90">Marketplace</span>
               </h1>
               <button
                 className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-12 py-4 rounded-full font-semibold hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl border-2 border-transparent hover:border-white"
@@ -99,61 +98,112 @@ const HomePage: React.FC = () => {
         </div>
 
         {/* Call to Action */}
-        <div className="bg-gradient-to-r from-green-400 to-emerald-600 py-32 min-h-[40rem] flex items-center justify-center">
-          <div className="container mx-auto px-4 text-center text-white">
-            <h2 className="text-4xl font-bold mb-6">Are you a farmer?</h2>
-            <p className="text-xl mb-10 opacity-90">
-              Join our platform and start selling your produce directly to
-              consumers
-            </p>
-            <button
-              className="bg-white backdrop-blur-sm bg-opacity-20 text-white px-12 py-4 rounded-full font-bold hover:bg-opacity-30 transition-all transform hover:scale-105 shadow-xl border-2 border-white"
-              onClick={handleGetStarted}
-            >
-              Register as Farmer
-            </button>
+        <div className="bg-gradient-to-r from-green-500 to-emerald-600 py-16">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-16">
+              <div className="text-white md:w-1/2">
+                <h2 className="text-4xl font-bold mb-4">Are you a farmer?</h2>
+                <p className="text-lg opacity-90 mb-6 leading-relaxed">
+                  Join our platform and start selling your produce directly to consumers. 
+                  Enjoy better profits, transparent pricing, and a direct connection with your customers.
+                </p>
+                <button
+                  className="bg-white text-emerald-600 px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
+                  onClick={handleGetStarted}
+                >
+                  Register as Farmer
+                </button>
+              </div>
+              <div className="md:w-1/2 flex justify-end">
+                <div className="bg-white p-6 rounded-xl shadow-xl transform hover:-translate-y-2 transition-all duration-300 max-w-md">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <span className="text-4xl">👨‍🌾</span>
+                    <h3 className="text-xl font-bold text-gray-800">Benefits</h3>
+                  </div>
+                  <ul className="space-y-3 text-gray-600">
+                    <li className="flex items-center">
+                      <span className="text-green-500 mr-2">✓</span>
+                      Direct access to customers
+                    </li>
+                    <li className="flex items-center">
+                      <span className="text-green-500 mr-2">✓</span>
+                      Better profit margins
+                    </li>
+                    <li className="flex items-center">
+                      <span className="text-green-500 mr-2">✓</span>
+                      Simple inventory management
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Footer */}
-        <footer className="bg-gray-900 text-white py-16">
+        <footer className="bg-gradient-to-b from-gray-900 to-gray-800 text-white py-4">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              <div>
-                <h4 className="font-bold text-xl mb-6">About Us</h4>
-                <p className="text-gray-400 leading-relaxed">
-                  Connecting farmers directly with consumers for a sustainable
-                  future.
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-4">
+                <h2 className="text-2xl font-bold mb-1">
+                  <span className="text-green-400">Green</span>
+                  <span className="text-blue-300">Source</span>
+                </h2>
+                <p className="text-gray-400 max-w-2xl mx-auto text-sm">
+                  Building a sustainable future by connecting farmers directly with consumers.
+                  Join us in revolutionizing the agricultural marketplace.
                 </p>
               </div>
-              <div>
-                <h4 className="font-bold text-xl mb-6">Quick Links</h4>
-                <ul className="space-y-4">
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                      How it Works
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                      For Farmers
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                      For Consumers
-                    </a>
-                  </li>
-                </ul>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div className="space-y-2">
+                  <h4 className="font-bold text-lg mb-2 text-green-400">About Us</h4>
+                  <p className="text-gray-400 leading-relaxed text-sm">
+                    Empowering farmers and consumers through direct trade relationships
+                    for a more sustainable and equitable food system.
+                  </p>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="font-bold text-lg mb-2 text-green-400">Quick Links</h4>
+                  <ul className="space-y-1">
+                    <li>
+                      <a href="#" className="text-gray-400 hover:text-white transition-colors hover:underline">
+                        How it Works
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="text-gray-400 hover:text-white transition-colors hover:underline">
+                        For Farmers
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="text-gray-400 hover:text-white transition-colors hover:underline">
+                        For Consumers
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="font-bold text-lg mb-2 text-green-400">Contact</h4>
+                  <ul className="space-y-1">
+                    <li className="text-gray-400 hover:text-white transition-colors">
+                      <span className="block font-medium">Email</span>
+                      support@farmmarket.com
+                    </li>
+                    <li className="text-gray-400 hover:text-white transition-colors">
+                      <span className="block font-medium">Phone</span>
+                      (555) 123-4567
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div>
-                <h4 className="font-bold text-xl mb-6">Contact</h4>
-                <ul className="space-y-4">
-                  <li className="text-gray-400">
-                    Email: support@farmmarket.com
-                  </li>
-                  <li className="text-gray-400">Phone: (555) 123-4567</li>
-                </ul>
+              
+              <div className="border-t border-gray-700 mt-4 pt-2 text-center">
+                <p className="text-gray-400 text-sm">
+                  © 2024 GreenSource Marketplace. All rights reserved.
+                </p>
               </div>
             </div>
           </div>

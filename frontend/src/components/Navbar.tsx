@@ -18,7 +18,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <div className="flex items-center font-bold text-lg sm:text-xl">
+            <div className="flex items-center font-bold text-xl sm:text-2xl">
               <span className="text-green-500">Green</span>
               <span className="text-blue-800">Source</span>
             </div>
