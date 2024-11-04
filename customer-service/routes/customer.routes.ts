@@ -6,7 +6,7 @@ const customerController = new CustomerController();
 
 router.post("/", customerController.addCustomer);
 router.get("/", customerController.getAllCustomers);
-// router.get("/:id", customerController.getCustomerProfile);
+router.get("/:email", customerController.getCustomerProfile);
 router.post("/login", customerController.loginCustomer);
 router.put("/:email", customerController.updateCustomerProfile);
 router.delete("/:email", customerController.deleteCustomerProfile);
@@ -20,6 +20,7 @@ router.post("/:email/orders/:orderId/cancel", customerController.cancelOrder);
 router.get("/:email/cart", customerController.getCart);
 router.post("/:email/cart", customerController.addToCart);
 router.delete("/:email/cart/:productId", customerController.removeFromCart);
+router.put("/:email/cart/:productId", customerController.updateCart);
 
 // Address routes
 router.get("/:email/addresses", customerController.getAddresses);

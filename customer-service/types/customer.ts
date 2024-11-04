@@ -11,6 +11,11 @@ export interface Address {
   updatedAt: Date;
 }
 
+export interface CartItem {
+  productId: string;
+  quantity: number;
+}
+
 export interface Customer {
   id: string;
   email: string;
@@ -18,7 +23,7 @@ export interface Customer {
   lastName: string;
   phone?: string;
   addresses: Address[];
-  cart: string[]; // Array of product IDs
+  cart: CartItem[]; // Array of products with quantities
   orders: string[]; // Array of order IDs
   wishlist: string[]; // Array of product IDs
   createdAt: Date;

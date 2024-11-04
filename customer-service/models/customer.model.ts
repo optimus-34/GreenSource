@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { Customer, Address } from "../types/customer";
+import { Customer, Address, CartItem } from "../types/customer";
 
 const AddressSchema = new Schema<Address>(
   {
@@ -13,13 +13,18 @@ const AddressSchema = new Schema<Address>(
   { timestamps: true }
 );
 
+const CartItemSchema = new Schema<CartItem>({
+  productId: { type: String, required: true },
+  quantity: { type: Number, required: true },
+});
+
 const CustomerSchema = new Schema<Customer>(
   {
     email: { type: String, required: true, unique: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     phone: { type: String },
-    cart: [{ type: String }],
+    cart: [CartItemSchema],
     orders: [{ type: String }],
     addresses: [AddressSchema],
     wishlist: [{ type: String }],

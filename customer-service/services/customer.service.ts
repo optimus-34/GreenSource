@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 import { CustomerModel } from "../models/customer.model";
-import { Customer, Address } from "../types/customer";
+import { Customer, Address, CartItem } from "../types/customer";
 import { AppError } from "../types/error";
 import { IOrder } from "../types/order";
 
@@ -23,7 +23,7 @@ export class CustomerService {
   }
 
   async getCustomerById(id: string): Promise<Customer> {
-    const customer = await CustomerModel.findOne({ user_id: id });
+    const customer = await CustomerModel.findOne({ email: id });
     if (!customer) {
       throw new AppError(404, "Customer not found");
     }
@@ -126,7 +126,7 @@ export class CustomerService {
     return customer.orders;
   }
 
-  async getCart(email: string): Promise<string[]> {
+  async getCart(email: string): Promise<CartItem[]> {
     const customer = await CustomerModel.findOne({ email: email });
     if (!customer) {
       throw new AppError(404, "Customer not found");
@@ -134,10 +134,34 @@ export class CustomerService {
     return customer.cart;
   }
 
-  async addToCart(email: string, productId: string): Promise<Customer> {
+  async addToCart(
+    email: string,
+    productId: string,
+    quantity: number
+  ): Promise<{ success: string }> {
+    const cartItem: CartItem = {
+      productId,
+      quantity,
+    };
     const customer = await CustomerModel.findOneAndUpdate(
       { email: email },
-      { $addToSet: { cart: productId } },
+      { $addToSet: { cart: cartItem } },
+      { new: true }
+    );
+    if (!customer) {
+      throw new AppError(404, "Customer not found");
+    }
+    return { success: "true" };
+  }
+
+  async updateCart(
+    email: string,
+    productId: string,
+    quantity: number
+  ): Promise<Customer> {
+    const customer = await CustomerModel.findOneAndUpdate(
+      { email: email, "cart.productId": productId },
+      { $set: { "cart.$.quantity": quantity } },
       { new: true }
     );
     if (!customer) {
@@ -149,7 +173,7 @@ export class CustomerService {
   async removeFromCart(email: string, productId: string): Promise<Customer> {
     const customer = await CustomerModel.findOneAndUpdate(
       { email: email },
-      { $pull: { cart: productId } },
+      { $pull: { cart: { productId: productId } } },
       { new: true }
     );
     if (!customer) {

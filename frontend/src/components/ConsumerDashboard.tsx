@@ -18,9 +18,9 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
   const { user, token } = useSelector(selectAuth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [cartCount, setCartCount] = useState(0);
-  const [savedCount, setSavedCount] = useState(0);
-  const [orderCount, setOrderCount] = useState(0);
+  // const [cartCount, setCartCount] = useState(0);
+  // const [savedCount, setSavedCount] = useState(0);
+  // const [orderCount, setOrderCount] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleSignout = () => {
@@ -37,22 +37,16 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
 
       try {
         const response = await axios({
-          method: "POST",
-          url: `http://localhost:3000/api/customers/api/customers/login`,
+          method: "GET",
+          url: `http://localhost:3000/api/customers/api/customers/${user.email}`,
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          data: {
-            email: user.email,
-          },
         });
-
-        const { cart = [], wishlist = [], orders = [] } = response.data;
-
-        setCartCount(cart.length);
-        setSavedCount(wishlist.length);
-        setOrderCount(orders.length);
+        // setCartCount(response.data.data.cart?.length);
+        // setSavedCount(response.data.data.wishlist?.length);
+        // setOrderCount(response.data.data.orders?.length);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error("Error fetching customer details:", {
@@ -120,19 +114,27 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
           <span className="text-blue-800">Source</span>
         </h1>
         <button onClick={toggleSidebar} className="p-2">
-          {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isSidebarOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </div>
 
       {/* Sidebar */}
-      <div className={`
+      <div
+        className={`
         fixed md:sticky md:top-0
         w-64 h-[100dvh]
         bg-white shadow-lg 
         transition-transform duration-300 ease-in-out
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }
         z-50
-      `}>
+      `}
+      >
         <div className="flex flex-col h-full">
           <div className="hidden md:block p-5 border-b">
             <h1 className="text-xl font-bold">
@@ -159,7 +161,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
                   {item.icon}
                   <span className="ml-3">{item.label}</span>
                 </div>
-                {item.path === "/consumer/cart" && (
+                {/* {item.path === "/consumer/cart" && (
                   <span
                     className={`size-6 rounded-full flex items-center justify-center ${
                       cartCount > 0
@@ -191,7 +193,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
                   >
                     {savedCount}
                   </span>
-                )}
+                )} */}
               </button>
             ))}
           </nav>

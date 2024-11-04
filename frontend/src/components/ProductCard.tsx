@@ -90,7 +90,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <div className="max-w-[300px] max-h-[400px] h-full flex flex-col rounded-lg shadow-md bg-white">
+    <div className="min-w-[300px] max-w-[300px] min-h-[400px] max-h-[400px] h-full flex flex-col rounded-lg shadow-md bg-white">
       <div className="relative">
         <img
           className="w-full h-[200px] object-cover rounded-t-lg"
@@ -133,7 +133,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-semibold text-blue-600">
-            ${product.currentPrice.toFixed(2)}
+            ₹{product.currentPrice.toFixed(2)}
           </span>
           <span className="text-xs text-gray-500">
             Category: {product.category}

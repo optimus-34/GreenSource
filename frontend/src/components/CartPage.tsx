@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { IProduct } from "../types/Product";
-import axios, { AxiosError } from "axios";
+import {
+  getCustomerCart,
+  removeFromCart,
+  createOrder,
+} from "../utils/services";
+import { selectAuth } from "../store/slices/authSlice";
+import axios from "axios";
+
+interface ICartItem {
+  productId: string;
+  quantity: Number;
+}
 
 interface CartItem extends IProduct {
   quantity: number;
@@ -13,14 +26,19 @@ interface StockError {
 }
 
 const CartPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { token, user } = useSelector(selectAuth);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [stockErrors, setStockErrors] = useState<StockError[]>([]);
 
   useEffect(() => {
-    fetchCartItems();
-  }, []);
+    if (token && user.email) {
+      fetchCartItems();
+    }
+  }, [token, user.email]);
 
   useEffect(() => {
     const calculateTotal = () => {
@@ -35,86 +53,137 @@ const CartPage: React.FC = () => {
 
   const fetchCartItems = async () => {
     try {
-      const response = await axios.get("/api/cart");
-      setCartItems(response.data);
+      setLoading(true);
+      const response = await getCustomerCart(token!, user.email!);
+      // Get product details for each cart item
+      const cartItemsWithDetails = await Promise.all(
+        response.data.map(async (item: ICartItem) => {
+          try {
+            const productResponse = await axios.get(
+              `http://localhost:3000/api/products/${item.productId}`,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            return {
+              ...productResponse.data,
+              quantity: 1, // Default quantity
+              stock: productResponse.data.quantityAvailable,
+            };
+          } catch (err) {
+            console.error(`Error fetching product ${item.productId}:`, err);
+            return null;
+          }
+        })
+      );
+
+      // Filter out any null values from failed requests
+      const validCartItems = cartItemsWithDetails.filter(
+        (item): item is CartItem => item !== null
+      );
+      setCartItems(validCartItems || []);
     } catch (error) {
+      setError("Failed to fetch cart items");
       console.error("Error fetching cart items:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const updateQuantity = async (productId: string, newQuantity: number) => {
+  const updateQuantity = (productId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
 
-    try {
-      const response = await axios.put(`/api/cart/${productId}`, {
-        quantity: newQuantity,
-      });
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item._id === productId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+    // Update quantity in the backend
+    updateCartInBackend(productId, newQuantity);
 
-      if (response.data.success) {
+    async function updateCartInBackend(productId: string, newQuantity: number) {
+      try {
+        await axios.put(
+          `http://localhost:3000/api/customers/api/customers/${user.email}/cart/${productId}`,
+          { quantity: newQuantity },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } catch (error) {
+        setError("Failed to update cart quantity");
+        console.error("Error updating cart quantity:", error);
+        // Revert the quantity change in UI if backend update fails
         setCartItems((prevItems) =>
           prevItems.map((item) =>
-            item._id === productId ? { ...item, quantity: newQuantity } : item
+            item._id === productId ? { ...item, quantity: item.quantity } : item
           )
         );
-        setStockErrors((errors) =>
-          errors.filter((error) => error.productId !== productId)
-        );
       }
-    } catch (error) {
-      if (error instanceof AxiosError && error.response?.data?.stockError) {
-        setStockErrors((errors) => [
-          ...errors.filter((err) => err.productId !== productId),
-          {
-            productId,
-            availableStock: error.response?.data.availableStock,
-          },
-        ]);
-      }
-      console.error("Error updating quantity:", error);
     }
   };
 
-  const removeItem = async (productId: string) => {
+  const handleRemoveItem = async (productId: string) => {
     try {
-      await axios.delete(`/api/cart/${productId}`);
+      setLoading(true);
+      await removeFromCart(token!, user.email!, productId);
       setCartItems((prevItems) =>
         prevItems.filter((item) => item._id !== productId)
       );
-      setStockErrors((errors) =>
-        errors.filter((error) => error.productId !== productId)
-      );
     } catch (error) {
+      setError("Failed to remove item from cart");
       console.error("Error removing item:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleCheckout = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("/api/checkout", {
-        items: cartItems,
-      });
+      const orderData = {
+        items: cartItems.map((item) => ({
+          productId: item._id,
+          quantity: item.quantity,
+          price: item.currentPrice,
+        })),
+        totalAmount,
+      };
 
-      if (response.data.success) {
-        setCartItems([]);
-        setStockErrors([]);
-        // Redirect to success page or show success message
-      }
+      await createOrder(token!, user.email!, orderData);
+      setCartItems([]);
+      setError("");
+      navigate("/orders"); // Redirect to orders page after successful checkout
     } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response?.data?.stockErrors) {
-          setStockErrors(error.response.data.stockErrors);
-        }
-      } else {
-        console.error("Unexpected error:", error);
-      }
+      setError("Failed to process checkout");
+      console.error("Error during checkout:", error);
     } finally {
       setLoading(false);
     }
   };
 
+  if (loading && cartItems.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8 mt-16">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8 mt-16">
+    <div className="container max-w-4xl mx-auto px-4 py-8 mt-10">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+
       {cartItems.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-600">Your cart is empty</p>
@@ -164,12 +233,12 @@ const CartPage: React.FC = () => {
                 </div>
 
                 <p className="font-semibold min-w-[80px] text-right">
-                  ${(item.currentPrice * item.quantity).toFixed(2)}
+                  ₹{(item.currentPrice * item.quantity).toFixed(2)}
                 </p>
 
                 <button
                   className="text-red-500 hover:text-red-700"
-                  onClick={() => removeItem(item._id)}
+                  onClick={() => handleRemoveItem(item._id)}
                   disabled={loading}
                 >
                   Remove
@@ -182,7 +251,7 @@ const CartPage: React.FC = () => {
             <div className="flex justify-between items-center">
               <span className="text-xl font-semibold">Total:</span>
               <span className="text-2xl font-bold">
-                ${totalAmount.toFixed(2)}
+                ₹{totalAmount.toFixed(2)}
               </span>
             </div>
 

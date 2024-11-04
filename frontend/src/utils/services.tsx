@@ -60,7 +60,7 @@ export const addToCartService = async (
 ) => {
   try {
     console.log(token, email, productId);
-    const productData = { productId: productId };
+    const productData = { productId: productId, quantity: 1 };
     const response = await axios.post(
       `http://localhost:3000/api/customers/api/customers/${email}/cart`,
       productData,
@@ -124,5 +124,78 @@ export const addProductImage = async (
       );
     }
     throw new Error("Failed to add product image");
+  }
+};
+
+export const getCustomerCart = async (token: string, email: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/api/customers/api/customers/${email}/cart`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "Failed to fetch cart");
+    }
+    throw new Error("Failed to fetch cart");
+  }
+};
+
+export const removeFromCart = async (
+  token: string,
+  email: string,
+  productId: string
+) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:3000/api/customers/api/customers/${email}/cart/${productId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "Failed to remove item from cart"
+      );
+    }
+    throw new Error("Failed to remove item from cart");
+  }
+};
+
+export const createOrder = async (
+  token: string,
+  email: string,
+  orderData: any
+) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/api/customers/api/customers/${email}/orders`,
+      orderData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "Failed to create order"
+      );
+    }
+    throw new Error("Failed to create order");
   }
 };
