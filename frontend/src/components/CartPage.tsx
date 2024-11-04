@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { IProduct } from "../types/Product";
+import axios, { AxiosError } from "axios";
 
 interface CartItem extends IProduct {
   quantity: number;
+  stock: number;
+}
+
+interface StockError {
+  productId: string;
+  availableStock: number;
 }
 
 const CartPage: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [stockErrors, setStockErrors] = useState<StockError[]>([]);
+
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
 
   useEffect(() => {
     const calculateTotal = () => {
@@ -20,21 +33,81 @@ const CartPage: React.FC = () => {
     calculateTotal();
   }, [cartItems]);
 
-  const updateQuantity = (productId: string, newQuantity: number) => {
+  const fetchCartItems = async () => {
+    try {
+      const response = await axios.get('/api/cart');
+      setCartItems(response.data);
+    } catch (error) {
+      console.error('Error fetching cart items:', error);
+    }
+  };
+
+  const updateQuantity = async (productId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
 
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item._id === productId ? { ...item, quantity: newQuantity } : item
-      )
-    );
+    try {
+      const response = await axios.put(`/api/cart/${productId}`, {
+        quantity: newQuantity
+      });
+      
+      if (response.data.success) {
+        setCartItems((prevItems) =>
+          prevItems.map((item) =>
+            item._id === productId ? { ...item, quantity: newQuantity } : item
+          )
+        );
+        setStockErrors(errors => errors.filter(error => error.productId !== productId));
+      }
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.data?.stockError) {
+        setStockErrors((errors) => [
+          ...errors.filter((err) => err.productId !== productId),
+          {
+            productId,
+            availableStock: error.response.data.availableStock,
+          },
+        ]);
+      }
+      console.error("Error updating quantity:", error);
+    }
   };
 
-  const removeItem = (productId: string) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => item._id !== productId)
-    );
+  const removeItem = async (productId: string) => {
+    try {
+      await axios.delete(`/api/cart/${productId}`);
+      setCartItems((prevItems) =>
+        prevItems.filter((item) => item._id !== productId)
+      );
+      setStockErrors(errors => errors.filter(error => error.productId !== productId));
+    } catch (error) {
+      console.error('Error removing item:', error);
+    }
   };
+
+  const handleCheckout = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post('/api/checkout', {
+        items: cartItems
+      });
+
+      if (response.data.success) {
+        setCartItems([]);
+        setStockErrors([]);
+        // Redirect to success page or show success message
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.data?.stockErrors) {
+          setStockErrors(error.response.data.stockErrors);
+        }
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 mt-16">
@@ -55,6 +128,11 @@ const CartPage: React.FC = () => {
                 <p className="text-sm text-gray-500">
                   ${item.currentPrice.toFixed(2)} / {item.unit}
                 </p>
+                {stockErrors.find(error => error.productId === item._id) && (
+                  <p className="text-red-500 text-sm">
+                    Only {stockErrors.find(error => error.productId === item._id)?.availableStock} items available in stock
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center gap-4">
@@ -62,6 +140,7 @@ const CartPage: React.FC = () => {
                   <button
                     className="px-3 py-1 hover:bg-gray-100"
                     onClick={() => updateQuantity(item._id, item.quantity - 1)}
+                    disabled={loading}
                   >
                     -
                   </button>
@@ -69,6 +148,7 @@ const CartPage: React.FC = () => {
                   <button
                     className="px-3 py-1 hover:bg-gray-100"
                     onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                    disabled={loading}
                   >
                     +
                   </button>
@@ -81,6 +161,7 @@ const CartPage: React.FC = () => {
                 <button
                   className="text-red-500 hover:text-red-700"
                   onClick={() => removeItem(item._id)}
+                  disabled={loading}
                 >
                   Remove
                 </button>
@@ -98,12 +179,15 @@ const CartPage: React.FC = () => {
 
             <div className="mt-6 flex justify-end">
               <button
-                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-                onClick={() => {
-                  /* Implement checkout logic */
-                }}
+                className={`bg-green-600 text-white px-6 py-3 rounded-lg transition-colors ${
+                  loading || stockErrors.length > 0
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:bg-green-700'
+                }`}
+                onClick={handleCheckout}
+                disabled={loading || stockErrors.length > 0}
               >
-                Proceed to Checkout
+                {loading ? 'Processing...' : 'Proceed to Checkout'}
               </button>
             </div>
           </div>
@@ -112,4 +196,5 @@ const CartPage: React.FC = () => {
     </div>
   );
 };
+
 export default CartPage;

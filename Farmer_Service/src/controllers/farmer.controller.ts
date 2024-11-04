@@ -173,6 +173,34 @@ export const getProducts = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const { email, productId } = req.params; 
+
+    // Send DELETE request to product service
+    await axios.delete(`http://localhost:3005/${productId}`);
+
+    // Remove product ID from the farmer's list_products
+    await Farmer.findOneAndUpdate(
+      { email: email},
+      { $pull: { list_products: productId } }
+    );
+
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error communicating with product service:", error.message);
+      res.status(500).json({
+        message: "Error communicating with product service",
+        error: error.message,
+      });
+    } else {
+      console.error("Unexpected error:", error);
+      res.status(500).json({ message: "An unexpected error occurred" });
+    }
+  }
+};
+
 export const addFarmerAddress = async (req: Request, res: Response) => {
   try {
     const id = req.params.email; // Get Farmer ID from request parameters
