@@ -16,6 +16,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
     origin: process.env.CORS_ORIGIN || "*",
     methods: ["GET", "POST"],
   },
+  
 });
 
 const PORT = process.env.PORT || 3000;
