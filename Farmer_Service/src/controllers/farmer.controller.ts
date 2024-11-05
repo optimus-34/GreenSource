@@ -239,6 +239,35 @@ export const addFarmerAddress = async (req: Request, res: Response) => {
   }
 };
 
+// Delete a farmer's address
+export const deleteFarmerAddress = async (req: Request, res: Response) => {
+  try {
+    const { email, addressId } = req.params;
+
+    // Remove address ID from farmer's addresses array
+    await Farmer.findOneAndUpdate(
+      { email: email },
+      { $pull: { addresses: addressId } }
+    );
+
+    // Delete the address from Address collection
+    await Address.findByIdAndDelete(addressId);
+
+    res.status(200).json({ message: "Address deleted successfully" });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error deleting farmer address:", error.message);
+      res.status(500).json({
+        message: "Error deleting farmer address",
+        error: error.message,
+      });
+    } else {
+      console.error("Unexpected error:", error);
+      res.status(500).json({ message: "An unexpected error occurred" });
+    }
+  }
+};
+
 // Update Farmer name
 export const updateFarmerName = async (req: Request, res: Response) => {
   try {

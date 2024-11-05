@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAuth, logout } from "../store/slices/authSlice";
-import { Users, ShoppingBag, Settings, Activity, Menu, X } from "lucide-react";
+import { Users, ShoppingBag, Settings, Activity, Menu, X, ChevronDown, ChevronRight, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
 
 const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
@@ -9,6 +9,7 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isUsersOpen, setIsUsersOpen] = useState(false);
 
   const handleSignout = () => {
     dispatch(logout());
@@ -17,9 +18,24 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
 
   const menuItems = [
     {
+      icon: <LayoutDashboard className="w-5 h-5" />,
+      label: "Overview",
+      path: "/admin",
+    },
+    {
       icon: <Users className="w-5 h-5" />,
       label: "Users",
       path: "/admin/users",
+      subItems: [
+        {
+          label: "Farmers",
+          path: "/admin/users/farmers",
+        },
+        {
+          label: "Customers",
+          path: "/admin/users/customers",
+        },
+      ],
     },
     {
       icon: <ShoppingBag className="w-5 h-5" />,
@@ -28,7 +44,7 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
     },
     {
       icon: <Activity className="w-5 h-5" />,
-      label: "Analytics",
+      label: "Analytics", 
       path: "/admin/analytics",
     },
     {
@@ -40,6 +56,10 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const toggleUsers = () => {
+    setIsUsersOpen(!isUsersOpen);
   };
 
   return (
@@ -76,21 +96,53 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
 
           <nav className="flex-1 p-4">
             {menuItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => {
-                  navigate(item.path);
-                  setIsSidebarOpen(false);
-                }}
-                className={`flex items-center space-x-3 w-full px-4 py-3 mb-2 rounded-lg hover:bg-gray-100 ${
-                  item.path === window.location.pathname
-                    ? "text-blue-500 bg-blue-50"
-                    : "text-gray-600"
-                }`}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </button>
+              <div key={item.path}>
+                <button
+                  onClick={() => {
+                    if (item.subItems) {
+                      toggleUsers();
+                    } else {
+                      navigate(item.path);
+                      setIsSidebarOpen(false);
+                    }
+                  }}
+                  className={`flex items-center justify-between w-full px-4 py-3 mb-2 rounded-lg hover:bg-gray-100 ${
+                    (item.path === window.location.pathname || 
+                     (item.subItems && item.subItems.some(sub => sub.path === window.location.pathname)))
+                      ? "text-blue-500 bg-blue-50"
+                      : "text-gray-600"
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </div>
+                  {item.subItems && (
+                    isUsersOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
+                  )}
+                </button>
+                
+                {item.subItems && isUsersOpen && (
+                  <div className="ml-8">
+                    {item.subItems.map((subItem) => (
+                      <button
+                        key={subItem.path}
+                        onClick={() => {
+                          navigate(subItem.path);
+                          setIsSidebarOpen(false);
+                        }}
+                        className={`flex items-center w-full px-4 py-2 mb-1 rounded-lg hover:bg-gray-100 ${
+                          subItem.path === window.location.pathname
+                            ? "text-blue-500 bg-blue-50"
+                            : "text-gray-600"
+                        }`}
+                      >
+                        {subItem.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </nav>
         </div>

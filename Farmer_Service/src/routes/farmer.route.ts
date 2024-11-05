@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import { createFarmer, getFarmers, getFarmer, updateFarmer, deleteFarmer,addFarmerAddress, updateFarmerName, updateFarmerPhone, updateFarmerAddress, updateFarmerEmail, updateFarmerVerifiedStatus, addProduct, getProducts, loginFarmer, deleteProduct} from '../controllers/farmer.controller';
+import { createFarmer, getFarmers, getFarmer, updateFarmer, deleteFarmer,addFarmerAddress, updateFarmerName, updateFarmerPhone, updateFarmerAddress, updateFarmerEmail, updateFarmerVerifiedStatus, addProduct, getProducts, loginFarmer, deleteProduct, deleteFarmerAddress} from '../controllers/farmer.controller';
 import { createAddress, deleteAddress, getAddress, getAddresses, updateAddress } from '../controllers/address.controller';
 
 
 const router = Router();
 router.post('/farmers', createFarmer);
 router.put('/farmers/:email/addAddress', addFarmerAddress);
+router.delete('/farmers/:email/delete/address/:addressId', deleteFarmerAddress);
 router.get('/farmers', getFarmers);
 router.get('/farmers/:email', getFarmer);
 router.put('/farmers/:email', updateFarmer);
