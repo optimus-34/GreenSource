@@ -1,21 +1,37 @@
-export interface OrderItem {
-  productId: string;
-  quantity: number;
-  price: number;
-  productName: string;
+export enum OrderStatus {
+  PENDING = "PENDING",
+  CONFIRMED = "CONFIRMED",
+  CANCELLED = "CANCELLED",
+  DELIVERED = "DELIVERED",
+  SHIPPED = "SHIPPED",
+  ONTHEWAY = "ON THE WAY",
 }
 
-export interface Order {
+export interface IShippingAddress {
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}
+
+export interface IOrderItem {
   id: string;
-  items: OrderItem[];
+  orderId: string;
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+}
+
+export interface IOrder {
+  id: string;
+  consumerId: string;
+  farmerId: string;
+  status: OrderStatus;
   totalAmount: number;
-  status: string;
-  createdAt: string;
-  shippingAddress: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
-  };
+  shippingAddress: IShippingAddress;
+  items: IOrderItem[];
+  createdAt: Date;
+  updatedAt: Date;
 }

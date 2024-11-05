@@ -30,6 +30,30 @@ export class OrderController {
     }
   }
 
+  async getOrdersByCustomerEmail(req: Request, res: Response): Promise<void> {
+    try {
+      const orders = await this.orderService.getOrdersByCustomerEmail(
+        req.params.email
+      );
+      res.json(orders);
+    } catch (error: unknown) {
+      if (error instanceof Error) res.json({ error: error.message });
+      else res.status(500).json({ error: "unknown error occured" });
+    }
+  }
+
+  async getOrdersByFarmerEmail(req: Request, res: Response): Promise<void> {
+    try {
+      const orders = await this.orderService.getOrdersByFarmerEmail(
+        req.params.email
+      );
+      res.json(orders);
+    } catch (error: unknown) {
+      if (error instanceof Error) res.json({ error: error.message });
+      else res.status(500).json({ error: "unknown error occured" });
+    }
+  }
+
   async updateOrder(req: Request, res: Response): Promise<void> {
     try {
       const order = await this.orderService.updateOrder(

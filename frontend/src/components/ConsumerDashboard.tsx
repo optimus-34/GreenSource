@@ -105,6 +105,18 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  if (user && user.userType === "farmer") {
+    setTimeout(() => {
+      navigate("/farmer/profile");
+    }, 2000);
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+        <h1>You are not authorized to access this page</h1>
+        <h1>Redirecting to farmer profile page</h1>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Mobile Header */}

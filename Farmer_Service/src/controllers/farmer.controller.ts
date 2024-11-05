@@ -121,15 +121,17 @@ export const addProduct = async (req: Request, res: Response) => {
     // Include the farmer ID in the product data
 
     const farmer = await Farmer.findOne({ email: farmerId });
-   
-    const farmerName = farmer ? `${farmer.first_name} ${farmer.last_name}` : null;
-   
+
+    const farmerName = farmer
+      ? `${farmer.first_name} ${farmer.last_name}`
+      : null;
+
     productData.farmerId = farmerId;
     productData.farmerName = farmerName;
-    
+
     // Send POST request to product service
     const response = await axios.post("http://localhost:3005/", productData);
-   
+
     // Update the Farmer's list_products with the new product ID
     const productId = response.data._id; // Assuming the product ID is returned in the response
     await Farmer.findOneAndUpdate(
@@ -183,14 +185,14 @@ export const getProducts = async (req: Request, res: Response) => {
 
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
-    const { email, productId } = req.params; 
+    const { email, productId } = req.params;
 
     // Send DELETE request to product service
     await axios.delete(`http://localhost:3005/${productId}`);
 
     // Remove product ID from the farmer's list_products
     await Farmer.findOneAndUpdate(
-      { email: email},
+      { email: email },
       { $pull: { list_products: productId } }
     );
 
@@ -261,6 +263,58 @@ export const updateFarmerName = async (req: Request, res: Response) => {
   }
 };
 
+export const getEarnings = async (req: Request, res: Response) => {
+  const response = await axios.get(
+    `http://localhost:3003/api/orders/${req.params.email}/farmers`
+  );
+  try {
+    const orders = response.data;
+    const now = new Date();
+    const startOfToday = new Date(now.setHours(0, 0, 0, 0));
+    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const earnings = {
+      today: 0,
+      week: 0,
+      month: 0,
+      allTime: 0,
+    };
+
+    orders.forEach((order: any) => {
+      const orderDate = new Date(order.createdAt);
+      const amount = order.totalAmount;
+
+      // Add to all time earnings
+      earnings.allTime += amount;
+
+      // Check if order is from today
+      if (orderDate >= startOfToday) {
+        earnings.today += amount;
+      }
+
+      // Check if order is from this week
+      if (orderDate >= startOfWeek) {
+        earnings.week += amount;
+      }
+
+      // Check if order is from this month
+      if (orderDate >= startOfMonth) {
+        earnings.month += amount;
+      }
+    });
+
+    res.json(earnings);
+  } catch (error) {
+    console.error("Error calculating earnings:", error);
+    res.status(500).json({
+      message: "Error calculating earnings",
+      error:
+        error instanceof Error ? error.message : "An unexpected error occurred",
+    });
+  }
+};
+
 // Update Farmer phone
 export const updateFarmerPhone = async (req: Request, res: Response) => {
   try {
@@ -325,6 +379,27 @@ export const updateFarmerAddress = async (req: Request, res: Response) => {
         error instanceof Error ? error.message : "An unexpected error occurred",
     });
   }
+};
+
+export const getOrders = async (req: Request, res: Response) => {
+  const orders = await Farmer.find({ farmerEmail: req.params.email });
+  res.json(orders);
+};
+
+export const addOrder = async (req: Request, res: Response) => {
+  const order = await Farmer.findOneAndUpdate(
+    { email: req.params.email },
+    {
+      $push: {
+        list_sales: {
+          orderId: req.body.orderId,
+          amount: req.body.amount,
+        },
+      },
+    },
+    { new: true }
+  );
+  res.json(order);
 };
 
 // Update Farmer verified status

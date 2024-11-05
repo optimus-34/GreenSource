@@ -89,8 +89,8 @@ export default function ConsumerSavedPage() {
   }
 
   return (
-    <div className="flex-grow p-8 mt-10">
-      <h1 className="text-2xl font-bold mb-6">My Wishlist</h1>
+    <div className="flex-grow px-8">
+      <h1 className="text-2xl font-bold mb-6">My Saved Products</h1>
       <div className="flex flex-wrap justify-start items-start gap-6">
         {wishlistItems.length > 0 ? (
           wishlistItems.map((product) => (

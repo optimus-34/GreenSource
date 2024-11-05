@@ -170,10 +170,10 @@ export class CustomerService {
     return customer;
   }
 
-  async removeFromCart(email: string, productId: string): Promise<Customer> {
+  async removeFromCart(email: string): Promise<Customer> {
     const customer = await CustomerModel.findOneAndUpdate(
       { email: email },
-      { $pull: { cart: { productId: productId } } },
+      { $set: { cart: [] } },
       { new: true }
     );
     if (!customer) {
@@ -182,13 +182,10 @@ export class CustomerService {
     return customer;
   }
 
-  async addOrder(
-    email: string,
-    order: Omit<IOrder, "id" | "customerId">
-  ): Promise<Customer> {
+  async addOrder(email: string, orderId: string): Promise<Customer> {
     const customer = await CustomerModel.findOneAndUpdate(
       { email: email },
-      { $addToSet: { orders: order } },
+      { $addToSet: { orders: orderId } },
       { new: true }
     );
     if (!customer) {

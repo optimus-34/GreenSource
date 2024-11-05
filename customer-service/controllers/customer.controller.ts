@@ -146,7 +146,7 @@ export class CustomerController {
     try {
       const order = await this.customerService.addOrder(
         req.params.email,
-        req.body
+        req.body.orderId
       );
       res.json({ success: true, data: order });
     } catch (error) {
@@ -213,8 +213,7 @@ export class CustomerController {
   removeFromCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.removeFromCart(
-        req.params.email,
-        req.params.productId
+        req.params.email
       );
       res.json({ success: true, data: customer });
     } catch (error) {

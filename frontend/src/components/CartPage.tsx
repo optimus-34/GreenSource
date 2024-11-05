@@ -10,6 +10,7 @@ import {
 import { selectAuth } from "../store/slices/authSlice";
 import axios from "axios";
 import { Address } from "../types/Customer";
+import { IOrder, OrderStatus } from "../types/Order";
 
 interface ICartItem {
   productId: string;
@@ -24,16 +25,6 @@ interface CartItem extends IProduct {
 interface StockError {
   productId: string;
   availableStock: number;
-}
-
-interface OrderData {
-  items: {
-    productId: string;
-    quantity: number;
-    price: number;
-  }[];
-  totalAmount: number;
-  shippingAddress: Address;
 }
 
 const CartPage: React.FC = () => {
@@ -189,18 +180,59 @@ const CartPage: React.FC = () => {
 
     try {
       setLoading(true);
-      const orderData: OrderData = {
+
+      // Create order object that matches IOrder interface
+      const order: IOrder = {
+        id: "", // Will be set by backend
+        consumerId: user.email!,
+        farmerId: cartItems[0].farmerId,
+        status: OrderStatus.PENDING,
+        totalAmount,
+        shippingAddress: {
+          street: selectedAddress.street,
+          city: selectedAddress.city,
+          state: selectedAddress.state,
+          zipCode: selectedAddress.zipCode,
+          country: selectedAddress.country,
+        },
         items: cartItems.map((item) => ({
+          id: "", // Will be set by backend
+          orderId: "", // Will be set by backend
           productId: item._id,
           quantity: item.quantity,
-          price: item.currentPrice,
+          unitPrice: item.currentPrice,
+          totalPrice: item.currentPrice * item.quantity,
         })),
-        totalAmount,
-        shippingAddress: selectedAddress,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
-      // Create order in orders-payments-service
-      const orderResponse = await createOrder(token!, user.email!, orderData);
+      // First create the order in the orders service
+      const orderResponse = await createOrder(token!, order);
+      console.log(orderResponse.data._id);
+      const orderId = orderResponse.data._id;
+
+      // Add order ID to customer's orders
+      await axios.post(
+        `http://localhost:3000/api/customers/api/customers/${user.email}/orders`,
+        { orderId }, // Send only the order ID
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Add order ID to farmer's orders
+      await axios.post(
+        `http://localhost:3000/api/farmers/api/farmers/${order.farmerId}/add/order`,
+        { orderId, amount: order.totalAmount }, // Send only the order ID
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       // Clear cart in customer service
       await axios.delete(
@@ -214,7 +246,7 @@ const CartPage: React.FC = () => {
 
       setCartItems([]);
       setError("");
-      navigate("/orders");
+      navigate("/consumer/orders");
     } catch (error: any) {
       setError(error.response?.data?.message || "Failed to process checkout");
       console.error("Error during checkout:", error);
@@ -229,9 +261,9 @@ const CartPage: React.FC = () => {
       <div className="grid grid-cols-1 gap-4">
         {addresses.map((address) => (
           <div
-            key={address.id}
+            key={address._id} // Changed from address.id to address._id for uniqueness
             className={`border p-4 rounded-lg cursor-pointer ${
-              selectedAddress?.id === address.id
+              selectedAddress?._id === address._id
                 ? "border-green-500 bg-green-50"
                 : "border-gray-200"
             }`}
@@ -260,7 +292,8 @@ const CartPage: React.FC = () => {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-8 mt-10">
+    <div className="container max-w-4xl mx-auto px-4">
+      <h1 className="text-2xl font-bold mb-6">Your Cart</h1>
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
