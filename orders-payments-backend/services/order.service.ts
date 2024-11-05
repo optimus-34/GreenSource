@@ -17,7 +17,7 @@ export class OrderService {
   }
 
   async getOrderById(orderId: string): Promise<IOrder | null> {
-    return await Order.findOne({ id: orderId });
+    return await Order.findById(orderId);
   }
 
   async updateOrder(
@@ -35,5 +35,13 @@ export class OrderService {
       { status: OrderStatus.CANCELLED, updatedAt: new Date() },
       { new: true }
     );
+  }
+
+  async getOrdersByCustomerEmail(email: string): Promise<IOrder[]> {
+    return await Order.find({ consumerId: email });
+  }
+
+  async getOrdersByFarmerEmail(email: string): Promise<IOrder[]> {
+    return await Order.find({ farmerId: email });
   }
 }

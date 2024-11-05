@@ -19,7 +19,7 @@ router.post("/:email/orders/:orderId/cancel", customerController.cancelOrder);
 // Cart routes
 router.get("/:email/cart", customerController.getCart);
 router.post("/:email/cart", customerController.addToCart);
-router.delete("/:email/cart/:productId", customerController.removeFromCart);
+router.delete("/:email/cart", customerController.removeFromCart);
 router.put("/:email/cart/:productId", customerController.updateCart);
 
 // Address routes

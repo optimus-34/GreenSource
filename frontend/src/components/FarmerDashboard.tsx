@@ -47,6 +47,18 @@ const FarmerDashboard = ({ children }: { children: React.ReactNode }) => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  if (user && user.userType === "consumer") {
+    setTimeout(() => {
+      navigate("/consumer/profile");
+    }, 2000);
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+        <h1>You are not authorized to access this page</h1>
+        <h1>Redirecting to consumer profile page</h1>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Mobile Header */}
@@ -56,19 +68,27 @@ const FarmerDashboard = ({ children }: { children: React.ReactNode }) => {
           <span className="text-blue-800">Source</span>
         </h1>
         <button onClick={toggleSidebar} className="p-2">
-          {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isSidebarOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </div>
 
       {/* Sidebar */}
-      <div className={`
+      <div
+        className={`
         fixed md:sticky md:top-0
         w-64 h-[100dvh]
         bg-white shadow-lg 
         transition-transform duration-300 ease-in-out
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }
         z-50
-      `}>
+      `}
+      >
         <div className="flex flex-col h-full">
           <div className="hidden md:block p-5 border-b">
             <h1 className="text-xl font-bold">
@@ -103,7 +123,6 @@ const FarmerDashboard = ({ children }: { children: React.ReactNode }) => {
       <div className="flex-1">
         <header className="bg-white shadow">
           <div className="flex flex-col md:flex-row md:items-center justify-end px-4 md:px-6 py-4">
-
             <div className="flex items-center space-x-4">
               <span className="text-gray-600 text-sm md:text-base">
                 Welcome, {user?.username || "User"}

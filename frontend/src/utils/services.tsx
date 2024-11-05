@@ -1,6 +1,7 @@
 import axios from "axios";
 // import { IProduct } from "../types/Product";
 import { IProductImage } from "../types/Product";
+import { IOrder } from "../types/Order";
 
 export const getProducts = async (token: string) => {
   const response = await axios.get("http://localhost:3000/api/products", {
@@ -200,12 +201,12 @@ export const removeFromCart = async (
 
 export const createOrder = async (
   token: string,
-  email: string,
-  orderData: any
+  // email: string,
+  orderData: IOrder
 ) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/api/customers/api/customers/${email}/orders`,
+      `http://localhost:3000/api/orders/api/orders`,
       orderData,
       {
         headers: {
@@ -214,7 +215,7 @@ export const createOrder = async (
         },
       }
     );
-    return response.data;
+    return response;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(

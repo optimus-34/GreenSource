@@ -1,15 +1,21 @@
-import { Schema, Types, model } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import { Schema, Types, model } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
-const FarmerSchema = new Schema({
+const FarmerSchema = new Schema(
+  {
     id: { type: String, default: uuidv4, unique: true, required: true },
     email: { type: String, required: true, unique: true },
     phone: { type: String, required: true },
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
-    addresses: [{ type: Types.ObjectId, ref: 'Address' }],
+    addresses: [{ type: Types.ObjectId, ref: "Address" }],
     list_products: [{ type: Types.ObjectId }],
-    list_sales: [{ type: Types.ObjectId }]
-}, { timestamps: true }); 
+    list_sales: [{
+      orderId: { type: String },
+      amount: { type: Number }
+    }],
+  },
+  { timestamps: true }
+);
 
-export default model('Farmer', FarmerSchema);
+export default model("Farmer", FarmerSchema);

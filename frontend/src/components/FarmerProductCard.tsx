@@ -39,7 +39,7 @@ const FarmerProductCard: React.FC<FarmerProductCardProps> = ({ product }) => {
   }, [product._id]);
 
   return (
-    <div className="max-w-[300px] max-h-[400px] h-full flex flex-col rounded-lg shadow-md bg-white">
+    <div className="w-[300px] h-[370px] flex flex-col rounded-lg shadow-md bg-white">
       <div className="relative">
         <img
           className="w-full h-[200px] object-cover rounded-t-lg"

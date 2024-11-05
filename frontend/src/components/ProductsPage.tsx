@@ -43,7 +43,7 @@ const ProductsPage: React.FC = () => {
   }
 
   return (
-    <div className="flex-grow p-8 mt-10">
+    <div className="flex-grow p-8">
       <div className="flex flex-wrap justify-start items-start gap-6">
         {products.length > 0 ? (
           products.map((product) => (
