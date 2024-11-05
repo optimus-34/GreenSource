@@ -4,7 +4,7 @@ interface User {
   id: string | null;
   email: string | null;
   username: string | null;
-  userType: "consumer" | "farmer" | "admin" | null;
+  userType: "admin" | null;
 }
 
 interface AuthState {
@@ -34,7 +34,7 @@ const safeJsonParse = (json: string | null): User => {
         id: parsed.id ?? null,
         email: parsed.email ?? null,
         username: parsed.username ?? null,
-        userType: parsed.role ?? null, // Changed from userType to role
+        userType: parsed.role ?? null,
       };
     }
     return defaultUser;
@@ -142,35 +142,6 @@ const authSlice = createSlice({
         state.token = storedToken;
       }
     },
-    signupStart: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    signupSuccess: (
-      state,
-      _action: PayloadAction<{ user: User; token: string }>
-    ) => {
-      state.isAuthenticated = true;
-      // state.user = action.payload.user;
-      // state.token = action.payload.token;
-      state.loading = false;
-      state.error = null;
-      
-
-      // try {
-      //   localStorage.setItem("token", action.payload.token);
-      //   localStorage.setItem("user", JSON.stringify(action.payload.user));
-      // } catch (error) {
-      //   console.error("Error storing signup data:", error);
-      // }
-    },
-    signupFailure: (state, action: PayloadAction<string>) => {
-      state.isAuthenticated = false;
-      state.user = defaultUser;
-      state.token = null;
-      state.loading = false;
-      state.error = action.payload;
-    },
   },
 });
 
@@ -181,9 +152,6 @@ export const {
   logout,
   updateUser,
   //rehydrateState,
-  signupStart,
-  signupSuccess,
-  signupFailure,
 } = authSlice.actions;
 
 // Selector that includes rehydration check
