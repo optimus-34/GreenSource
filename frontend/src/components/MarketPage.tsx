@@ -216,34 +216,28 @@ export default function MarketPage() {
             ref={index === displayedRecords.length - 1 ? lastRecordElementRef : null}
             className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
           >
-            <div className="p-4 grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+            <div className="p-4">
+              <h3 className="text-xl font-bold mb-4">{record.commodity}</h3>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="font-semibold">Commodity:</p>
-                  <p>{record.commodity}</p>
+                  <p className="font-medium ">Variety:</p>
+                  <p className="text-sm text-gray-500">{record.variety}</p>
                 </div>
                 <div>
-                  <p className="font-semibold">Variety:</p>
-                  <p>{record.variety}</p>
+                  <p className="font-medium ">District:</p>
+                  <p className="text-sm text-gray-500">{record.district}</p>
                 </div>
                 <div>
-                  <p className="font-semibold">State:</p>
-                  <p>{record.state}</p>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <div>
-                  <p className="font-semibold">District:</p>
-                  <p>{record.district}</p>
+                  <p className="font-medium ">State:</p>
+                  <p className="text-sm text-gray-500">{record.state}</p>
                 </div>
                 <div>
-                  <p className="font-semibold">Market:</p>
-                  <p>{record.market}</p>
+                  <p className="font-medium ">Market:</p>
+                  <p className="text-sm text-gray-500">{record.market}</p>
                 </div>
               </div>
 
-              <div className="col-span-2 border-t pt-4">
+              <div className="border-t mt-4 pt-4">
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
                     <p className="text-sm text-gray-500">Min Price</p>
