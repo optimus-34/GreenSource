@@ -30,7 +30,6 @@ router.delete("/:email/addresses/:addressId", customerController.deleteAddress);
 
 // Wishlist routes without authentication
 router.get("/:email/wishlist", customerController.getWishlist);
-router.get("/:email/wishlist", customerController.getWishlist);
 router.post("/:email/wishlist", customerController.addToWishlist);
 router.delete(
   "/:email/wishlist/:productId",
