@@ -216,27 +216,35 @@ export default function MarketPage() {
             ref={index === displayedRecords.length - 1 ? lastRecordElementRef : null}
             className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
           >
-            <div className="p-4">
-              <h2 className="text-xl font-semibold mb-2">{record.commodity}</h2>
-              <p className="text-gray-600 mb-2">Variety: {record.variety}</p>
+            <div className="p-4 grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div>
+                  <p className="font-semibold">Commodity:</p>
+                  <p>{record.commodity}</p>
+                </div>
+                <div>
+                  <p className="font-semibold">Variety:</p>
+                  <p>{record.variety}</p>
+                </div>
+                <div>
+                  <p className="font-semibold">State:</p>
+                  <p>{record.state}</p>
+                </div>
+              </div>
               
-              <div className="grid grid-cols-2 gap-2 mb-4">
-                <div className="text-sm">
-                  <span className="font-semibold">State:</span> {record.state}
+              <div className="space-y-2">
+                <div>
+                  <p className="font-semibold">District:</p>
+                  <p>{record.district}</p>
                 </div>
-                <div className="text-sm">
-                  <span className="font-semibold">District:</span> {record.district}
-                </div>
-                <div className="text-sm">
-                  <span className="font-semibold">Market:</span> {record.market}
-                </div>
-                <div className="text-sm">
-                  <span className="font-semibold">Grade:</span> {record.grade}
+                <div>
+                  <p className="font-semibold">Market:</p>
+                  <p>{record.market}</p>
                 </div>
               </div>
 
-              <div className="border-t pt-4">
-                <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="col-span-2 border-t pt-4">
+                <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
                     <p className="text-sm text-gray-500">Min Price</p>
                     <p className="font-bold text-green-600">₹{record.min_price}</p>
@@ -250,6 +258,7 @@ export default function MarketPage() {
                     <p className="font-bold text-blue-600">₹{record.modal_price}</p>
                   </div>
                 </div>
+                <p className="text-xs text-gray-500 text-center mt-1">Price per quintal</p>
                 <div className="text-right mt-2 text-sm text-gray-500">
                   Date: {record.arrival_date}
                 </div>
