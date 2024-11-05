@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { selectAuth } from "../store/slices/authSlice";
 import { IOrder, OrderStatus } from "../types/Order";
+import { Link } from 'react-router-dom';
 
 interface Order extends IOrder {
   _id: string;
@@ -161,6 +162,12 @@ export default function FarmerOrdersPage() {
                 </button>
               </div>
             )}
+            <Link
+              to={`/orders/${order._id}`}
+              className="mt-2 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-center"
+            >
+              View Details
+            </Link>
           </div>
         </div>
 

@@ -18,6 +18,7 @@ import FarmerOrdersPage from "./components/FarmerOrdersPage";
 import FarmerProfile from "./components/FarmerProfile";
 import FarmerEarnings from "./components/FarmerEarnings";
 //import { AuthPersistence } from "./store/slices/AuthPersistence";
+import OrderDetailsPage from "./components/OrderDetailsPage";
 
 function App() {
   return (
@@ -97,7 +98,7 @@ function App() {
             path="/farmer/profile"
             element={
               <FarmerDashboard>
-                <FarmerProfile/>
+                <FarmerProfile />
               </FarmerDashboard>
             }
           />
@@ -105,7 +106,7 @@ function App() {
             path="/farmer/earnings"
             element={
               <FarmerDashboard>
-                <FarmerEarnings/>
+                <FarmerEarnings />
               </FarmerDashboard>
             }
           />
@@ -113,7 +114,23 @@ function App() {
             path="/farmer/market-prices"
             element={
               <FarmerDashboard>
-                <MarketPage/>
+                <MarketPage />
+              </FarmerDashboard>
+            }
+          />
+          <Route
+            path="/consumers/orders/:orderId"
+            element={
+              <ConsumerDashboard>
+                <OrderDetailsPage />
+              </ConsumerDashboard>
+            }
+          />
+          <Route
+            path="/farmer/orders/:orderId"
+            element={
+              <FarmerDashboard>
+                <OrderDetailsPage />
               </FarmerDashboard>
             }
           />

@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { selectAuth } from "../store/slices/authSlice";
 import { IOrder, OrderStatus } from "../types/Order";
+import { Link } from 'react-router-dom';
 
 interface Order extends IOrder {
   _id: string;
@@ -92,7 +93,7 @@ export default function ConsumerOrdersPage() {
     console.log(orderDetails);
 
     return (
-      <>
+      <Link to={`/consumers/orders/${order._id}`} className="block hover:shadow-md transition-shadow">
         <div className="border rounded-lg p-6 shadow-sm">
           <div className="flex justify-between items-start mb-4">
             <div>
@@ -163,7 +164,7 @@ export default function ConsumerOrdersPage() {
             </p>
           </div>
         </div>
-      </>
+      </Link>
     );
   };
 
