@@ -311,25 +311,28 @@ export const getEarnings = async (req: Request, res: Response) => {
     };
 
     orders.forEach((order: any) => {
-      const orderDate = new Date(order.createdAt);
-      const amount = order.totalAmount;
+      // Only calculate earnings for delivered orders
+      if (order.status === 'DELIVERED') {
+        const orderDate = new Date(order.createdAt);
+        const amount = order.totalAmount;
 
-      // Add to all time earnings
-      earnings.allTime += amount;
+        // Add to all time earnings
+        earnings.allTime += amount;
 
-      // Check if order is from today
-      if (orderDate >= startOfToday) {
-        earnings.today += amount;
-      }
+        // Check if order is from today
+        if (orderDate >= startOfToday) {
+          earnings.today += amount;
+        }
 
-      // Check if order is from this week
-      if (orderDate >= startOfWeek) {
-        earnings.week += amount;
-      }
+        // Check if order is from this week
+        if (orderDate >= startOfWeek) {
+          earnings.week += amount;
+        }
 
-      // Check if order is from this month
-      if (orderDate >= startOfMonth) {
-        earnings.month += amount;
+        // Check if order is from this month
+        if (orderDate >= startOfMonth) {
+          earnings.month += amount;
+        }
       }
     });
 
@@ -337,7 +340,7 @@ export const getEarnings = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error calculating earnings:", error);
     res.status(500).json({
-      message: "Error calculating earnings",
+      message: "Error calculating earnings", 
       error:
         error instanceof Error ? error.message : "An unexpected error occurred",
     });

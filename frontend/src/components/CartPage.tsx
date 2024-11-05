@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { IProduct } from "../types/Product";
 import {
@@ -255,33 +255,46 @@ const CartPage: React.FC = () => {
     }
   };
 
-  const renderAddressSelection = () => (
-    <div className="mt-6 border-t pt-4">
-      <h3 className="text-lg font-semibold mb-4">Delivery Address</h3>
-      <div className="grid grid-cols-1 gap-4">
-        {addresses.map((address) => (
-          <div
-            key={address._id} // Changed from address.id to address._id for uniqueness
-            className={`border p-4 rounded-lg cursor-pointer ${
-              selectedAddress?._id === address._id
-                ? "border-green-500 bg-green-50"
-                : "border-gray-200"
-            }`}
-            onClick={() => setSelectedAddress(address)}
-          >
-            <p className="font-semibold">{address.street}</p>
-            <p className="text-gray-600">
-              {address.city}, {address.state} {address.zipCode}
-            </p>
-            <p className="text-gray-600">{address.country}</p>
-            {address.isDefault && (
-              <span className="text-sm text-green-600">Default Address</span>
-            )}
-          </div>
-        ))}
+  const renderAddressSelection = () => {
+    if (addresses.length === 0) {
+      return (
+        <div className="mt-6 border-t pt-4">
+          <h3 className="text-lg font-semibold mb-4">Delivery Address</h3>
+          <p className="text-gray-600">No addresses found</p>
+          <Link to="/consumer/profile" className="text-blue-500">
+            Add an address
+          </Link>
+        </div>
+      );
+    }
+    return (
+      <div className="mt-6 border-t pt-4">
+        <h3 className="text-lg font-semibold mb-4">Delivery Address</h3>
+        <div className="grid grid-cols-1 gap-4">
+          {addresses.map((address) => (
+            <div
+              key={address._id} // Changed from address.id to address._id for uniqueness
+              className={`border p-4 rounded-lg cursor-pointer ${
+                selectedAddress?._id === address._id
+                  ? "border-green-500 bg-green-50"
+                  : "border-gray-200"
+              }`}
+              onClick={() => setSelectedAddress(address)}
+            >
+              <p className="font-semibold">{address.street}</p>
+              <p className="text-gray-600">
+                {address.city}, {address.state} {address.zipCode}
+              </p>
+              <p className="text-gray-600">{address.country}</p>
+              {address.isDefault && (
+                <span className="text-sm text-green-600">Default Address</span>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   if (loading && cartItems.length === 0) {
     return (

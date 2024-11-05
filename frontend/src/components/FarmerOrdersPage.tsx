@@ -163,7 +163,7 @@ export default function FarmerOrdersPage() {
               </div>
             )}
             <Link
-              to={`/orders/${order._id}`}
+              to={`/farmer/orders/${order._id}`}
               className="mt-2 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-center"
             >
               View Details

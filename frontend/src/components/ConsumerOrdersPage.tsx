@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { selectAuth } from "../store/slices/authSlice";
 import { IOrder, OrderStatus } from "../types/Order";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 interface Order extends IOrder {
   _id: string;
@@ -56,6 +56,8 @@ export default function ConsumerOrdersPage() {
     const [orderDetails, setOrderDetails] = useState<{ [key: string]: any }>(
       {}
     );
+    const [cancelling, setCancelling] = useState(false);
+    const { token } = useSelector(selectAuth);
 
     useEffect(() => {
       const fetchOrderDetails = async () => {
@@ -92,8 +94,36 @@ export default function ConsumerOrdersPage() {
     }, [order._id]);
     console.log(orderDetails);
 
+    const handleUpdateOrderStatus = async (
+      orderId: string,
+      status: OrderStatus
+    ) => {
+      try {
+        await axios.put(
+          `http://localhost:3000/api/orders/api/orders/${orderId}`,
+          { status },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        fetchOrders(); // Refresh orders after update
+      } catch (error) {
+        setError("Failed to update order status");
+        console.error("Error updating order:", error);
+      }
+    };
+
+    const canCancel = [OrderStatus.PENDING, OrderStatus.CONFIRMED].includes(
+      order.status
+    );
+
     return (
-      <Link to={`/consumers/orders/${order._id}`} className="block hover:shadow-md transition-shadow">
+      <Link
+        to={`/consumers/orders/${order._id}`}
+        className="block hover:shadow-md transition-shadow"
+      >
         <div className="border rounded-lg p-6 shadow-sm">
           <div className="flex justify-between items-start mb-4">
             <div>
@@ -105,23 +135,37 @@ export default function ConsumerOrdersPage() {
                 {new Date(order.createdAt).toLocaleDateString()}
               </p>
             </div>
-            <span
-              className={`px-3 py-1 rounded-full text-sm ${
-                order.status === OrderStatus.DELIVERED
-                  ? "bg-green-600 text-white"
-                  : order.status === OrderStatus.CONFIRMED
-                  ? "bg-green-200 text-green-800"
-                  : order.status === OrderStatus.PENDING ||
-                    order.status === OrderStatus.ONTHEWAY ||
-                    order.status === OrderStatus.SHIPPED
-                  ? "bg-yellow-100 text-yellow-800"
-                  : order.status === OrderStatus.CANCELLED
-                  ? "bg-red-100 text-red-800"
-                  : "bg-gray-100 text-gray-800"
-              }`}
-            >
-              {order.status}
-            </span>
+            <div className="flex items-center gap-2">
+              <span
+                className={`px-3 py-1 rounded-full text-sm ${
+                  order.status === OrderStatus.DELIVERED
+                    ? "bg-green-600 text-white"
+                    : order.status === OrderStatus.CONFIRMED
+                    ? "bg-green-200 text-green-800"
+                    : order.status === OrderStatus.PENDING ||
+                      order.status === OrderStatus.ONTHEWAY ||
+                      order.status === OrderStatus.SHIPPED
+                    ? "bg-yellow-100 text-yellow-800"
+                    : order.status === OrderStatus.CANCELLED
+                    ? "bg-red-100 text-red-800"
+                    : "bg-gray-100 text-gray-800"
+                }`}
+              >
+                {order.status}
+              </span>
+              {canCancel && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevent Link navigation
+                    handleUpdateOrderStatus(order.id, OrderStatus.CANCELLED);
+                  }}
+                  disabled={cancelling}
+                  className="px-3 py-1 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 disabled:bg-red-300"
+                >
+                  {cancelling ? "Cancelling..." : "Cancel Order"}
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="space-y-4">
