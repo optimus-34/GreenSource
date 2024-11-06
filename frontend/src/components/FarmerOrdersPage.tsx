@@ -77,6 +77,7 @@ export default function FarmerOrdersPage() {
     const [orderDetails, setOrderDetails] = useState<{ [key: string]: any }>(
       {}
     );
+    const [cancelling, setCancelling] = useState(false);
 
     useEffect(() => {
       const fetchOrderDetails = async () => {
@@ -111,6 +112,10 @@ export default function FarmerOrdersPage() {
         fetchOrderDetails();
       }
     }, [order._id]);
+
+    const canCancel = [OrderStatus.PENDING, OrderStatus.CONFIRMED].includes(
+      order.status
+    );
 
     return (
       <div className="border rounded-lg p-6 shadow-sm">
@@ -161,6 +166,15 @@ export default function FarmerOrdersPage() {
                   Reject
                 </button>
               </div>
+            )}
+            {canCancel && order.status !== OrderStatus.PENDING && (
+              <button
+                onClick={() => handleUpdateOrderStatus(order.id, OrderStatus.CANCELLED)}
+                disabled={cancelling}
+                className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:bg-red-300"
+              >
+                {cancelling ? "Cancelling..." : "Cancel Order"}
+              </button>
             )}
             <Link
               to={`/farmer/orders/${order._id}`}

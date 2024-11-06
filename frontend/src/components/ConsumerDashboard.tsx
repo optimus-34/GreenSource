@@ -215,7 +215,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
       {/* Main Content */}
       <div className="flex-1">
         <header className="bg-white shadow">
-          <div className="flex flex-col md:flex-row md:items-center justify-end px-4 md:px-6 py-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between md:justify-end px-4 md:px-6 py-4">
             <div className="flex items-center space-x-4">
               <span className="text-gray-600 text-sm md:text-base">
                 Welcome, {user?.username || "User"}
