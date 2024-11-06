@@ -5,7 +5,7 @@ export interface IDelivery extends Document {
   farmerId: String;
   customerId: String;
   agentId: String;
-  status: "PENDING" | "ASSIGNED" | "PICKED_UP" | "DELIVERED";
+  status: "PENDING" | "ASSIGNED" | "ON THE WAY" | "DELIVERED";
   deliveryLocation: {
     type: string;
     coordinates: [number, number]; // [longitude, latitude]
