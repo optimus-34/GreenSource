@@ -201,8 +201,7 @@ export const removeFromCart = async (
 
 export const createOrder = async (
   token: string,
-  // email: string,
-  orderData: IOrder
+  orderData: Omit<IOrder, '_id'>
 ) => {
   try {
     const response = await axios.post(

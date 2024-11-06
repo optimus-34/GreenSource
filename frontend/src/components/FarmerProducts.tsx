@@ -172,7 +172,7 @@ export default function FarmerProducts() {
 
   if (!farmer?.is_verified) {
     return (
-      <div className="flex-grow p-8">
+      <div className="flex-grow px-8">
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
           <p className="font-bold">Account Not Verified</p>
           <p>
@@ -193,7 +193,7 @@ export default function FarmerProducts() {
   }
 
   return (
-    <div className="flex-grow p-8">
+    <div className="flex-grow px-8">
       <div className="mb-6 flex justify-between items-center">
         <h2 className="text-2xl font-bold">My Products</h2>
         <button

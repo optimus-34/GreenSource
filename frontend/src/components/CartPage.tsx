@@ -197,8 +197,7 @@ const CartPage: React.FC = () => {
     try {
       setLoading(true);
 
-      const order: IOrder = {
-        id: "",
+      const orderData: Omit<IOrder, '_id'> = {
         consumerId: user.email!,
         farmerId: cartItems[0].farmerId,
         status: OrderStatus.PENDING,
@@ -211,8 +210,6 @@ const CartPage: React.FC = () => {
           country: selectedAddress.country,
         },
         items: cartItems.map((item) => ({
-          id: "",
-          orderId: "",
           productId: item._id,
           quantity: item.quantity,
           unitPrice: item.currentPrice,
@@ -222,8 +219,8 @@ const CartPage: React.FC = () => {
         updatedAt: new Date(),
       };
 
-      // Create order - this will now handle all updates
-      const orderResponse = await createOrder(token!, order);
+      // Create order
+      const orderResponse = await createOrder(token!, orderData);
       const orderId = orderResponse.data._id;
 
       // Add order ID to customer's orders
@@ -240,17 +237,6 @@ const CartPage: React.FC = () => {
       // Clear cart in customer service
       await axios.delete(
         `http://localhost:3000/api/customers/api/customers/${user.email}/cart`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // update product quantity
-      await axios.put(
-        `http://localhost:3000/api/products/${cartItems[0]._id}`,
-        { quantityAvailable: cartItems[0].stock - cartItems[0].quantity },
         {
           headers: {
             Authorization: `Bearer ${token}`,

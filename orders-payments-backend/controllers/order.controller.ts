@@ -64,10 +64,13 @@ export class OrderController {
       const orders = await this.orderService.getOrdersByCustomerEmail(
         req.params.email
       );
-      res.json(orders);
+      res.status(200).json(orders);
     } catch (error: unknown) {
-      if (error instanceof Error) res.json({ error: error.message });
-      else res.status(500).json({ error: "unknown error occured" });
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "unknown error occurred" });
+      }
     }
   }
 
@@ -76,10 +79,13 @@ export class OrderController {
       const orders = await this.orderService.getOrdersByFarmerEmail(
         req.params.email
       );
-      res.json(orders);
+      res.status(200).json(orders);
     } catch (error: unknown) {
-      if (error instanceof Error) res.json({ error: error.message });
-      else res.status(500).json({ error: "unknown error occured" });
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "unknown error occurred" });
+      }
     }
   }
 
@@ -107,10 +113,13 @@ export class OrderController {
         res.status(404).json({ error: "Order not found" });
         return;
       }
-      res.json(order);
+      res.status(200).json(order);
     } catch (error: unknown) {
-      if (error instanceof Error) res.json({ error: error.message });
-      else res.status(500).json({ error: "unknown error occured" });
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "unknown error occurred" });
+      }
     }
   }
 

@@ -48,33 +48,19 @@ export default function FarmerOrdersPage() {
     status: OrderStatus
   ) => {
     try {
-      if (status === OrderStatus.CANCELLED) {
-        // First get the order details to know the product quantities
-        const orderResponse = await axios.get(
-          `http://localhost:3000/api/orders/api/orders/${orderId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const order = orderResponse.data as Order;
+      const orderResponse = await axios.get(
+        `http://localhost:3000/api/orders/api/orders/${orderId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const order = orderResponse.data;
 
-        // Update order status
-        await axios.put(
-          `http://localhost:3000/api/orders/api/orders/${orderId}`,
-          { status },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log(order);
-
-        // For each item in the order, restore its quantity
-        for (const item of order?.items) {
-          // First get current product details
+      if (status === OrderStatus.CONFIRMED) {
+        // Decrease product quantities when accepting order
+        for (const item of order.items) {
           const productResponse = await axios.get(
             `http://localhost:3000/api/products/${item.productId}`,
             {
@@ -85,7 +71,34 @@ export default function FarmerOrdersPage() {
           );
           const product = productResponse.data;
 
-          // Update product quantity by adding back the ordered quantity
+          await axios.put(
+            `http://localhost:3000/api/products/${item.productId}`,
+            {
+              quantityAvailable: product.quantityAvailable - item.quantity,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+        }
+      } else if (
+        status === OrderStatus.CANCELLED &&
+        order.status === OrderStatus.CONFIRMED
+      ) {
+        // Restore quantities if cancelling a confirmed order
+        for (const item of order.items) {
+          const productResponse = await axios.get(
+            `http://localhost:3000/api/products/${item.productId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const product = productResponse.data;
+
           await axios.put(
             `http://localhost:3000/api/products/${item.productId}`,
             {
@@ -98,17 +111,19 @@ export default function FarmerOrdersPage() {
             }
           );
         }
-      } else {
-        await axios.put(
-          `http://localhost:3000/api/orders/api/orders/${orderId}`,
-          { status },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
       }
+
+      // Update order status
+      await axios.put(
+        `http://localhost:3000/api/orders/api/orders/${orderId}`,
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       fetchOrders(); // Refresh orders after update
     } catch (error) {
       setError("Failed to update order status");
@@ -130,6 +145,7 @@ export default function FarmerOrdersPage() {
       {}
     );
     const [cancelling, setCancelling] = useState(false);
+    const { token } = useSelector(selectAuth);
 
     useEffect(() => {
       const fetchOrderDetails = async () => {
@@ -170,20 +186,21 @@ export default function FarmerOrdersPage() {
     );
 
     return (
-      <div className="border rounded-lg p-6 shadow-sm">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h3 className="text-lg font-semibold">
-              Order
-              <span className="text-gray-500 text-xs ml-2">#{order._id}</span>
-            </h3>
-            <p className="text-gray-600 text-sm">
-              {new Date(order.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-          <div className="flex flex-col gap-2">
+      <div className="bg-white border rounded-lg p-4 shadow-sm flex flex-col h-full justify-between">
+        <div className="flex flex-col gap-4 flex-grow">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div>
+              <h3 className="text-base font-semibold flex items-center gap-2 flex-wrap">
+                Order
+                <span className="text-gray-500 text-xs">#{order._id}</span>
+              </h3>
+              <p className="text-gray-600 text-sm">
+                {new Date(order.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+
             <span
-              className={`px-3 py-1 rounded-full text-sm text-center ${
+              className={`px-2 py-1 rounded-full text-sm text-center ${
                 order.status === OrderStatus.DELIVERED
                   ? "bg-green-600 text-white"
                   : order.status === OrderStatus.CONFIRMED
@@ -199,84 +216,88 @@ export default function FarmerOrdersPage() {
             >
               {order.status}
             </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {orderDetails[order._id]?.map((item: any, index: number) => (
+              <div
+                key={index}
+                className="p-3 bg-gray-50 rounded flex flex-col justify-between"
+              >
+                <div>
+                  <p className="font-medium text-sm">
+                    {item.productDetails.name}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Quantity: {item.quantity}
+                  </p>
+                </div>
+                <div className="flex justify-between items-center mt-2">
+                  <div>
+                    <p className="text-xs text-gray-500">Unit Price</p>
+                    <p className="font-medium text-sm">
+                      ₹{item.unitPrice.toFixed(2)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Total</p>
+                    <p className="font-medium text-sm">
+                      ₹{item.totalPrice.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4 pt-4 border-t">
+          <div className="flex justify-between items-center mb-4">
+            <span className="font-semibold text-sm">Total Amount:</span>
+            <span className="font-bold text-base">
+              ₹{order.totalAmount.toFixed(2)}
+            </span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-2">
             {order.status === OrderStatus.PENDING && (
-              <div className="flex gap-2">
+              <>
                 <button
                   onClick={() =>
-                    handleUpdateOrderStatus(order.id, OrderStatus.CONFIRMED)
+                    handleUpdateOrderStatus(order._id, OrderStatus.CONFIRMED)
                   }
-                  className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600"
+                  className="px-3 py-1.5 bg-green-500 text-white rounded-md text-sm hover:bg-green-600 flex-1"
                 >
                   Accept
                 </button>
                 <button
                   onClick={() =>
-                    handleUpdateOrderStatus(order.id, OrderStatus.CANCELLED)
+                    handleUpdateOrderStatus(order._id, OrderStatus.CANCELLED)
                   }
-                  className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600"
+                  className="px-3 py-1.5 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 flex-1"
                 >
                   Reject
                 </button>
-              </div>
+              </>
             )}
             {canCancel && order.status !== OrderStatus.PENDING && (
               <button
                 onClick={() =>
-                  handleUpdateOrderStatus(order.id, OrderStatus.CANCELLED)
+                  handleUpdateOrderStatus(order._id, OrderStatus.CANCELLED)
                 }
                 disabled={cancelling}
-                className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:bg-red-300"
+                className="px-3 py-1.5 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 disabled:bg-red-300 flex-1"
               >
                 {cancelling ? "Cancelling..." : "Cancel Order"}
               </button>
             )}
             <Link
               to={`/farmer/orders/${order._id}`}
-              className="mt-2 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-center"
+              className="px-3 py-1.5 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 text-center flex-1"
             >
               View Details
             </Link>
           </div>
-        </div>
-
-        <div className="space-y-4">
-          {orderDetails[order._id]?.map((item: any, index: number) => (
-            <div key={index} className="flex justify-between items-center">
-              <div>
-                <p className="font-medium">{item.productDetails.name}</p>
-                <p className="text-sm text-gray-600">
-                  Quantity: {item.quantity}
-                </p>
-              </div>
-              <p className="font-medium">
-                Unit Price: ₹{item.unitPrice.toFixed(2)}
-              </p>
-              <p className="font-medium">
-                Total Price: ₹{item.totalPrice.toFixed(2)}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-4 pt-4 border-t">
-          <div className="flex justify-between items-center">
-            <span className="font-semibold">Total Amount:</span>
-            <span className="font-bold text-lg">
-              ₹{order.totalAmount.toFixed(2)}
-            </span>
-          </div>
-        </div>
-
-        <div className="mt-4 pt-4 border-t">
-          <h4 className="font-semibold mb-2">Delivery Address:</h4>
-          <p className="text-gray-600">
-            {order.shippingAddress.street}
-            <br />
-            {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
-            {order.shippingAddress.zipCode}
-            <br />
-            {order.shippingAddress.country}
-          </p>
         </div>
       </div>
     );
@@ -284,18 +305,18 @@ export default function FarmerOrdersPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center text-gray-600">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-2xl font-bold mb-6">Active Orders</h1>
+    <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <h1 className="text-2xl md:text-3xl font-bold mb-6">Active Orders</h1>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
           {error}
         </div>
       )}
@@ -304,15 +325,25 @@ export default function FarmerOrdersPage() {
         {activeOrders.map((order) => (
           <OrderCard key={order._id} order={order} />
         ))}
+        {activeOrders.length === 0 && (
+          <p className="text-gray-500 text-center py-4 col-span-full">
+            No active orders
+          </p>
+        )}
       </div>
 
-      <h2 className="text-xl font-bold mb-6 mt-12">
+      <h2 className="text-xl md:text-2xl font-bold mb-6 mt-8">
         Completed & Cancelled Orders
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {completedOrders.map((order) => (
           <OrderCard key={order._id} order={order} />
         ))}
+        {completedOrders.length === 0 && (
+          <p className="text-gray-500 text-center py-4 col-span-full">
+            No completed or cancelled orders
+          </p>
+        )}
       </div>
     </div>
   );
