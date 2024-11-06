@@ -34,7 +34,7 @@ app.use(
 
 app.use(
   "/api/customers",
-  authenticateMultipleRoles(["admin","farmer"]),
+  authenticateMultipleRoles(["admin","consumer"]),
   createProxyMiddleware({
     target: "http://localhost:3001",
     changeOrigin: true,
