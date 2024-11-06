@@ -93,7 +93,8 @@ const Login = () => {
       let url;
       if (formData.userType === "consumer") {
         url = `http://localhost:3001/api/customers/login`;
-      } else if (formData.userType === "farmer") {
+      } 
+      else if (formData.userType === "farmer") {
         url = `http://localhost:3002/api/login`;
       }
 
