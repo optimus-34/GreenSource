@@ -11,6 +11,14 @@ import { selectAuth } from "../store/slices/authSlice";
 import { Plus, X, Upload } from "lucide-react";
 import axios from "axios";
 
+interface Farmer {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  is_verified: boolean;
+}
+
 export default function FarmerProducts() {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,6 +27,7 @@ export default function FarmerProducts() {
   const [productImages, setProductImages] = useState<File[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [farmer, setFarmer] = useState<Farmer | null>(null);
   const [newProduct, setNewProduct] = useState<Partial<IProduct>>({
     name: "",
     description: "",
@@ -32,8 +41,20 @@ export default function FarmerProducts() {
   const { user, token } = useSelector(selectAuth);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchFarmerAndProducts = async () => {
       try {
+        // Fetch farmer details first
+        const farmerResponse = await axios.get(
+          `http://localhost:3000/api/farmers/api/farmers/${user.email}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setFarmer(farmerResponse.data);
+
+        // Then fetch products
         const data = await getFarmerProducts(
           token as string,
           user.email as string
@@ -41,12 +62,12 @@ export default function FarmerProducts() {
         setProducts(data);
         setLoading(false);
       } catch (err: unknown) {
-        setError(`Failed to fetch products ${err}`);
+        setError(`Failed to fetch data ${err}`);
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchFarmerAndProducts();
   }, [user.email, token]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,6 +169,20 @@ export default function FarmerProducts() {
       setLoading(false);
     }
   };
+
+  if (!farmer?.is_verified) {
+    return (
+      <div className="flex-grow p-8">
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
+          <p className="font-bold">Account Not Verified</p>
+          <p>
+            Your account needs to be verified by an admin before you can add
+            products.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return <p className="text-lg">Loading...</p>;

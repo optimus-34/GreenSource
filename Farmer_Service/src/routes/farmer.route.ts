@@ -18,7 +18,7 @@ import {
   deleteProduct,
   addOrder,
   getEarnings,
-  deleteFarmerAddress
+  deleteFarmerAddress,
 } from "../controllers/farmer.controller";
 import {
   createAddress,
@@ -41,7 +41,7 @@ router.put("/farmers/:email/update/email", updateFarmerEmail);
 router.put("/farmers/:email/update/is_verified", updateFarmerVerifiedStatus);
 router.post("/farmers/:email/add/product/", addProduct);
 router.delete("/farmers/:email/delete/product/:productId", deleteProduct);
-router.delete('/farmers/:email/delete/address/:addressId', deleteFarmerAddress);
+router.delete("/farmers/:email/delete/address/:addressId", deleteFarmerAddress);
 router.get("/farmers/:email/get/earnings", getEarnings);
 router.get("/farmers/:email/get/products", getProducts);
 router.get("/farmers/:email/get/orders", getOrders);
@@ -55,5 +55,3 @@ router.post("/login", loginFarmer);
 router.delete("/address/:id", deleteAddress);
 
 export default router;
-
-

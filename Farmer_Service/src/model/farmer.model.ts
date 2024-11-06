@@ -10,10 +10,13 @@ const FarmerSchema = new Schema(
     last_name: { type: String, required: true },
     addresses: [{ type: Types.ObjectId, ref: "Address" }],
     list_products: [{ type: Types.ObjectId }],
-    list_sales: [{
-      orderId: { type: String },
-      amount: { type: Number }
-    }],
+    list_sales: [
+      {
+        orderId: { type: String },
+        amount: { type: Number },
+      },
+    ],
+    is_verified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

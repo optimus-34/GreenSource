@@ -312,7 +312,7 @@ export const getEarnings = async (req: Request, res: Response) => {
 
     orders.forEach((order: any) => {
       // Only calculate earnings for delivered orders
-      if (order.status === 'DELIVERED') {
+      if (order.status === "DELIVERED") {
         const orderDate = new Date(order.createdAt);
         const amount = order.totalAmount;
 
@@ -340,7 +340,7 @@ export const getEarnings = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error calculating earnings:", error);
     res.status(500).json({
-      message: "Error calculating earnings", 
+      message: "Error calculating earnings",
       error:
         error instanceof Error ? error.message : "An unexpected error occurred",
     });

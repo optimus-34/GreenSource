@@ -5,6 +5,14 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import AdminDashboard from "./components/AdminDashboard";
 import AdminOverview from "./components/AdminOverview";
+import AdminFarmersView from "./components/AdminFarmersView";
+import AdminDeliveryAgentsView from "./components/AdminDeliveryAgentsView";
+import AdminConsumersView from "./components/AdminConsumersView";
+import AdminProducts from "./components/AdminProducts";
+import AdminAnalytics from "./components/AdminAnalytics";
+import AdminSettings from "./components/AdminSettings";
+import AdminFarmerProductsPage from "./components/AdminFarmerProductsPage";
+import AdminFarmerOrdersPage from "./components/AdminFarmerOrdersPage";
 
 function App() {
   return (
@@ -18,6 +26,70 @@ function App() {
             element={
               <AdminDashboard>
                 <AdminOverview />
+              </AdminDashboard>
+            }
+          />
+          <Route
+            path="/admin/users/farmers"
+            element={
+              <AdminDashboard>
+                <AdminFarmersView />
+              </AdminDashboard>
+            }
+          />
+          <Route
+            path="/admin/users/delivery-agents"
+            element={
+              <AdminDashboard>
+                <AdminDeliveryAgentsView />
+              </AdminDashboard>
+            }
+          />
+          <Route
+            path="/admin/users/consumers"
+            element={
+              <AdminDashboard>
+                <AdminConsumersView />
+              </AdminDashboard>
+            }
+          />
+          <Route
+            path="/admin/products"
+            element={
+              <AdminDashboard>
+                <AdminProducts />
+              </AdminDashboard>
+            }
+          />
+          <Route
+            path="/admin/analytics"
+            element={
+              <AdminDashboard>
+                <AdminAnalytics />
+              </AdminDashboard>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <AdminDashboard>
+                <AdminSettings />
+              </AdminDashboard>
+            }
+          />
+          <Route
+            path="/admin/farmers/:farmerId/products"
+            element={
+              <AdminDashboard>
+                <AdminFarmerProductsPage />
+              </AdminDashboard>
+            }
+          />
+          <Route
+            path="/admin/farmers/:farmerId/orders"
+            element={
+              <AdminDashboard>
+                <AdminFarmerOrdersPage />
               </AdminDashboard>
             }
           />
