@@ -25,7 +25,7 @@ app.use(
 // Farmer Service Proxy (protected)
 app.use(
   "/api/farmers",
-  authenticateFarmer,
+  authenticateMultipleRoles(["admin","farmer"]),
   createProxyMiddleware({
     target: "http://localhost:3002", 
     changeOrigin: true,
@@ -34,7 +34,7 @@ app.use(
 
 app.use(
   "/api/customers",
-  authenticateConsumer,
+  authenticateMultipleRoles(["admin","farmer"]),
   createProxyMiddleware({
     target: "http://localhost:3001",
     changeOrigin: true,
