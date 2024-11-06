@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
 import { OrderService } from "../services/order.service";
+import axios from "axios";
+import { IOrder } from "../types/order";
+
+interface IOrderWithId extends IOrder {
+  _id: string;
+}
 
 export class OrderController {
   private orderService: OrderService;
@@ -10,12 +16,35 @@ export class OrderController {
 
   async createOrder(req: Request, res: Response): Promise<void> {
     try {
-      const order = await this.orderService.createOrder(req.body);
+      const order = (await this.orderService.createOrder(
+        req.body
+      )) as IOrderWithId;
+
+      // Update farmer's orders
+      try {
+        await axios.post(
+          `http://localhost:3002/api/farmers/${order.farmerId}/add/order`,
+          {
+            orderId: order._id,
+            amount: order.totalAmount,
+          },
+          {
+            headers: {
+              Authorization: req.headers.authorization,
+            },
+          }
+        );
+      } catch (farmerError) {
+        // If farmer update fails, we should probably roll back the order creation
+        await this.orderService.cancelOrder(order._id);
+        throw new Error("Failed to update farmer's orders");
+      }
+
       res.status(201).json(order);
     } catch (error: unknown) {
       if (error instanceof Error)
         res.status(400).json({ error: error.message });
-      else res.status(500).json({ error: "unknown error occured" });
+      else res.status(500).json({ error: "unknown error occurred" });
     }
   }
 

@@ -197,9 +197,8 @@ const CartPage: React.FC = () => {
     try {
       setLoading(true);
 
-      // Create order object that matches IOrder interface
       const order: IOrder = {
-        id: "", // Will be set by backend
+        id: "",
         consumerId: user.email!,
         farmerId: cartItems[0].farmerId,
         status: OrderStatus.PENDING,
@@ -212,8 +211,8 @@ const CartPage: React.FC = () => {
           country: selectedAddress.country,
         },
         items: cartItems.map((item) => ({
-          id: "", // Will be set by backend
-          orderId: "", // Will be set by backend
+          id: "",
+          orderId: "",
           productId: item._id,
           quantity: item.quantity,
           unitPrice: item.currentPrice,
@@ -223,26 +222,14 @@ const CartPage: React.FC = () => {
         updatedAt: new Date(),
       };
 
-      // First create the order in the orders service
+      // Create order - this will now handle all updates
       const orderResponse = await createOrder(token!, order);
-      console.log(orderResponse.data._id);
       const orderId = orderResponse.data._id;
 
       // Add order ID to customer's orders
       await axios.post(
         `http://localhost:3000/api/customers/api/customers/${user.email}/orders`,
-        { orderId }, // Send only the order ID
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // Add order ID to farmer's orders
-      await axios.post(
-        `http://localhost:3000/api/farmers/api/farmers/${order.farmerId}/add/order`,
-        { orderId, amount: order.totalAmount }, // Send only the order ID
+        { orderId },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -253,6 +240,17 @@ const CartPage: React.FC = () => {
       // Clear cart in customer service
       await axios.delete(
         `http://localhost:3000/api/customers/api/customers/${user.email}/cart`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // update product quantity
+      await axios.put(
+        `http://localhost:3000/api/products/${cartItems[0]._id}`,
+        { quantityAvailable: cartItems[0].stock - cartItems[0].quantity },
         {
           headers: {
             Authorization: `Bearer ${token}`,

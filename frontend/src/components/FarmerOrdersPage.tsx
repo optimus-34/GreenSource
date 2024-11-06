@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { selectAuth } from "../store/slices/authSlice";
 import { IOrder, OrderStatus } from "../types/Order";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 interface Order extends IOrder {
   _id: string;
@@ -48,15 +48,67 @@ export default function FarmerOrdersPage() {
     status: OrderStatus
   ) => {
     try {
-      await axios.put(
-        `http://localhost:3000/api/orders/api/orders/${orderId}`,
-        { status },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      if (status === OrderStatus.CANCELLED) {
+        // First get the order details to know the product quantities
+        const orderResponse = await axios.get(
+          `http://localhost:3000/api/orders/api/orders/${orderId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const order = orderResponse.data as Order;
+
+        // Update order status
+        await axios.put(
+          `http://localhost:3000/api/orders/api/orders/${orderId}`,
+          { status },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(order);
+
+        // For each item in the order, restore its quantity
+        for (const item of order?.items) {
+          // First get current product details
+          const productResponse = await axios.get(
+            `http://localhost:3000/api/products/${item.productId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const product = productResponse.data;
+
+          // Update product quantity by adding back the ordered quantity
+          await axios.put(
+            `http://localhost:3000/api/products/${item.productId}`,
+            {
+              quantityAvailable: product.quantityAvailable + item.quantity,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
         }
-      );
+      } else {
+        await axios.put(
+          `http://localhost:3000/api/orders/api/orders/${orderId}`,
+          { status },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
       fetchOrders(); // Refresh orders after update
     } catch (error) {
       setError("Failed to update order status");
@@ -169,7 +221,9 @@ export default function FarmerOrdersPage() {
             )}
             {canCancel && order.status !== OrderStatus.PENDING && (
               <button
-                onClick={() => handleUpdateOrderStatus(order.id, OrderStatus.CANCELLED)}
+                onClick={() =>
+                  handleUpdateOrderStatus(order.id, OrderStatus.CANCELLED)
+                }
                 disabled={cancelling}
                 className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:bg-red-300"
               >
