@@ -36,7 +36,7 @@ const Signup = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    phone: ""
+    phone: "",
   });
 
   const handleInputChange = (
@@ -61,9 +61,9 @@ const Signup = () => {
 
     // Clear validation errors when user types
     if (Object.keys(validationErrors).includes(name)) {
-      setValidationErrors(prev => ({
+      setValidationErrors((prev) => ({
         ...prev,
-        [name]: ""
+        [name]: "",
       }));
     }
   };
@@ -74,7 +74,7 @@ const Signup = () => {
       email: "",
       password: "",
       confirmPassword: "",
-      phone: ""
+      phone: "",
     };
 
     // Email validation
@@ -85,9 +85,11 @@ const Signup = () => {
     }
 
     // Password validation
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(formData.password)) {
-      errors.password = "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character";
+      errors.password =
+        "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character";
       isValid = false;
     }
 
@@ -131,29 +133,30 @@ const Signup = () => {
           },
         }
       );
-      console.log(response.data.id);
       let responseData;
       if (userType === "farmer") {
         responseData = await axios.post(
-          "http://localhost:3002/api/farmers/",
+          "http://localhost:3002/api/farmers",
           {
             addresses: showAddressForm ? [formData.address] : [],
             email: formData.email,
             first_name: formData.firstName,
             last_name: formData.lastName,
             phone: formData.phone,
+            is_verified: false,
             list_products: [],
             list_sales: [],
           },
           {
             headers: {
               "Content-Type": "application/json",
+              // Authorization: `Bearer ${response.data.token}`,
             },
           }
         );
       } else {
         responseData = await axios.post(
-          "http://localhost:3001/api/customers/",
+          "http://localhost:3001/api/customers",
           {
             email: formData.email,
             firstName: formData.firstName,
@@ -168,6 +171,7 @@ const Signup = () => {
           {
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${response.data.token}`,
             },
           }
         );
@@ -179,9 +183,7 @@ const Signup = () => {
           payload: response.data,
         });
 
-        navigate(
-          "/login"
-        );
+        navigate("/login");
       }
     } catch (error) {
       dispatch(
@@ -220,7 +222,9 @@ const Signup = () => {
                   }
                   className="form-radio h-4 w-4 text-blue-500 focus:ring-blue-400"
                 />
-                <span className="ml-2 text-gray-700 group-hover:text-blue-600 transition-colors">Consumer</span>
+                <span className="ml-2 text-gray-700 group-hover:text-blue-600 transition-colors">
+                  Consumer
+                </span>
               </label>
               <label className="inline-flex items-center group cursor-pointer">
                 <input
@@ -233,7 +237,9 @@ const Signup = () => {
                   }
                   className="form-radio h-4 w-4 text-green-500 focus:ring-green-400"
                 />
-                <span className="ml-2 text-gray-700 group-hover:text-green-600 transition-colors">Farmer</span>
+                <span className="ml-2 text-gray-700 group-hover:text-green-600 transition-colors">
+                  Farmer
+                </span>
               </label>
             </div>
 
@@ -308,11 +314,13 @@ const Signup = () => {
                 value={formData.email}
                 onChange={handleInputChange}
                 className={`mt-1 w-full px-3 py-1.5 bg-gradient-to-r from-blue-50 to-green-50 border ${
-                  validationErrors.email ? 'border-red-500' : 'border-blue-200'
+                  validationErrors.email ? "border-red-500" : "border-blue-200"
                 } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200`}
               />
               {validationErrors.email && (
-                <p className="mt-1 text-xs text-red-500">{validationErrors.email}</p>
+                <p className="mt-1 text-xs text-red-500">
+                  {validationErrors.email}
+                </p>
               )}
             </div>
 
@@ -332,11 +340,15 @@ const Signup = () => {
                   value={formData.phone}
                   onChange={handleInputChange}
                   className={`mt-1 w-full px-3 py-1.5 bg-gradient-to-r from-blue-50 to-green-50 border ${
-                    validationErrors.phone ? 'border-red-500' : 'border-blue-200'
+                    validationErrors.phone
+                      ? "border-red-500"
+                      : "border-blue-200"
                   } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200`}
                 />
                 {validationErrors.phone && (
-                  <p className="mt-1 text-xs text-red-500">{validationErrors.phone}</p>
+                  <p className="mt-1 text-xs text-red-500">
+                    {validationErrors.phone}
+                  </p>
                 )}
               </div>
             )}
@@ -357,11 +369,15 @@ const Signup = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   className={`mt-1 w-full px-3 py-1.5 bg-gradient-to-r from-blue-50 to-green-50 border ${
-                    validationErrors.password ? 'border-red-500' : 'border-blue-200'
+                    validationErrors.password
+                      ? "border-red-500"
+                      : "border-blue-200"
                   } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200`}
                 />
                 {validationErrors.password && (
-                  <p className="mt-1 text-xs text-red-500">{validationErrors.password}</p>
+                  <p className="mt-1 text-xs text-red-500">
+                    {validationErrors.password}
+                  </p>
                 )}
               </div>
               <div className="transform transition-all duration-200 hover:translate-x-1">
@@ -379,11 +395,15 @@ const Signup = () => {
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   className={`mt-1 w-full px-3 py-1.5 bg-gradient-to-r from-blue-50 to-green-50 border ${
-                    validationErrors.confirmPassword ? 'border-red-500' : 'border-blue-200'
+                    validationErrors.confirmPassword
+                      ? "border-red-500"
+                      : "border-blue-200"
                   } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200`}
                 />
                 {validationErrors.confirmPassword && (
-                  <p className="mt-1 text-xs text-red-500">{validationErrors.confirmPassword}</p>
+                  <p className="mt-1 text-xs text-red-500">
+                    {validationErrors.confirmPassword}
+                  </p>
                 )}
               </div>
             </div>
@@ -405,7 +425,9 @@ const Signup = () => {
             {/* Address Form */}
             {showAddressForm && (
               <div className="space-y-3 p-3 border border-blue-200 rounded-lg bg-gradient-to-r from-blue-50/50 to-green-50/50">
-                <h3 className="text-base font-medium bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">Address Details</h3>
+                <h3 className="text-base font-medium bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                  Address Details
+                </h3>
                 <div className="transform transition-all duration-200 hover:translate-x-1">
                   <label
                     htmlFor="street"
@@ -502,14 +524,32 @@ const Signup = () => {
               type="submit"
               disabled={loading}
               className={`w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1.5 px-4 rounded-lg font-medium text-base hover:from-blue-600 hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transform transition-all duration-300 ${
-                loading ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/20"
+                loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/20"
               }`}
             >
               {loading ? (
                 <span className="inline-flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Creating Account...
                 </span>
@@ -543,43 +583,60 @@ const Signup = () => {
                 <span className="text-blue-300">Source</span>
               </h2>
               <p className="text-gray-400 max-w-2xl mx-auto text-sm">
-                Building a sustainable future by connecting farmers directly with consumers.
-                Join us in revolutionizing the agricultural marketplace.
+                Building a sustainable future by connecting farmers directly
+                with consumers. Join us in revolutionizing the agricultural
+                marketplace.
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
               <div className="space-y-2">
-                <h4 className="font-bold text-lg mb-2 text-green-400">About Us</h4>
+                <h4 className="font-bold text-lg mb-2 text-green-400">
+                  About Us
+                </h4>
                 <p className="text-gray-400 leading-relaxed text-sm">
-                  Empowering farmers and consumers through direct trade relationships
-                  for a more sustainable and equitable food system.
+                  Empowering farmers and consumers through direct trade
+                  relationships for a more sustainable and equitable food
+                  system.
                 </p>
               </div>
-              
+
               <div className="space-y-2">
-                <h4 className="font-bold text-lg mb-2 text-green-400">Quick Links</h4>
+                <h4 className="font-bold text-lg mb-2 text-green-400">
+                  Quick Links
+                </h4>
                 <ul className="space-y-1">
                   <li>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors hover:underline">
+                    <a
+                      href="#"
+                      className="text-gray-400 hover:text-white transition-colors hover:underline"
+                    >
                       How it Works
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors hover:underline">
+                    <a
+                      href="#"
+                      className="text-gray-400 hover:text-white transition-colors hover:underline"
+                    >
                       For Farmers
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors hover:underline">
+                    <a
+                      href="#"
+                      className="text-gray-400 hover:text-white transition-colors hover:underline"
+                    >
                       For Consumers
                     </a>
                   </li>
                 </ul>
               </div>
-              
+
               <div className="space-y-2">
-                <h4 className="font-bold text-lg mb-2 text-green-400">Contact</h4>
+                <h4 className="font-bold text-lg mb-2 text-green-400">
+                  Contact
+                </h4>
                 <ul className="space-y-1">
                   <li className="text-gray-400 hover:text-white transition-colors">
                     <span className="block font-medium">Email</span>
@@ -592,7 +649,7 @@ const Signup = () => {
                 </ul>
               </div>
             </div>
-            
+
             <div className="border-t border-gray-700 mt-4 pt-2 text-center">
               <p className="text-gray-400 text-sm">
                 © 2024 GreenSource Marketplace. All rights reserved.

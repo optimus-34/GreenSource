@@ -5,22 +5,41 @@ import { useSelector } from "react-redux";
 import { selectAuth } from "../store/slices/authSlice";
 import { Trash2 } from "lucide-react";
 
-interface Product {
+enum ProductCategory {
+  VEGETABLES = "VEGETABLES",
+  FRUITS = "FRUITS",
+  DAIRY = "DAIRY",
+  MEAT = "MEAT",
+  GRAINS = "GRAINS",
+}
+
+interface IProduct {
   _id: string;
+  farmerId: string;
+  farmerName: string;
   name: string;
   description: string;
   basePrice: number;
   currentPrice: number;
   quantityAvailable: number;
   unit: string;
-  category: string;
-  images?: { imageUrl: string }[];
+  category: ProductCategory;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface IProductImage {
+  _id: string;
+  productId: string;
+  imageUrl: string;
+  displayOrder: number;
 }
 
 export default function AdminFarmerProductsPage() {
   const { farmerId } = useParams();
   const { token } = useSelector(selectAuth);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,20 +56,8 @@ export default function AdminFarmerProductsPage() {
         }
       );
 
-      // Fetch images for each product
-      const productsWithImages = await Promise.all(
-        response.data.map(async (product: Product) => {
-          const imagesResponse = await axios.get(
-            `http://localhost:3000/api/products/${product._id}/images`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          return { ...product, images: imagesResponse.data };
-        })
-      );
+      setProducts(response.data);
 
-      setProducts(productsWithImages);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -76,7 +83,6 @@ export default function AdminFarmerProductsPage() {
 
   if (loading) return <div className="p-8">Loading...</div>;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
-  console.log(products[0].images);
 
   return (
     <div className="p-8">
@@ -89,7 +95,7 @@ export default function AdminFarmerProductsPage() {
             className="bg-white rounded-lg shadow-md overflow-hidden"
           >
             <img
-              src={product?.images?.[0]?.imageUrl}
+              src={""}
               alt={product.name}
               className="w-full h-48 object-cover"
             />
