@@ -1,36 +1,51 @@
 // src/middleware/authenticate.ts
-import axios from 'axios';
 import { Request, Response, NextFunction } from 'express';
+import axios from 'axios';
 
-export const authenticateJWT = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const token = req.headers.authorization?.split(' ')[1];
+interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    role: string;
+  };
+}
 
-    // Ensure token is defined
-    if (!token) {
-         res.status(401).json({ message: 'Access token required' });
-         return;
-    }
-
+export const authenticate = (allowedRoles: string[]) => {
+  return async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-        // Send token to authentication service for validation
-        const response = await axios.get('http://localhost:8082/validate', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+      const token = req.headers.authorization?.split(' ')[1];
 
-        // If validation is successful, attach user info to request
-        const user = response.data; // Adjust based on the response structure
-        //res.status(200).json({ message: "user authenticated sucessfully" }); // Adjust based on the response structure
-        next(); // Proceed to the next middleware or route handler
+      if (!token) {
+        res.status(401).json({ message: 'Authentication required' });
+      }
+
+      // Validate token by calling auth service
+      const response = await axios.get('http://localhost:8082/validate', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const { id, role } = response.data;
+
+      // Check if user's role is allowed
+      if (!allowedRoles.includes(role)) {
+          res.status(403).json({
+          message: 'Access denied. Insufficient permissions.'
+        });
+      }
+
+      req.user = { id, role };
+      next();
     } catch (error) {
-        if (error instanceof Error) {
-            res.status(403).json({ message: 'Invalid token', error: error.message });
-        } else {
-            res.status(403).json({ message: 'Invalid token' });
-        }
-        return;
+      console.error('Authentication error:', error);
+      res.status(401).json({ message: 'Invalid or expired token' });
     }
-    
+  };
 };
 
+// Specific middleware for different roles
+export const authenticateAdmin = authenticate(['admin']);
+export const authenticateFarmer = authenticate(['farmer']);
+export const authenticateConsumer = authenticate(['consumer']);
+export const authenticateDeliveryAgent = authenticate(['delivery_agent']);
+
+// Middleware that allows multiple roles
+export const authenticateMultipleRoles = (roles: string[]) => authenticate(roles);

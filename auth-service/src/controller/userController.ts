@@ -132,7 +132,7 @@ export const login = async (req: Request, res: Response) => {
   const token = jwt.sign(
     { id: user.id, role: user.role },
     SECRET_KEY as string,
-    { expiresIn: "1h" }
+    { expiresIn: "2h" }
   );
   res.json({ token , user});
   return;
@@ -151,7 +151,8 @@ export const validateToken = (req: Request, res: Response): void => {
       return res.status(403).json({ message: "Invalid token" });
     }
 
-    // Return the user information or any relevant data you need
-    res.status(200).json({ user: decoded });
+    // Return just the id and role that were used to create the token
+    const { id, role } = decoded as { id: string; role: string };
+    res.status(200).json({ message: "Token validation successful", id, role });
   });
 };

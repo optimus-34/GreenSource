@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
-import { authenticateJWT } from "./middleware/authenticate";
+import { authenticateConsumer, authenticateFarmer, authenticateMultipleRoles } from "./middleware/authenticate";
 
 const app = express();
 app.use(
@@ -22,19 +22,19 @@ app.use(
   })
 );
 
-// Finance Service Proxy (protected)
+// Farmer Service Proxy (protected)
 app.use(
   "/api/farmers",
-  authenticateJWT,
+  authenticateFarmer,
   createProxyMiddleware({
-    target: "http://localhost:3002",
+    target: "http://localhost:3002", 
     changeOrigin: true,
   })
 );
 
 app.use(
   "/api/customers",
-  authenticateJWT,
+  authenticateConsumer,
   createProxyMiddleware({
     target: "http://localhost:3001",
     changeOrigin: true,
@@ -43,7 +43,7 @@ app.use(
 
 app.use(
   "/api/products",
-  authenticateJWT,
+  authenticateMultipleRoles(["admin", "farmer","consumer","delivery_agent"]),
   createProxyMiddleware({
     target: "http://localhost:3005",
     changeOrigin: true,
@@ -52,7 +52,7 @@ app.use(
 
 app.use(
   "/api/orders",
-  authenticateJWT,
+  authenticateMultipleRoles(["admin", "farmer","consumer","delivery_agent"]),
   createProxyMiddleware({
     target: "http://localhost:3003",
     changeOrigin: true,
@@ -61,7 +61,7 @@ app.use(
 
 app.use(
   "/api/delivery",
-  authenticateJWT,
+  authenticateMultipleRoles(["admin", "farmer","consumer","delivery_agent"]),
   createProxyMiddleware({
     target: "http://localhost:3006",
     changeOrigin: true,
