@@ -1,7 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAuth, logout } from "../store/slices/authSlice";
-import { Users, ShoppingBag, Settings, Activity, Menu, X, ChevronDown, ChevronRight, LayoutDashboard } from "lucide-react";
+import {
+  Users,
+  ShoppingBag,
+  Settings,
+  Activity,
+  Menu,
+  X,
+  ChevronDown,
+  ChevronRight,
+  LayoutDashboard,
+} from "lucide-react";
 import { useState } from "react";
 
 const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
@@ -20,7 +30,7 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
     {
       icon: <LayoutDashboard className="w-5 h-5" />,
       label: "Overview",
-      path: "/admin",
+      path: "/admin/dashboard",
     },
     {
       icon: <Users className="w-5 h-5" />,
@@ -35,6 +45,10 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
           label: "Customers",
           path: "/admin/users/customers",
         },
+        {
+          label: "Delivery Agents",
+          path: "/admin/users/delivery-agents",
+        },
       ],
     },
     {
@@ -44,7 +58,7 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
     },
     {
       icon: <Activity className="w-5 h-5" />,
-      label: "Analytics", 
+      label: "Analytics",
       path: "/admin/analytics",
     },
     {
@@ -72,19 +86,27 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
           <span className="text-gray-600 text-sm ml-2">Admin</span>
         </h1>
         <button onClick={toggleSidebar} className="p-2">
-          {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isSidebarOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </div>
 
       {/* Sidebar */}
-      <div className={`
+      <div
+        className={`
         fixed md:sticky md:top-0
         w-64 h-[100dvh]
         bg-white shadow-lg 
         transition-transform duration-300 ease-in-out
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }
         z-50
-      `}>
+      `}
+      >
         <div className="flex flex-col h-full">
           <div className="hidden md:block p-5 border-b">
             <h1 className="text-xl font-bold">
@@ -107,8 +129,11 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
                     }
                   }}
                   className={`flex items-center justify-between w-full px-4 py-3 mb-2 rounded-lg hover:bg-gray-100 ${
-                    (item.path === window.location.pathname || 
-                     (item.subItems && item.subItems.some(sub => sub.path === window.location.pathname)))
+                    item.path === window.location.pathname ||
+                    (item.subItems &&
+                      item.subItems.some(
+                        (sub) => sub.path === window.location.pathname
+                      ))
                       ? "text-blue-500 bg-blue-50"
                       : "text-gray-600"
                   }`}
@@ -117,11 +142,14 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
                     {item.icon}
                     <span>{item.label}</span>
                   </div>
-                  {item.subItems && (
-                    isUsersOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
-                  )}
+                  {item.subItems &&
+                    (isUsersOpen ? (
+                      <ChevronDown className="w-4 h-4" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4" />
+                    ))}
                 </button>
-                
+
                 {item.subItems && isUsersOpen && (
                   <div className="ml-8">
                     {item.subItems.map((subItem) => (

@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import AdminDashboard from "./components/AdminDashboard";
+import AdminOverview from "./components/AdminOverview";
 
 function App() {
   return (
@@ -12,7 +13,14 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<AdminDashboard children={<></>} />} />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <AdminDashboard>
+                <AdminOverview />
+              </AdminDashboard>
+            }
+          />
         </Routes>
       </Provider>
     </>

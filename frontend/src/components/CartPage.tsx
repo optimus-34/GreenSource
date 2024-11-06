@@ -60,12 +60,28 @@ const CartPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await getCustomerCart(token!, user.email!);
-      // Get product details for each cart item
+
+      // Create a map to track quantities by productId
+      const quantityMap = response.data.reduce(
+        (map: { [key: string]: number }, item: ICartItem) => {
+          map[item.productId] =
+            (map[item.productId] || 0) + Number(item.quantity);
+          return map;
+        },
+        {}
+      );
+
+      // Get unique product IDs
+      const uniqueProductIds = [
+        ...new Set(response.data.map((item: ICartItem) => item.productId)),
+      ];
+
+      // Get product details for each unique product
       const cartItemsWithDetails = await Promise.all(
-        response.data.map(async (item: ICartItem) => {
+        uniqueProductIds.map(async (productId) => {
           try {
             const productResponse = await axios.get(
-              `http://localhost:3000/api/products/${item.productId}`,
+              `http://localhost:3000/api/products/${productId}`,
               {
                 headers: {
                   "Content-Type": "application/json",
@@ -75,11 +91,11 @@ const CartPage: React.FC = () => {
             );
             return {
               ...productResponse.data,
-              quantity: 1, // Default quantity
+              quantity: quantityMap[productId as string], // Use aggregated quantity
               stock: productResponse.data.quantityAvailable,
             };
           } catch (err) {
-            console.error(`Error fetching product ${item.productId}:`, err);
+            console.error(`Error fetching product ${productId}:`, err);
             return null;
           }
         })

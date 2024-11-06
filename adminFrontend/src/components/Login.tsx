@@ -97,7 +97,7 @@ const Login = () => {
           type: "auth/loginSuccess",
           payload: response.data,
         });
-        navigate("/dashboard");
+        navigate("/admin/dashboard");
       }
     } catch (error) {
       dispatch(
