@@ -190,9 +190,9 @@ const FarmerProfile: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">First Name</label>
+                  <label className="block text-lg font-semibold text-gray-700 mb-1">First Name</label>
                   <input
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all text-xl font-bold text-gray-900"
                     placeholder="First Name"
                     value={farmerData.firstName}
                     onChange={(e) => setFarmerData({...farmerData, firstName: e.target.value})}
@@ -200,9 +200,9 @@ const FarmerProfile: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">Last Name</label>
+                  <label className="block text-lg font-semibold text-gray-700 mb-1">Last Name</label>
                   <input
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all text-xl font-bold text-gray-900"
                     placeholder="Last Name"
                     value={farmerData.lastName}
                     onChange={(e) => setFarmerData({...farmerData, lastName: e.target.value})}
@@ -210,9 +210,9 @@ const FarmerProfile: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">Phone Number</label>
+                  <label className="block text-lg font-semibold text-gray-700 mb-1">Phone Number</label>
                   <input
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all text-xl font-bold text-gray-900"
                     placeholder="Phone Number"
                     value={farmerData.phone}
                     onChange={(e) => setFarmerData({...farmerData, phone: e.target.value})}
@@ -220,9 +220,9 @@ const FarmerProfile: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">Email</label>
+                  <label className="block text-lg font-semibold text-gray-700 mb-1">Email</label>
                   <input
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-xl font-bold text-gray-900"
                     value={farmerData.email}
                     disabled
                   />
@@ -235,7 +235,7 @@ const FarmerProfile: React.FC = () => {
           <div className="md:col-span-1">
             <div className="bg-white rounded-2xl shadow-xl p-6 h-[400px] relative">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-900">Farm Addresses</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Farm <br /> Addresses</h2>
                 <button
                   className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 shadow-md text-sm"
                   onClick={() => setIsAddingAddress(true)}

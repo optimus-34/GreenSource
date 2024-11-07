@@ -167,7 +167,7 @@ export default function MarketPage() {
           </span>
           <button 
             onClick={handleRefresh}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 transform hover:scale-105"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
@@ -182,13 +182,13 @@ export default function MarketPage() {
         <input
           type="text"
           placeholder="Search commodities, states or markets..."
-          className="p-2 border rounded-lg"
+          className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
           onChange={(e) => debouncedSearch(e.target.value)}
         />
         
         <select 
           onChange={(e) => throttledStateFilter(e.target.value)}
-          className="p-2 border rounded-lg"
+          className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
         >
           <option value="">All States</option>
           {states.map(state => (
@@ -199,7 +199,7 @@ export default function MarketPage() {
         <select
           value={selectedCommodity}
           onChange={(e) => handleCommoditySelect(e.target.value)}
-          className="p-2 border rounded-lg"
+          className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
         >
           <option value="">All Commodities</option>
           {commodities.map(commodity => (
@@ -214,7 +214,7 @@ export default function MarketPage() {
           <div
             key={index}
             ref={index === displayedRecords.length - 1 ? lastRecordElementRef : null}
-            className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+            className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 transform hover:scale-105"
           >
             <div className="p-4">
               <h3 className="text-xl font-bold mb-4">{record.commodity}</h3>
