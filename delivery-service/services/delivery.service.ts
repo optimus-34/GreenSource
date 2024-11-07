@@ -4,31 +4,37 @@ import mongoose from "mongoose";
 
 class DeliveryService {
   // Delivery Agent Management
-  async createDeliveryAgent(agentData: {
-    name: string;
-    email: string;
-    phone: string;
-    currentLocation: { coordinates: [number, number] };
-    serviceLocations: Array<{
-      name: string;
-      coordinates: [number, number];
-      radius: number;
-    }>;
-  }): Promise<IDeliveryAgent> {
+  async createDeliveryAgent(
+    agentData: IDeliveryAgent
+  ): Promise<IDeliveryAgent> {
+    // Ensure serviceLocations is an array
+    const serviceLocations = agentData.serviceLocations || [];
+
     // Validate service locations (max 5)
-    if (agentData.serviceLocations.length > 5) {
+    if (serviceLocations.length > 5) {
       throw new Error("Maximum 5 service locations allowed per agent");
     }
-    return await new DeliveryAgent(agentData).save();
+
+    // Create new agent with validated data
+    const newAgent = new DeliveryAgent({
+      ...agentData,
+      serviceLocations,
+    });
+
+    return await newAgent.save();
   }
 
   async updateDeliveryAgent(
     agentId: string,
     updateData: Partial<IDeliveryAgent>
   ): Promise<IDeliveryAgent | null> {
-    if (updateData.serviceLocations && updateData.serviceLocations.length > 5) {
-      throw new Error("Maximum 5 service locations allowed per agent");
+    // Ensure serviceLocations is an array if it's being updated
+    if (updateData.serviceLocations) {
+      if (updateData.serviceLocations.length > 5) {
+        throw new Error("Maximum 5 service locations allowed per agent");
+      }
     }
+
     return await DeliveryAgent.findByIdAndUpdate(agentId, updateData, {
       new: true,
     });
@@ -39,6 +45,7 @@ class DeliveryService {
     orderId: string;
     farmerId: string;
     customerId: string;
+    deliveryAgentId: string;
     pickupLocation: { address: string };
     deliveryLocation: { address: string };
   }): Promise<IDelivery> {
@@ -70,6 +77,45 @@ class DeliveryService {
     return delivery;
   }
 
+  async getAvailableAgents(): Promise<IDeliveryAgent[]> {
+    return DeliveryAgent.find({ orderCount: { $lt: 5 }, isAvailable: true });
+  }
+
+  async updateDeliveryAgentOrderCount(
+    agentId: string
+  ): Promise<IDeliveryAgent | null> {
+    return await DeliveryAgent.findByIdAndUpdate(
+      agentId,
+      { $inc: { orderCount: 1 } },
+      { new: true }
+    );
+  }
+
+  async decreaseDeliveryAgentOrderCount(
+    agentId: string
+  ): Promise<IDeliveryAgent | null> {
+    return await DeliveryAgent.findByIdAndUpdate(
+      agentId,
+      { $inc: { orderCount: -1 } },
+      { new: true }
+    );
+  }
+
+  async addDeliveryAgentIdToDelivery(
+    deliveryId: string,
+    agentId: string
+  ): Promise<IDelivery | null> {
+    return await Delivery.findByIdAndUpdate(
+      deliveryId,
+      { deliveryAgentId: agentId },
+      { new: true }
+    );
+  }
+
+  async getDeliveryAgentByEmail(email: string): Promise<IDeliveryAgent | null> {
+    return DeliveryAgent.findOne({ email: email });
+  }
+
   async cancelDelivery(deliveryId: string): Promise<IDelivery | null> {
     return Delivery.findByIdAndUpdate(
       deliveryId,
@@ -78,8 +124,14 @@ class DeliveryService {
     );
   }
 
+  async getAvailableAgentsForLocations(
+    serviceLocations: string[]
+  ): Promise<IDeliveryAgent[]> {
+    return DeliveryAgent.find({ serviceLocations: { $in: serviceLocations } });
+  }
+
   async getAgentDeliveries(agentId: string): Promise<IDelivery[]> {
-    return Delivery.find({ agentId: agentId });
+    return Delivery.find({ deliveryAgentId: agentId });
   }
 
   async getDeliveryAgentById(agentId: string): Promise<IDeliveryAgent | null> {

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAuth, logout } from "../store/slices/authSlice";
-import { Package, Truck, ClipboardCheck, User, Menu, X, LayoutDashboard } from "lucide-react";
+import { Truck, ClipboardCheck, User, Menu, X, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
 
 const DeliveryAgentDashboard = ({ children }: { children: React.ReactNode }) => {
@@ -20,11 +20,6 @@ const DeliveryAgentDashboard = ({ children }: { children: React.ReactNode }) => 
       icon: <LayoutDashboard className="w-5 h-5" />,
       label: "Overview",
       path: "/delivery",
-    },
-    {
-      icon: <Package className="w-5 h-5" />,
-      label: "Pending Deliveries",
-      path: "/delivery/pending",
     },
     {
       icon: <Truck className="w-5 h-5" />,

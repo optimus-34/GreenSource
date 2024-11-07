@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import DeliveryAgentDashboard from "./components/DeliveryAgentDashboard";
+import ActiveDeliveryPage from "./components/ActiveDeliveryPage";
 
 function App() {
   return (
@@ -12,11 +13,34 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/delivery" element={<DeliveryAgentDashboard children={<>Overview</>} />} />
-          <Route path="/delivery/pending" element={<DeliveryAgentDashboard children={<>Pending Deliveries</>} />} />
-          <Route path="/delivery/active" element={<DeliveryAgentDashboard children={<>Active Deliveries</>} />} />
-          <Route path="/delivery/completed" element={<DeliveryAgentDashboard children={<>Completed Deliveries</>} />} />
-          <Route path="/delivery/profile" element={<DeliveryAgentDashboard children={<>My Profile</>} />} />
+          <Route
+            path="/delivery"
+            element={
+              <DeliveryAgentDashboard children={<ActiveDeliveryPage />} />
+            }
+          />
+          <Route
+            path="/delivery/pending"
+            element={
+              <DeliveryAgentDashboard children={<>Pending Deliveries</>} />
+            }
+          />
+          <Route
+            path="/delivery/active"
+            element={
+              <DeliveryAgentDashboard children={<>Active Deliveries</>} />
+            }
+          />
+          <Route
+            path="/delivery/completed"
+            element={
+              <DeliveryAgentDashboard children={<>Completed Deliveries</>} />
+            }
+          />
+          <Route
+            path="/delivery/profile"
+            element={<DeliveryAgentDashboard children={<>My Profile</>} />}
+          />
         </Routes>
       </Provider>
     </>

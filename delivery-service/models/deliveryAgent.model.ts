@@ -4,6 +4,7 @@ export interface IDeliveryAgent {
   name: string;
   email: string;
   phoneNumber: string;
+  orderCount: number;
   serviceLocations: string[]; // Array of city names
   deliveredOrders: string[]; // Array of order IDs
   isAvailable: boolean;
@@ -24,10 +25,16 @@ const DeliveryAgentSchema = new Schema(
       type: String,
       required: true,
     },
+    orderCount: {
+      type: Number,
+      default: 0,
+      max: 5,
+    },
     serviceLocations: {
       type: [String],
+      default: [],
       validate: [
-        (val: string[]) => val.length <= 5,
+        (val: string[]) => val && val.length <= 5,
         "Maximum 5 service locations allowed",
       ],
     },

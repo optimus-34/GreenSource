@@ -83,6 +83,93 @@ export default function FarmerOrdersPage() {
             }
           );
         }
+        // Get farmer's address and contact details first
+        const [farmerAddressRes, farmerDetailsRes, consumerDetailsRes] =
+          await Promise.all([
+            axios.get(
+              `http://localhost:3000/api/farmers/api/farmers/${order.farmerId}/get/address`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            ),
+            axios.get(
+              `http://localhost:3000/api/farmers/api/farmers/${order.farmerId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            ),
+            axios.get(
+              `http://localhost:3001/api/customers/${order.consumerId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            ),
+          ]);
+
+        console.log("farmerAddressRes", farmerAddressRes.data[0]);
+        const farmerAddressData = farmerAddressRes.data[0];
+        const farmerAddress = `${farmerAddressData.street}, ${farmerAddressData.city}, ${farmerAddressData.state}, ${farmerAddressData.country}, ${farmerAddressData.zipcode}`;
+        const farmerPhoneNumber = farmerDetailsRes.data.phone;
+        const consumerPhoneNumber = consumerDetailsRes.data.data.phone;
+        const consumerAddressData = consumerDetailsRes.data.data.addresses[0];
+        const consumerAddress = `${consumerAddressData.street}, ${consumerAddressData.city}, ${consumerAddressData.state}, ${consumerAddressData.country}, ${consumerAddressData.zipcode}`;
+        // get delivery agents with order count less than 5
+        const deliveryAgents = await axios.get(
+          `http://localhost:3000/api/delivery/api/agents/available`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("deliveryAgents", deliveryAgents.data);
+
+        // if (!deliveryAgents.data || deliveryAgents.data.length === 0) {
+        //   throw new Error(
+        //     "No available delivery agents found for these locations"
+        //   );
+        // }
+        const agentId = deliveryAgents.data[0]._id;
+        console.log(agentId);
+        const deliveryData = {
+          orderId: order._id.toString() as string,
+          farmerId: order.farmerId as string,
+          consumerId: order.consumerId as string,
+          deliveryAddress: consumerAddress as string,
+          pickupAddress: farmerAddress as string,
+          deliveryAgentId: agentId,
+          orderPrice: order.totalAmount,
+          farmerPhoneNumber: farmerPhoneNumber as string,
+          consumerPhoneNumber: consumerPhoneNumber as string,
+          status: "PENDING",
+        };
+
+        // Create delivery entry
+        try {
+          await axios.post("http://localhost:3000/api/delivery", deliveryData, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          console.log("deliveryData added", deliveryData);
+          await axios.put(
+            `http://localhost:3000/api/delivery/agents/${agentId}/orderCount/increase`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log("orderCount increased");
+        } catch (error) {
+          console.log("error", error);
+        }
       } else if (
         status === OrderStatus.CANCELLED &&
         order.status === OrderStatus.CONFIRMED

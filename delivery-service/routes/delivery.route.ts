@@ -13,9 +13,39 @@ router.get("/agents", async (req: Request, res: Response) => {
 router.get("/agents/:agentId", async (req: Request, res: Response) => {
   await deliveryController.getDeliveryAgentById(req, res);
 });
-router.get("/agents/:agentId/deliveries", async (req: Request, res: Response) => {
-  await deliveryController.getAgentDeliveries(req, res);
+router.get("/agent/email/:email", async (req: Request, res: Response) => {
+  await deliveryController.getDeliveryAgentByEmail(req, res);
 });
+router.get(
+  "/agents/:agentId/deliveries",
+  async (req: Request, res: Response) => {
+    await deliveryController.getAgentDeliveries(req, res);
+  }
+);
+router.put(
+  "/agents/:agentId/orderCount/increase",
+  async (req: Request, res: Response) => {
+    await deliveryController.updateDeliveryAgentOrderCount(req, res);
+  }
+);
+router.put(
+  "/add/:deliveryId/agent/:agentId",
+  async (req: Request, res: Response) => {
+    await deliveryController.addDeliveryAgentIdToDelivery(req, res);
+  }
+);
+
+// Add this route before other agent routes
+router.get("/api/agents/available", async (req: Request, res: Response) => {
+  await deliveryController.getAvailableAgents(req, res);
+});
+
+router.put(
+  "/agents/:agentId/orderCount/decrease",
+  async (req: Request, res: Response) => {
+    await deliveryController.decreaseDeliveryAgentOrderCount(req, res);
+  }
+);
 
 // get delivery details by order id
 router.get("/order/:orderId", async (req: Request, res: Response) => {

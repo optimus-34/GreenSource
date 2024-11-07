@@ -8,7 +8,6 @@ interface DeliveryAgent {
   email: string;
   name: string;
   phoneNumber: string;
-  is_verified: boolean;
   orders?: {
     _id: string;
     orderDate: string;
@@ -74,36 +73,6 @@ export default function AdminDeliveryAgentsView() {
     }
   };
 
-  const handleVerifyAgent = async (email: string, verify: boolean) => {
-    try {
-      await axios.put(
-        `http://localhost:3000/api/delivery/agents/${email}/verify`,
-        { is_verified: verify },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      fetchDeliveryAgents();
-    } catch (error) {
-      console.error("Error updating agent verification:", error);
-    }
-  };
-
-  const handleDeleteAgent = async (email: string) => {
-    try {
-      await axios.delete(`http://localhost:3000/api/delivery/agents/${email}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      fetchDeliveryAgents();
-    } catch (error) {
-      console.error("Error deleting delivery agent:", error);
-    }
-  };
-
   const toggleSection = (agentEmail: string, section: "orders") => {
     setExpandedSections((prev) => ({
       ...prev,
@@ -148,43 +117,7 @@ export default function AdminDeliveryAgentsView() {
                     <span className="font-medium">Phone:</span>
                     {agent.phoneNumber}
                   </p>
-                  <p className="flex items-center gap-2">
-                    <span className="font-medium">Status:</span>
-                    <span
-                      className={`${
-                        agent.is_verified ? "text-green-600" : "text-red-600"
-                      } font-medium`}
-                    >
-                      {agent.is_verified ? "Verified" : "Not Verified"}
-                    </span>
-                  </p>
                 </div>
-              </div>
-
-              <div className="flex flex-col gap-2 w-full md:w-auto">
-                {!agent.is_verified ? (
-                  <>
-                    <button
-                      className="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded-full text-sm transition-colors duration-200"
-                      onClick={() => handleVerifyAgent(agent.email, true)}
-                    >
-                      Verify
-                    </button>
-                    <button
-                      className="w-full md:w-auto bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-full text-sm transition-colors duration-200"
-                      onClick={() => handleDeleteAgent(agent.email)}
-                    >
-                      Reject
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white font-medium px-4 py-2 rounded-full text-sm transition-colors duration-200"
-                    onClick={() => handleVerifyAgent(agent.email, false)}
-                  >
-                    Revoke Verification
-                  </button>
-                )}
               </div>
             </div>
 

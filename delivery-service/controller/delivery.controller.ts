@@ -6,7 +6,21 @@ class DeliveryController {
   // Delivery Agent Controllers
   async createDeliveryAgent(req: Request, res: Response) {
     try {
-      const agent = await deliveryService.createDeliveryAgent(req.body);
+      // Ensure required fields are present
+      const { name, email, phoneNumber } = req.body;
+      if (!name || !email || !phoneNumber) {
+        return res.status(400).json({
+          error: "Name, email, and phone number are required",
+        });
+      }
+
+      // Initialize serviceLocations as empty array if not provided
+      const agentData = {
+        ...req.body,
+        serviceLocations: req.body.serviceLocations || [],
+      };
+
+      const agent = await deliveryService.createDeliveryAgent(agentData);
       res.status(201).json(agent);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -42,6 +56,16 @@ class DeliveryController {
     }
   }
 
+  async getDeliveryAgentByEmail(req: Request, res: Response) {
+    try {
+      const { email } = req.params;
+      const agent = await deliveryService.getDeliveryAgentByEmail(email);
+      res.json(agent);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
   async getDeliveryAgentById(req: Request, res: Response) {
     try {
       const { agentId } = req.params;
@@ -59,6 +83,52 @@ class DeliveryController {
       res.json(delivery);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getAvailableAgents(req: Request, res: Response) {
+    try {
+      const agents = await deliveryService.getAvailableAgents();
+      res.json(agents);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async decreaseDeliveryAgentOrderCount(req: Request, res: Response) {
+    try {
+      const { agentId } = req.params;
+      const agent = await deliveryService.decreaseDeliveryAgentOrderCount(
+        agentId
+      );
+      res.json(agent);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async addDeliveryAgentIdToDelivery(req: Request, res: Response) {
+    try {
+      const { deliveryId, agentId } = req.params;
+      const delivery = await deliveryService.addDeliveryAgentIdToDelivery(
+        deliveryId,
+        agentId
+      );
+      res.json(delivery);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async updateDeliveryAgentOrderCount(req: Request, res: Response) {
+    try {
+      const { agentId } = req.params;
+      const agent = await deliveryService.updateDeliveryAgentOrderCount(
+        agentId
+      );
+      res.json(agent);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
   }
 
@@ -106,6 +176,26 @@ class DeliveryController {
         return res.status(404).json({ error: "Delivery not found" });
       }
       res.json(delivery);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getAvailableAgentsForLocations(req: Request, res: Response) {
+    try {
+      const serviceLocations = req.query.serviceLocations as string[];
+
+      if (!serviceLocations || !Array.isArray(serviceLocations)) {
+        return res.status(400).json({
+          error:
+            "serviceLocations query parameter is required and must be an array",
+        });
+      }
+
+      const agents = await deliveryService.getAvailableAgentsForLocations(
+        serviceLocations
+      );
+      res.json(agents);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
