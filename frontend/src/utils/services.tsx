@@ -110,7 +110,7 @@ export const getCartItems = async (token: string) => {
   try {
     const response = await axios({
       method: "GET",
-      url: `http://localhost:3000/api/customers/api/customers//cart`,
+      url: `http://localhost:3000/api/customers/api/customers/cart`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -201,8 +201,9 @@ export const removeFromCart = async (
 
 export const createOrder = async (
   token: string,
-  orderData: Omit<IOrder, '_id'>
+  orderData: Omit<IOrder, "_id">
 ) => {
+  console.log("orderData", orderData);
   try {
     const response = await axios.post(
       `http://localhost:3000/api/orders/api/orders`,

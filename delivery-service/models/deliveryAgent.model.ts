@@ -1,20 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface IDeliveryAgent extends Document {
+export interface IDeliveryAgent {
   name: string;
   email: string;
-  password: string;
-  phone: string;
+  phoneNumber: string;
+  serviceLocations: string[]; // Array of city names
+  deliveredOrders: string[]; // Array of order IDs
   isAvailable: boolean;
-  currentLocation: {
-    type: string;
-    coordinates: [number, number]; // [longitude, latitude]
-  };
-  serviceLocations: Array<{
-    name: string;
-    coordinates: [number, number];
-    radius: number; // radius in kilometers
-  }>;
 }
 
 const DeliveryAgentSchema = new Schema(
@@ -28,49 +20,32 @@ const DeliveryAgentSchema = new Schema(
       required: true,
       unique: true,
     },
-    password: {
+    phoneNumber: {
       type: String,
       required: true,
     },
-    phone: {
-      type: String,
-      required: true,
+    serviceLocations: {
+      type: [String],
+      validate: [
+        (val: string[]) => val.length <= 5,
+        "Maximum 5 service locations allowed",
+      ],
     },
+    deliveredOrders: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Delivery",
+      },
+    ],
     isAvailable: {
       type: Boolean,
       default: true,
     },
-    currentLocation: {
-      type: {
-        type: String,
-        enum: ["Point"],
-        default: "Point",
-      },
-      coordinates: {
-        type: [Number],
-        required: true,
-      },
-    },
-    serviceLocations: [{
-      name: {
-        type: String,
-        required: true,
-      },
-      coordinates: {
-        type: [Number],
-        required: true,
-      },
-      radius: {
-        type: Number,
-        required: true,
-        default: 5, // 5km radius
-      }
-    }]
   },
   { timestamps: true }
 );
 
-// Create geospatial index for current location
-DeliveryAgentSchema.index({ currentLocation: "2dsphere" });
-
-export default mongoose.model<IDeliveryAgent>("DeliveryAgent", DeliveryAgentSchema); 
+export default mongoose.model<IDeliveryAgent>(
+  "DeliveryAgent",
+  DeliveryAgentSchema
+);

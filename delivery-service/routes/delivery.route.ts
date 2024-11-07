@@ -1,40 +1,39 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import deliveryController from "../controller/delivery.controller";
 
 const router = express.Router();
 
-// Agent Management Routes
-router.post("/agents", async (req, res) =>
-  deliveryController.createDeliveryAgent(req, res)
-);
-router.put("/agents/:agentId", async (req, res, next) => {
-  try {
-    await deliveryController.updateDeliveryAgent(req, res);
-  } catch (error) {
-    next(error);
-  }
+// Delivery Agent Routes
+router.post("/agents", async (req: Request, res: Response) => {
+  await deliveryController.createDeliveryAgent(req, res);
+});
+router.get("/agents", async (req: Request, res: Response) => {
+  await deliveryController.getDeliveryAgents(req, res);
+});
+router.get("/agents/:agentId", async (req: Request, res: Response) => {
+  await deliveryController.getDeliveryAgentById(req, res);
+});
+router.get("/agents/:agentId/deliveries", async (req: Request, res: Response) => {
+  await deliveryController.getAgentDeliveries(req, res);
 });
 
-// Existing Routes
-router.post("/deliveries", async (req, res) =>
-  deliveryController.createDelivery(req, res)
-);
-router.put("/deliveries/:deliveryId/status", async (req, res, next) => {
-  try {
-    await deliveryController.updateDeliveryStatus(req, res);
-  } catch (error) {
-    next(error);
-  }
+// get delivery details by order id
+router.get("/order/:orderId", async (req: Request, res: Response) => {
+  await deliveryController.getDeliveryByOrderId(req, res);
 });
-router.get("/deliveries/order/:orderId", async (req, res, next) => {
-  try {
-    await deliveryController.getDeliveryByOrderId(req, res);
-  } catch (error) {
-    next(error);
-  }
+
+// Delivery Routes
+router.post("/", async (req: Request, res: Response) => {
+  await deliveryController.createDelivery(req, res);
 });
-router.get("/deliveries/agent/:agentId", async (req, res) =>
-  deliveryController.getAgentDeliveries(req, res)
-);
+router.get("/:deliveryId", async (req: Request, res: Response) => {
+  await deliveryController.getDeliveryById(req, res);
+});
+router.put("/:deliveryId/status", async (req: Request, res: Response) => {
+  await deliveryController.updateDeliveryStatus(req, res);
+});
+router.put("/:deliveryId/cancel", async (req: Request, res: Response) => {
+  await deliveryController.cancelDelivery(req, res);
+});
 
 export default router;

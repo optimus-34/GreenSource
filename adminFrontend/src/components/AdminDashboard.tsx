@@ -4,7 +4,6 @@ import { selectAuth, logout } from "../store/slices/authSlice";
 import {
   Users,
   ShoppingBag,
-  Settings,
   Activity,
   Menu,
   X,

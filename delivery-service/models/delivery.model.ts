@@ -1,15 +1,16 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface IDelivery extends Document {
-  orderId: String;
-  farmerId: String;
-  customerId: String;
-  agentId: String;
-  status: "PENDING" | "ASSIGNED" | "ON THE WAY" | "DELIVERED";
-  deliveryLocation: {
-    type: string;
-    coordinates: [number, number]; // [longitude, latitude]
-  };
+export interface IDelivery {
+  orderId: string;
+  farmerId: string;
+  consumerId: string;
+  farmerPhoneNumber: string;
+  consumerPhoneNumber: string;
+  deliveryAgentId?: string;
+  orderPrice: number;
+  deliveryAddress: string;
+  pickupAddress: string;
+  status: "PENDING" | "ASSIGNED" | "PICKED_UP" | "DELIVERED" | "CANCELLED";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,43 +20,47 @@ const DeliverySchema = new Schema(
     orderId: {
       type: String,
       required: true,
-      ref: "Order",
+      unique: true,
     },
     farmerId: {
       type: String,
       required: true,
-      ref: "Farmer",
     },
-    customerId: {
+    consumerId: {
       type: String,
       required: true,
-      ref: "Customer",
     },
-    agentId: {
+    farmerPhoneNumber: {
       type: String,
-      ref: "DeliveryAgent",
+      required: true,
+    },
+    consumerPhoneNumber: {
+      type: String,
+      required: true,
+    },
+    deliveryAgentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'DeliveryAgent',
+    },
+    orderPrice: {
+      type: Number,
+      required: true,
+    },
+    deliveryAddress: {
+      type: String,
+      required: true,
+    },
+    pickupAddress: {
+      type: String,
+      required: true,
     },
     status: {
       type: String,
-      enum: ["PENDING", "ASSIGNED", "PICKED_UP", "DELIVERED"],
+      enum: ["PENDING", "ASSIGNED", "PICKED_UP", "DELIVERED", "CANCELLED"],
       default: "PENDING",
-    },
-    deliveryLocation: {
-      type: {
-        type: String,
-        enum: ["Point"],
-        default: "Point",
-      },
-      coordinates: {
-        type: [Number],
-        required: true,
-      },
     },
   },
   { timestamps: true }
 );
-
-// Create geospatial index for location-based queries
-DeliverySchema.index({ deliveryLocation: "2dsphere" });
 
 export default mongoose.model<IDelivery>("Delivery", DeliverySchema);

@@ -71,6 +71,13 @@ export const getFarmer = async (req: Request, res: Response) => {
   }
 };
 
+// get farmer address by email
+export const getFarmerAddress = async (req: Request, res: Response) => {
+  const farmer = await Farmer.findOne({ email: req.params.email });
+  const addresses = await Address.find({ _id: { $in: farmer?.addresses } });
+  res.json(addresses);
+};
+
 // Update a Farmer
 export const updateFarmer = async (req: Request, res: Response) => {
   try {

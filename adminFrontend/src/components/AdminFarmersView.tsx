@@ -3,7 +3,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../store/slices/authSlice";
 import { Link } from "react-router-dom";
-import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface Farmer {
   email: string;

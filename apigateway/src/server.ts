@@ -2,16 +2,24 @@
 import express from "express";
 import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
-import { authenticateConsumer, authenticateFarmer, authenticateMultipleRoles } from "./middleware/authenticate";
+import {
+  authenticateConsumer,
+  authenticateFarmer,
+  authenticateMultipleRoles,
+} from "./middleware/authenticate";
 
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174","http://localhost:5175"],
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:5175",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
-  })  
+  })
 );
 //Auth Service Proxy
 app.use(
@@ -25,16 +33,16 @@ app.use(
 // Farmer Service Proxy (protected)
 app.use(
   "/api/farmers",
-  authenticateMultipleRoles(["admin","farmer"]),
+  authenticateMultipleRoles(["admin", "farmer"]),
   createProxyMiddleware({
-    target: "http://localhost:3002", 
+    target: "http://localhost:3002",
     changeOrigin: true,
   })
 );
 
 app.use(
   "/api/customers",
-  authenticateMultipleRoles(["admin","consumer"]),
+  authenticateMultipleRoles(["admin", "consumer"]),
   createProxyMiddleware({
     target: "http://localhost:3001",
     changeOrigin: true,
@@ -43,7 +51,7 @@ app.use(
 
 app.use(
   "/api/products",
-  authenticateMultipleRoles(["admin", "farmer","consumer","delivery_agent"]),
+  authenticateMultipleRoles(["admin", "farmer", "consumer", "delivery_agent"]),
   createProxyMiddleware({
     target: "http://localhost:3005",
     changeOrigin: true,
@@ -52,7 +60,7 @@ app.use(
 
 app.use(
   "/api/orders",
-  authenticateMultipleRoles(["admin", "farmer","consumer","delivery_agent"]),
+  authenticateMultipleRoles(["admin", "farmer", "consumer", "delivery_agent"]),
   createProxyMiddleware({
     target: "http://localhost:3003",
     changeOrigin: true,
@@ -61,9 +69,9 @@ app.use(
 
 app.use(
   "/api/delivery",
-  authenticateMultipleRoles(["admin", "farmer","consumer","delivery_agent"]),
+  authenticateMultipleRoles(["admin", "farmer", "consumer", "delivery_agent"]),
   createProxyMiddleware({
-    target: "http://localhost:3006",
+    target: "http://localhost:3004",
     changeOrigin: true,
   })
 );
