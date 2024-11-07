@@ -11,6 +11,7 @@ import {
   ChevronDown,
   ChevronRight,
   LayoutDashboard,
+  PackageCheck,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -57,15 +58,20 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
       path: "/admin/products",
     },
     {
+      icon: <PackageCheck className="w-5 h-5" />,
+      label: "Orders",
+      path: "/admin/orders",
+    },
+    {
       icon: <Activity className="w-5 h-5" />,
       label: "Analytics",
       path: "/admin/analytics",
     },
-    {
-      icon: <Settings className="w-5 h-5" />,
-      label: "Settings",
-      path: "/admin/settings",
-    },
+    // {
+    //   icon: <Settings className="w-5 h-5" />,
+    //   label: "Settings",
+    //   path: "/admin/settings",
+    // },
   ];
 
   const toggleSidebar = () => {
@@ -84,7 +90,10 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
           <span className="text-blue-600">Green</span>
           <span className="text-green-500">Source</span>
         </h1>
-        <button onClick={toggleSidebar} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+        <button
+          onClick={toggleSidebar}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        >
           {isSidebarOpen ? (
             <X className="w-6 h-6 text-gray-600" />
           ) : (
