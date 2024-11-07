@@ -169,7 +169,7 @@ const FarmerProfile: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Profile Details Card */}
           <div className="md:col-span-2">
-            <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <div className="bg-white rounded-2xl shadow-xl p-6 h-[400px]">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold text-gray-900">Profile Details</h2>
                 {isEditingProfile ? (
@@ -233,7 +233,7 @@ const FarmerProfile: React.FC = () => {
 
           {/* Farm Addresses Card */}
           <div className="md:col-span-1">
-            <div className="bg-white rounded-2xl shadow-xl p-6 h-[500px] flex flex-col">
+            <div className="bg-white rounded-2xl shadow-xl p-6 h-[400px] relative">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold text-gray-900">Farm Addresses</h2>
                 <button
@@ -244,7 +244,7 @@ const FarmerProfile: React.FC = () => {
                 </button>
               </div>
 
-              <div className="space-y-4 overflow-y-auto flex-1">
+              <div className="space-y-4 overflow-y-auto h-[300px] pr-2">
                 {addressesData.map((address, index) => (
                   <div key={address._id || index} className="p-4 bg-gray-50 border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all">
                     <div className="flex justify-between items-start">
@@ -270,9 +270,9 @@ const FarmerProfile: React.FC = () => {
               </div>
 
               {isAddingAddress && (
-                <div className="mt-4 p-4 border border-gray-200 rounded-xl bg-gray-50 shadow-lg">
+                <div className="absolute inset-0 bg-white rounded-2xl p-6 z-10">
                   <h3 className="text-lg font-bold text-gray-900 mb-4">Add New Address</h3>
-                  <div className="space-y-4">
+                  <div className="space-y-4 overflow-y-auto h-[280px] pr-2">
                     <div>
                       <label className="block text-sm font-bold text-gray-900 mb-1">Street</label>
                       <input
