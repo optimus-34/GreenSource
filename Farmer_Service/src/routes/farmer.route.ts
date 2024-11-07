@@ -19,6 +19,7 @@ import {
   addOrder,
   getEarnings,
   deleteFarmerAddress,
+  getFarmerAddress,
 } from "../controllers/farmer.controller";
 import {
   createAddress,
@@ -31,6 +32,7 @@ import {
 const router = Router();
 router.post("/farmers", createFarmer);
 router.put("/farmers/:email/addAddress", addFarmerAddress);
+router.get("/farmers/:email/get/address", getFarmerAddress);
 router.get("/farmers", getFarmers);
 router.get("/farmers/:email", getFarmer);
 router.put("/farmers/:email", updateFarmer);

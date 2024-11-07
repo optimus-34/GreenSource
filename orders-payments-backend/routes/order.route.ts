@@ -6,7 +6,7 @@ const orderController = new OrderController();
 
 router.post("/", (req, res) => orderController.createOrder(req, res));
 router.get("/", (req, res) => orderController.getOrders(req, res));
-router.get("/:email", (req, res) =>
+router.get("/:email/customers", (req, res) =>
   orderController.getOrdersByCustomerEmail(req, res)
 );
 router.get("/:email/farmers", (req, res) =>

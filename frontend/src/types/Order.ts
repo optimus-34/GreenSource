@@ -16,8 +16,6 @@ export interface IShippingAddress {
 }
 
 export interface IOrderItem {
-  id: string;
-  orderId: string;
   productId: string;
   quantity: number;
   unitPrice: number;
@@ -25,7 +23,6 @@ export interface IOrderItem {
 }
 
 export interface IOrder {
-  id: string;
   consumerId: string;
   farmerId: string;
   status: OrderStatus;

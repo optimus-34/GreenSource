@@ -1,37 +1,43 @@
-import { v4 as uuidv4 } from "uuid";
 import { Order } from "../models/order.model";
 import { IOrder, OrderStatus } from "../types/order";
 
 export class OrderService {
-  async createOrder(orderData: Partial<IOrder>): Promise<IOrder> {
-    const order = new Order({
-      ...orderData,
-      id: uuidv4(),
-      status: OrderStatus.PENDING,
-    });
-    return await order.save();
+  async createOrder(orderData: IOrder): Promise<IOrder> {
+    try {
+      const { ...cleanOrderData } = orderData as any;
+
+      const order = new Order({
+        ...cleanOrderData,
+        status: OrderStatus.PENDING,
+      });
+
+      return await order.save();
+    } catch (error) {
+      console.error("Error creating order:", error);
+      throw error;
+    }
   }
 
   async getOrders(): Promise<IOrder[]> {
     return await Order.find();
   }
 
-  async getOrderById(orderId: string): Promise<IOrder | null> {
-    return await Order.findById(orderId);
+  async getOrderById(_id: string): Promise<IOrder | null> {
+    return await Order.findById(_id);
   }
 
   async updateOrder(
-    orderId: string,
+    _id: string,
     orderData: Partial<IOrder>
   ): Promise<IOrder | null> {
-    return await Order.findOneAndUpdate({ id: orderId }, orderData, {
+    return await Order.findOneAndUpdate({ _id }, orderData, {
       new: true,
     });
   }
 
-  async cancelOrder(orderId: string): Promise<IOrder | null> {
+  async cancelOrder(_id: string): Promise<IOrder | null> {
     return await Order.findOneAndUpdate(
-      { id: orderId },
+      { _id },
       { status: OrderStatus.CANCELLED, updatedAt: new Date() },
       { new: true }
     );

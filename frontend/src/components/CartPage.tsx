@@ -197,9 +197,7 @@ const CartPage: React.FC = () => {
     try {
       setLoading(true);
 
-      // Create order object that matches IOrder interface
-      const order: IOrder = {
-        id: "", // Will be set by backend
+      const orderData: Omit<IOrder, '_id'> = {
         consumerId: user.email!,
         farmerId: cartItems[0].farmerId,
         status: OrderStatus.PENDING,
@@ -212,8 +210,6 @@ const CartPage: React.FC = () => {
           country: selectedAddress.country,
         },
         items: cartItems.map((item) => ({
-          id: "", // Will be set by backend
-          orderId: "", // Will be set by backend
           productId: item._id,
           quantity: item.quantity,
           unitPrice: item.currentPrice,
@@ -223,26 +219,14 @@ const CartPage: React.FC = () => {
         updatedAt: new Date(),
       };
 
-      // First create the order in the orders service
-      const orderResponse = await createOrder(token!, order);
-      console.log(orderResponse.data._id);
+      // Create order
+      const orderResponse = await createOrder(token!, orderData);
       const orderId = orderResponse.data._id;
 
       // Add order ID to customer's orders
       await axios.post(
         `http://localhost:3000/api/customers/api/customers/${user.email}/orders`,
-        { orderId }, // Send only the order ID
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // Add order ID to farmer's orders
-      await axios.post(
-        `http://localhost:3000/api/farmers/api/farmers/${order.farmerId}/add/order`,
-        { orderId, amount: order.totalAmount }, // Send only the order ID
+        { orderId },
         {
           headers: {
             Authorization: `Bearer ${token}`,

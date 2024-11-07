@@ -1,10 +1,8 @@
-import React from "react";
-import { Package, Truck, Check, Warehouse, User } from "lucide-react";
+import { Package, Check, Warehouse, User } from "lucide-react";
+import { IOrder } from "../types/Order";
 
-interface Order {
-  id: string;
-  status: string;
-  createdAt: string;
+interface Order extends IOrder {
+  _id: string;
 }
 
 interface OrderTrackerProps {

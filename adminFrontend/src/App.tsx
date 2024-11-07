@@ -13,6 +13,8 @@ import AdminAnalytics from "./components/AdminAnalytics";
 import AdminSettings from "./components/AdminSettings";
 import AdminFarmerProductsPage from "./components/AdminFarmerProductsPage";
 import AdminFarmerOrdersPage from "./components/AdminFarmerOrdersPage";
+import AdminConsumerOrdersPage from "./components/AdminConsumerOrdersPage";
+import AdminOrdersPage from "./components/AdminOrdersPage";
 
 function App() {
   return (
@@ -78,6 +80,14 @@ function App() {
             }
           />
           <Route
+            path="/admin/consumers/:consumerEmail/orders"
+            element={
+              <AdminDashboard>
+                <AdminConsumerOrdersPage />
+              </AdminDashboard>
+            }
+          />
+          <Route
             path="/admin/farmers/:farmerId/products"
             element={
               <AdminDashboard>
@@ -90,6 +100,14 @@ function App() {
             element={
               <AdminDashboard>
                 <AdminFarmerOrdersPage />
+              </AdminDashboard>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <AdminDashboard>
+                <AdminOrdersPage />
               </AdminDashboard>
             }
           />
