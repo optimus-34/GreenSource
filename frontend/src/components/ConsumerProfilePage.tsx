@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { User } from "lucide-react";
 import axios from "axios";
+import { selectAuth } from "../store/slices/authSlice";
+import { useSelector } from "react-redux";
 
 interface Address {
   _id?: string;
@@ -40,8 +42,8 @@ const ConsumerProfilePage: React.FC = () => {
   });
 
   // Get user email from localStorage
-  const user = localStorage.getItem("user");
-  const userEmail = user ? JSON.parse(user).email : null;
+  const { user } = useSelector(selectAuth);
+  const userEmail = user?.email;
 
   const fetchCustomerProfile = async () => {
     try {
@@ -152,21 +154,15 @@ const ConsumerProfilePage: React.FC = () => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
               {customerData.firstName} {customerData.lastName}
             </h1>
-            <p className="text-gray-800 font-medium mt-2">
-              {customerData.email}
-            </p>
-            {customerData.phone && (
-              <p className="text-gray-800 font-medium">{customerData.phone}</p>
-            )}
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Profile Details Card */}
           <div className="md:col-span-2">
-            <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-900">
+            <div className="bg-white rounded-2xl shadow-xl p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">
                   Profile Details
                 </h2>
                 {isEditingProfile ? (
@@ -185,13 +181,13 @@ const ConsumerProfilePage: React.FC = () => {
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">
+                  <label className="block text-lg font-semibold text-gray-700 mb-1">
                     First Name
                   </label>
                   <input
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all text-xl font-bold text-gray-900"
                     placeholder="First Name"
                     value={customerData.firstName}
                     onChange={(e) =>
@@ -204,11 +200,11 @@ const ConsumerProfilePage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">
+                  <label className="block text-lg font-semibold text-gray-700 mb-1">
                     Last Name
                   </label>
                   <input
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all text-xl font-bold text-gray-900"
                     placeholder="Last Name"
                     value={customerData.lastName}
                     onChange={(e) =>
@@ -221,11 +217,11 @@ const ConsumerProfilePage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">
+                  <label className="block text-lg font-semibold text-gray-700 mb-1">
                     Phone Number
                   </label>
                   <input
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-white disabled:border-transparent transition-all text-xl font-bold text-gray-900"
                     placeholder="Phone Number"
                     value={customerData.phone}
                     onChange={(e) =>
@@ -238,11 +234,11 @@ const ConsumerProfilePage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">
+                  <label className="block text-lg font-semibold text-gray-700 mb-1">
                     Email
                   </label>
                   <input
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-xl font-bold text-gray-900"
                     value={customerData.email}
                     disabled
                   />
@@ -253,9 +249,13 @@ const ConsumerProfilePage: React.FC = () => {
 
           {/* Addresses Card */}
           <div className="md:col-span-1">
-            <div className="bg-white rounded-2xl shadow-xl p-6 h-[500px] flex flex-col">
+            <div className="bg-white rounded-2xl shadow-xl p-6 h-[400px] relative">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-900">Addresses</h2>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Delivery
+                  <br />
+                  Addresses
+                </h2>
                 <button
                   className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 shadow-md text-sm"
                   onClick={() => setIsAddingAddress(true)}
@@ -264,10 +264,10 @@ const ConsumerProfilePage: React.FC = () => {
                 </button>
               </div>
 
-              <div className="space-y-4 overflow-y-auto flex-1">
-                {customerData.addresses.map((address) => (
+              <div className="space-y-4 overflow-y-auto h-[300px] pr-2">
+                {customerData.addresses.map((address, index) => (
                   <div
-                    key={address._id}
+                    key={address._id || index}
                     className="p-4 bg-gray-50 border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all"
                   >
                     <div className="flex justify-between items-start">
@@ -299,11 +299,11 @@ const ConsumerProfilePage: React.FC = () => {
               </div>
 
               {isAddingAddress && (
-                <div className="mt-4 p-4 border border-gray-200 rounded-xl bg-gray-50 shadow-lg">
+                <div className="absolute inset-0 bg-white rounded-2xl p-6 z-10">
                   <h3 className="text-lg font-bold text-gray-900 mb-4">
                     Add New Address
                   </h3>
-                  <div className="space-y-4">
+                  <div className="space-y-4 overflow-y-auto h-[280px] pr-2">
                     <div>
                       <label className="block text-sm font-bold text-gray-900 mb-1">
                         Street
