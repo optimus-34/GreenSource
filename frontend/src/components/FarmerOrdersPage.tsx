@@ -135,8 +135,8 @@ export default function FarmerOrdersPage() {
         //     "No available delivery agents found for these locations"
         //   );
         // }
-        const agentId = deliveryAgents.data[0]._id;
-        console.log(agentId);
+        const agentId = deliveryAgents.data?.[0]?._id;
+        console.log("agentId", agentId);
         const deliveryData = {
           orderId: order._id.toString() as string,
           farmerId: order.farmerId as string,
@@ -158,15 +158,14 @@ export default function FarmerOrdersPage() {
             },
           });
           console.log("deliveryData added", deliveryData);
-          await axios.put(
-            `http://localhost:3000/api/delivery/agents/${agentId}/orderCount/increase`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          console.log("orderCount increased");
+          try {
+            await axios.put(
+              `http://localhost:3004/agents/${agentId}/orderCount/increase`
+            );
+            console.log("orderCount increased");
+          } catch (error) {
+            console.error("Error increasing order count:", error);
+          }
         } catch (error) {
           console.log("error", error);
         }

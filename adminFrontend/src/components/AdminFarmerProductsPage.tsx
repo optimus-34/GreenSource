@@ -40,6 +40,7 @@ export default function AdminFarmerProductsPage() {
   const { farmerId } = useParams();
   const { token } = useSelector(selectAuth);
   const [products, setProducts] = useState<IProduct[]>([]);
+  const [productImages, setProductImages] = useState<IProductImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,6 +59,27 @@ export default function AdminFarmerProductsPage() {
 
       setProducts(response.data);
 
+      // Fetch images for each product
+      const imagePromises = response.data.map(async (product: IProduct) => {
+        try {
+          const imageResponse = await axios.get(
+            `http://localhost:3000/api/products/${product._id}/images`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          return imageResponse.data;
+        } catch (error) {
+          console.error(
+            `Error fetching image for product ${product._id}:`,
+            error
+          );
+          return [];
+        }
+      });
+      const images = await Promise.all(imagePromises);
+      setProductImages(images);
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -65,6 +87,8 @@ export default function AdminFarmerProductsPage() {
       setLoading(false);
     }
   };
+
+  console.log(productImages);
 
   const handleDeleteProduct = async (productId: string) => {
     if (!window.confirm("Are you sure you want to delete this product?"))
@@ -95,7 +119,10 @@ export default function AdminFarmerProductsPage() {
             className="bg-white rounded-lg shadow-md overflow-hidden"
           >
             <img
-              src={""}
+              src={
+                productImages?.find((data) => data.productId === product._id)
+                  ?.imageUrl || ""
+              }
               alt={product.name}
               className="w-full h-48 object-cover"
             />

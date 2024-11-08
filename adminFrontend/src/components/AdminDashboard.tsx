@@ -189,7 +189,7 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
         <header className="bg-white shadow-md">
           <div className="flex flex-col md:flex-row md:items-center justify-end px-4 md:px-6 py-4">
             <div className="flex items-center space-x-4">
-              <span className="text-gray-600 text-sm md:text-base">
+              <span className="text-gray-600 font-semibold text-sm md:text-base">
                 Welcome, {user?.username || "Admin"}
               </span>
               <button

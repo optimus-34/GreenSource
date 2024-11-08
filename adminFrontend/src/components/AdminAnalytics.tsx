@@ -106,8 +106,8 @@ export default function AdminAnalytics() {
         },
         farmers: {
           total: farmers.data.length,
-          verified: farmers.data.filter((f: any) => f.isVerified).length,
-          pendingVerification: farmers.data.filter((f: any) => !f.isVerified)
+          verified: farmers.data.filter((f: any) => f.is_verified).length,
+          pendingVerification: farmers.data.filter((f: any) => !f.is_verified)
             .length,
         },
         products: productStats,

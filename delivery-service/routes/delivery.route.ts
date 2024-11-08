@@ -37,7 +37,7 @@ router.put(
 
 // Add this route before other agent routes
 router.get("/api/agents/available", async (req: Request, res: Response) => {
-  await deliveryController.getAvailableAgents(req, res);
+  await deliveryController.getAvailableAgents(req, res); 
 });
 
 router.put(

@@ -181,7 +181,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
 
       {/* Main Content */}
       <div className="flex-1">
-        <header className="bg-white shadow-md">
+        <header className="bg-white shadow-md fixed top-0 left-0 right-0 z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-end px-4 md:px-6 py-4">
             <div className="flex items-center space-x-4">
               <span className="text-gray-600 text-sm md:text-base">
@@ -197,7 +197,7 @@ const ConsumerDashboard = ({ children }: { children: React.ReactNode }) => {
           </div>
         </header>
 
-        <main className="">{children}</main>
+        <main className="p-6 md:p-8 mt-16">{children}</main>
       </div>
     </div>
   );
