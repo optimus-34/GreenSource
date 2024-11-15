@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import DeliveryAgentDashboard from "./components/DeliveryAgentDashboard";
 import ActiveDeliveryPage from "./components/ActiveDeliveryPage";
+import OrderDetailsPage from "./components/OrderDetailsPage";
 
 function App() {
   return (
@@ -18,6 +19,10 @@ function App() {
             element={
               <DeliveryAgentDashboard children={<ActiveDeliveryPage />} />
             }
+          />
+          <Route
+            path="/delivery/:deliveryId"
+            element={<DeliveryAgentDashboard children={<OrderDetailsPage />} />}
           />
           <Route
             path="/delivery/pending"

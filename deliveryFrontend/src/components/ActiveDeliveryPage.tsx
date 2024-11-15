@@ -46,6 +46,29 @@ export default function ActiveDeliveryPage() {
     fetchDeliveries();
   }, []);
 
+  const handleCancel = async (deliveryId: string) => {
+    try {
+      await axios.patch(
+        `http://localhost:3000/api/delivery/${deliveryId}/cancel`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // Refresh deliveries after cancellation
+      const updatedDeliveries = deliveries.map((delivery) =>
+        delivery._id === deliveryId
+          ? { ...delivery, status: "CANCELLED" }
+          : delivery
+      ) as Delivery[];
+      setDeliveries(updatedDeliveries);
+    } catch (err) {
+      setError("Failed to cancel delivery");
+    }
+  };
+
   if (loading) return <div className="p-8">Loading...</div>;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
 
@@ -87,9 +110,13 @@ export default function ActiveDeliveryPage() {
               <div className="flex-1 space-y-4">
                 <div className="border-t pt-4">
                   <h3 className="font-semibold mb-2">Pickup Details:</h3>
-                  <p className="text-sm text-gray-600">{delivery.pickupAddress}</p>
+                  <p className="text-sm text-gray-600">
+                    {delivery.pickupAddress}
+                  </p>
                   <div className="mt-2">
-                    <p className="text-sm font-medium">Farmer: {delivery.farmerId}</p>
+                    <p className="text-sm font-medium">
+                      Farmer: {delivery.farmerId}
+                    </p>
                     <p className="text-sm text-gray-600">
                       Phone: {delivery.farmerPhoneNumber}
                     </p>
@@ -98,7 +125,9 @@ export default function ActiveDeliveryPage() {
 
                 <div className="border-t pt-4">
                   <h3 className="font-semibold mb-2">Delivery Details:</h3>
-                  <p className="text-sm text-gray-600">{delivery.deliveryAddress}</p>
+                  <p className="text-sm text-gray-600">
+                    {delivery.deliveryAddress}
+                  </p>
                   <div className="mt-2">
                     <p className="text-sm font-medium">
                       Customer: {delivery.consumerId}
@@ -107,6 +136,26 @@ export default function ActiveDeliveryPage() {
                       Phone: {delivery.consumerPhoneNumber}
                     </p>
                   </div>
+                </div>
+
+                <div className="border-t pt-4 flex gap-2">
+                  <button
+                    onClick={() =>
+                      (window.location.href = `/delivery/${delivery._id}`)
+                    }
+                    className="flex-1 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                  >
+                    View Details
+                  </button>
+                  {delivery.status !== "CANCELLED" &&
+                    delivery.status !== "DELIVERED" && (
+                      <button
+                        onClick={() => handleCancel(delivery._id)}
+                        className="flex-1 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    )}
                 </div>
               </div>
             </div>

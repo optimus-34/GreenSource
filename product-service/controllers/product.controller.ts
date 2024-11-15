@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ProductService } from "../services/product.service";
+import axios from "axios";
 
 export class ProductController {
   private productService: ProductService;
@@ -39,12 +40,10 @@ export class ProductController {
           .status(500)
           .json({ error: "Failed to create product", message: error.message });
       } else {
-        res
-          .status(500)
-          .json({
-            error: "Failed to create product",
-            message: "An unknown error occurred",
-          });
+        res.status(500).json({
+          error: "Failed to create product",
+          message: "An unknown error occurred",
+        });
       }
     }
   }
@@ -146,12 +145,10 @@ export class ProductController {
           .status(500)
           .json({ error: "Failed to search products", message: error.message });
       } else {
-        res
-          .status(500)
-          .json({
-            error: "Failed to search products",
-            message: "An unknown error occurred",
-          });
+        res.status(500).json({
+          error: "Failed to search products",
+          message: "An unknown error occurred",
+        });
       }
     }
   }

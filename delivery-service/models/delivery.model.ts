@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export interface IDelivery {
   orderId: string;
@@ -10,7 +10,7 @@ export interface IDelivery {
   orderPrice: number;
   deliveryAddress: string;
   pickupAddress: string;
-  status: "PENDING" | "ASSIGNED" | "PICKED_UP" | "DELIVERED" | "CANCELLED";
+  status: "CONFIRMED" | "CANCELLED" | "DELIVERED" | "ONTHEWAY";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,7 +40,7 @@ const DeliverySchema = new Schema(
     },
     deliveryAgentId: {
       type: Schema.Types.ObjectId,
-      ref: 'DeliveryAgent',
+      ref: "DeliveryAgent",
     },
     orderPrice: {
       type: Number,
@@ -56,8 +56,8 @@ const DeliverySchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["PENDING", "ASSIGNED", "PICKED_UP", "DELIVERED", "CANCELLED"],
-      default: "PENDING",
+      enum: ["CONFIRMED", "CANCELLED", "DELIVERED", "ONTHEWAY"],
+      default: "CONFIRMED",
     },
   },
   { timestamps: true }

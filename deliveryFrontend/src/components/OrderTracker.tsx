@@ -44,17 +44,20 @@ export function OrderTracker({ order, status }: OrderTrackerProps) {
     },
   ];
 
-  const currentStepIndex = steps.findIndex((step) => step.status === status);
+  const currentStepIndex = steps.findIndex(
+    (step) => step.status === status
+  );
+  console.log(steps[currentStepIndex].status);
 
   return (
-    <div className="min-w-[800px] py-6">
+    <div className="w-full py-6">
       <div className="relative">
         {/* Progress Bar */}
         <div className="absolute left-0 top-1/2 w-full h-1 bg-gray-200 -translate-y-1/2" />
         <div
           className="absolute left-0 top-1/2 h-1 bg-green-500 -translate-y-1/2 transition-all duration-500"
           style={{
-            width: `${(currentStepIndex / (steps.length - 1)) * 100}%`,
+            width: `${((currentStepIndex + 1) / steps.length) * 100}%`,
           }}
         />
 
@@ -62,17 +65,17 @@ export function OrderTracker({ order, status }: OrderTrackerProps) {
         <div className="relative flex justify-between">
           {steps.map((step, index) => {
             const StepIcon = step.icon;
-            const isCompleted = index <= currentStepIndex;
+            const isCompleted = index < currentStepIndex;
             const isCurrent = index === currentStepIndex;
 
             return (
               <div key={step.status} className="flex flex-col items-center">
                 <div
                   className={`
-                    w-10 h-10 rounded-full flex items-center justify-center 
+                    w-10 h-10 rounded-full flex items-center justify-center
                     transition-all duration-500
                     ${
-                      isCompleted
+                      isCompleted || isCurrent
                         ? "bg-green-500 text-white"
                         : "bg-gray-200 text-gray-400"
                     }
@@ -85,7 +88,11 @@ export function OrderTracker({ order, status }: OrderTrackerProps) {
                   <span
                     className={`
                     text-sm font-medium block
-                    ${isCompleted ? "text-gray-900" : "text-gray-500"}
+                    ${
+                      isCompleted || isCurrent
+                        ? "text-gray-900"
+                        : "text-gray-500"
+                    }
                   `}
                   >
                     {step.label}
