@@ -2,7 +2,9 @@ export enum OrderStatus {
   PENDING = "PENDING",
   CONFIRMED = "CONFIRMED",
   CANCELLED = "CANCELLED",
-  COMPLETED = "COMPLETED",
+  DELIVERED = "DELIVERED",
+  SHIPPED = "SHIPPED",
+  ONTHEWAY = "ON THE WAY",
 }
 
 export interface IShippingAddress {

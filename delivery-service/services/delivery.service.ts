@@ -51,7 +51,7 @@ class DeliveryService {
   }): Promise<IDelivery> {
     const delivery = new Delivery({
       ...deliveryData,
-      status: "PENDING",
+      status: "CONFIRMED",
     });
     await delivery.save();
     return delivery;

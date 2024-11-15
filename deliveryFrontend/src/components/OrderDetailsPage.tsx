@@ -22,13 +22,7 @@ interface Delivery {
   farmerId: string;
   customerId: string;
   agentId?: string;
-  status:
-    | "PENDING"
-    | "CONFIRMED"
-    | "ONTHEWAY"
-    | "SHIPPED"
-    | "DELIVERED"
-    | "CANCELLED";
+  status: "PENDING" | "CONFIRMED" | "ONTHEWAY" | "SHIPPED" | "DELIVERED";
   deliveryLocation: DeliveryLocation;
 }
 
@@ -46,17 +40,31 @@ interface DeliveryStatusUpdate {
 }
 
 export default function OrderDetailsPage() {
-  const { orderId } = useParams();
+  const { deliveryId } = useParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [delivery, setDelivery] = useState<Delivery | null>(null);
   const [productNames, setProductNames] = useState<{ [key: string]: string }>(
     {}
   );
   const { token } = useSelector(selectAuth);
+  console.log(token, deliveryId);
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
+        const deliveryRes = await axios.get(
+          `http://localhost:3000/api/delivery/${deliveryId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const deliveryResData = await deliveryRes.data;
+        setDelivery(deliveryResData);
+
+        const orderId = deliveryResData.orderId;
+
         // Fetch order details from order service
         const orderResponse = await axios.get(
           `http://localhost:3000/api/orders/api/orders/${orderId}`,
@@ -67,6 +75,7 @@ export default function OrderDetailsPage() {
           }
         );
         const orderData = await orderResponse.data;
+        console.log(orderData);
         setOrder(orderData);
 
         // Fetch delivery details from delivery service
@@ -98,14 +107,15 @@ export default function OrderDetailsPage() {
       } catch (error) {}
     };
 
-    if (orderId) {
+    if (deliveryId) {
       fetchOrderDetails();
     }
-  }, [orderId, token]);
+  }, [deliveryId, token]);
 
   const updateDeliveryStatus = async (statusUpdate: DeliveryStatusUpdate) => {
     try {
-      const response = await axios.put(
+      // Update delivery status
+      const deliveryResponse = await axios.put(
         `http://localhost:3000/api/delivery/${delivery?._id}/status`,
         statusUpdate,
         {
@@ -114,15 +124,43 @@ export default function OrderDetailsPage() {
           },
         }
       );
-      setDelivery(response.data);
+      setDelivery(deliveryResponse.data);
+
+      // Update order status to match delivery status
+      if (order) {
+        let orderStatus = statusUpdate.status;
+        if (statusUpdate.status === "ONTHEWAY") {
+          orderStatus = "CONFIRMED";
+        }
+
+        await axios.put(
+          `http://localhost:3000/api/orders/api/orders/${order._id}`,
+          { status: orderStatus },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Refresh order data
+        const orderResponse = await axios.get(
+          `http://localhost:3000/api/orders/api/orders/${order._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setOrder(orderResponse.data);
+      }
     } catch (error) {
       console.error("Error updating delivery status:", error);
     }
   };
 
-  const renderDeliveryAgentControls = () => {
-    if (!delivery || !delivery.agentId) return null;
-
+  const renderDeliveryAgentControls = (delivery: Delivery) => {
+    console.log(delivery.status);
     return (
       <div className="mt-6 space-y-4">
         <h3 className="font-semibold text-gray-800">Delivery Controls</h3>
@@ -160,8 +198,7 @@ export default function OrderDetailsPage() {
     return <div className="p-4">Loading...</div>;
   }
 
-  console.log(order);
-
+  console.log(delivery, order);
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 max-w-5xl mx-auto">
       <div className="border-b pb-4 mb-4">
@@ -236,7 +273,7 @@ export default function OrderDetailsPage() {
         </div>
       )}
 
-      {renderDeliveryAgentControls()}
+      {delivery !== null && renderDeliveryAgentControls(delivery)}
     </div>
   );
 }

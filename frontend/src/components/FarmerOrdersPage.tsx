@@ -147,7 +147,7 @@ export default function FarmerOrdersPage() {
           orderPrice: order.totalAmount,
           farmerPhoneNumber: farmerPhoneNumber as string,
           consumerPhoneNumber: consumerPhoneNumber as string,
-          status: "PENDING",
+          status: "CONFIRMED",
         };
 
         // Create delivery entry
