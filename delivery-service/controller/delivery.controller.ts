@@ -7,10 +7,24 @@ class DeliveryController {
   async createDeliveryAgent(req: Request, res: Response) {
     try {
       // Ensure required fields are present
-      const { name, email, phoneNumber } = req.body;
-      if (!name || !email || !phoneNumber) {
+      const { name, email, phoneNumber, idProof, vehicle } = req.body;
+      if (!name || !email || !phoneNumber || !idProof || !vehicle) {
         return res.status(400).json({
-          error: "Name, email, and phone number are required",
+          error: "Name, email, phone number, ID proof and vehicle details are required",
+        });
+      }
+
+      // Validate ID proof type
+      if (!["aadhaar", "pan", "voter"].includes(idProof.type)) {
+        return res.status(400).json({
+          error: "ID proof type must be either aadhaar, pan or voter"
+        });
+      }
+
+      // Validate vehicle type
+      if (!["bike", "van", "truck"].includes(vehicle.type)) {
+        return res.status(400).json({
+          error: "Vehicle type must be either bike, van or truck"
         });
       }
 
@@ -18,6 +32,9 @@ class DeliveryController {
       const agentData = {
         ...req.body,
         serviceLocations: req.body.serviceLocations || [],
+        orderCount: 0,
+        deliveredOrders: [],
+        isAvailable: true
       };
 
       const agent = await deliveryService.createDeliveryAgent(agentData);
@@ -60,6 +77,9 @@ class DeliveryController {
     try {
       const { email } = req.params;
       const agent = await deliveryService.getDeliveryAgentByEmail(email);
+      if (!agent) {
+        return res.status(404).json({ error: "Delivery agent not found" });
+      }
       res.json(agent);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -70,6 +90,9 @@ class DeliveryController {
     try {
       const { agentId } = req.params;
       const agent = await deliveryService.getDeliveryAgentById(agentId);
+      if (!agent) {
+        return res.status(404).json({ error: "Delivery agent not found" });
+      }
       res.json(agent);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -80,6 +103,9 @@ class DeliveryController {
     try {
       const { orderId } = req.params;
       const delivery = await deliveryService.getDeliveryByOrderId(orderId);
+      if (!delivery) {
+        return res.status(404).json({ error: "Delivery not found" });
+      }
       res.json(delivery);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -101,6 +127,9 @@ class DeliveryController {
       const agent = await deliveryService.decreaseDeliveryAgentOrderCount(
         agentId
       );
+      if (!agent) {
+        return res.status(404).json({ error: "Delivery agent not found" });
+      }
       res.json(agent);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -114,6 +143,9 @@ class DeliveryController {
         deliveryId,
         agentId
       );
+      if (!delivery) {
+        return res.status(404).json({ error: "Delivery not found" });
+      }
       res.json(delivery);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -126,6 +158,12 @@ class DeliveryController {
       const agent = await deliveryService.updateDeliveryAgentOrderCount(
         agentId
       );
+      if (!agent) {
+        return res.status(404).json({ error: "Delivery agent not found" });
+      }
+      if (agent.orderCount >= 5) {
+        return res.status(400).json({ error: "Agent has reached maximum order limit" });
+      }
       res.json(agent);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -189,6 +227,12 @@ class DeliveryController {
         return res.status(400).json({
           error:
             "serviceLocations query parameter is required and must be an array",
+        });
+      }
+
+      if (serviceLocations.length > 5) {
+        return res.status(400).json({
+          error: "Maximum 5 service locations allowed"
         });
       }
 
