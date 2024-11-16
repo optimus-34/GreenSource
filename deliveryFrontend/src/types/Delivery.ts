@@ -8,7 +8,13 @@ export interface IDelivery {
   orderPrice: number;
   deliveryAddress: string;
   pickupAddress: string;
-  status: "PENDING" | "ASSIGNED" | "PICKED_UP" | "DELIVERED" | "CANCELLED";
+  status:
+    | "PENDING"
+    | "CONFIRMED"
+    | "CANCELLED"
+    | "DELIVERED"
+    | "SHIPPED"
+    | "ONTHEWAY";
   createdAt: Date;
   updatedAt: Date;
 }

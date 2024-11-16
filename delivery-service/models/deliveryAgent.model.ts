@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export interface IDeliveryAgent {
   name: string;
@@ -8,6 +8,15 @@ export interface IDeliveryAgent {
   serviceLocations: string[]; // Array of city names
   deliveredOrders: string[]; // Array of order IDs
   isAvailable: boolean;
+  idProof: {
+    type: "aadhaar" | "pan" | "voter";
+    value: string;
+  };
+  vehicle: {
+    type: "bike" | "van" | "truck";
+    model: string;
+    registrationId: string;
+  };
 }
 
 const DeliveryAgentSchema = new Schema(
@@ -47,6 +56,33 @@ const DeliveryAgentSchema = new Schema(
     isAvailable: {
       type: Boolean,
       default: true,
+    },
+    idProof: {
+      type: {
+        type: String,
+        required: true,
+        enum: ["aadhaar", "pan", "voter"],
+      },
+      value: {
+        type: String,
+        required: true,
+      },
+    },
+    vehicle: {
+      type: {
+        type: String,
+        required: true,
+        enum: ["bike", "van", "truck"],
+      },
+      model: {
+        type: String,
+        required: true,
+      },
+      registrationId: {
+        type: String,
+        required: true,
+        unique: true,
+      },
     },
   },
   { timestamps: true }

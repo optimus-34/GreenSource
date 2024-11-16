@@ -7,27 +7,34 @@ interface Order extends IOrder {
 
 interface OrderTrackerProps {
   order: Order;
+  status: string;
 }
 
-export function OrderTracker({ order }: OrderTrackerProps) {
+export function OrderTracker({ order, status }: OrderTrackerProps) {
   const steps = [
     {
       status: "PENDING",
       icon: Package,
       label: "Order Placed",
-      description: "Order has been placed and waiting for assignment",
+      description: "Order has been placed and waiting for confirmation",
     },
     {
-      status: "ASSIGNED",
+      status: "CONFIRMED",
       icon: User,
       label: "Delivery Agent Assigned",
       description: "A delivery agent has been assigned to your order",
     },
     {
-      status: "PICKED_UP",
+      status: "ONTHEWAY",
       icon: Warehouse,
-      label: "Picked Up",
-      description: "Order has been picked up by delivery agent",
+      label: "On The Way",
+      description: "Order is on the way to the delivery location",
+    },
+    {
+      status: "SHIPPED",
+      icon: Check,
+      label: "Shipped",
+      description: "Order has been shipped successfully",
     },
     {
       status: "DELIVERED",
@@ -37,12 +44,10 @@ export function OrderTracker({ order }: OrderTrackerProps) {
     },
   ];
 
-  const currentStepIndex = steps.findIndex(
-    (step) => step.status === order.status
-  );
+  const currentStepIndex = steps.findIndex((step) => step.status === status);
 
   return (
-    <div className="w-full py-6">
+    <div className="min-w-[800px] py-6">
       <div className="relative">
         {/* Progress Bar */}
         <div className="absolute left-0 top-1/2 w-full h-1 bg-gray-200 -translate-y-1/2" />
@@ -76,7 +81,7 @@ export function OrderTracker({ order }: OrderTrackerProps) {
                 >
                   <StepIcon className="w-5 h-5" />
                 </div>
-                <div className="mt-2 text-center">
+                <div className="mt-10 text-center">
                   <span
                     className={`
                     text-sm font-medium block
@@ -99,13 +104,10 @@ export function OrderTracker({ order }: OrderTrackerProps) {
       <div className="text-center mt-4">
         <p className="text-sm text-gray-600">
           Current Status:{" "}
-          <span className="font-medium text-gray-900">
-            {steps.find((step) => step.status === order.status)?.label ||
-              "Processing"}
-          </span>
+          <span className="font-medium text-gray-900">{order.status}</span>
         </p>
         <p className="text-xs text-gray-500 mt-1">
-          Last updated: {new Date(order.createdAt).toLocaleString()}
+          Last updated: {new Date(order.updatedAt).toLocaleString()}
         </p>
       </div>
     </div>

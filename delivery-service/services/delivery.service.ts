@@ -51,7 +51,7 @@ class DeliveryService {
   }): Promise<IDelivery> {
     const delivery = new Delivery({
       ...deliveryData,
-      status: "PENDING",
+      status: "CONFIRMED",
     });
     await delivery.save();
     return delivery;
@@ -78,7 +78,7 @@ class DeliveryService {
   }
 
   async getAvailableAgents(): Promise<IDeliveryAgent[]> {
-    return DeliveryAgent.find({ orderCount: { $lt: 5 }, isAvailable: true });
+    return DeliveryAgent.find({ orderCount: { $lt: 1 }, isAvailable: true });
   }
 
   async updateDeliveryAgentOrderCount(
@@ -86,7 +86,7 @@ class DeliveryService {
   ): Promise<IDeliveryAgent | null> {
     return await DeliveryAgent.findByIdAndUpdate(
       agentId,
-      { $inc: { orderCount: 1 } },
+      { $inc: { orderCount: 1 }, isAvailable: false },
       { new: true }
     );
   }
@@ -96,7 +96,7 @@ class DeliveryService {
   ): Promise<IDeliveryAgent | null> {
     return await DeliveryAgent.findByIdAndUpdate(
       agentId,
-      { $inc: { orderCount: -1 } },
+      { $inc: { orderCount: -1 }, isAvailable: true },
       { new: true }
     );
   }
@@ -107,7 +107,7 @@ class DeliveryService {
   ): Promise<IDelivery | null> {
     return await Delivery.findByIdAndUpdate(
       deliveryId,
-      { deliveryAgentId: agentId },
+      { deliveryAgentId: agentId, isAvailable: false },
       { new: true }
     );
   }

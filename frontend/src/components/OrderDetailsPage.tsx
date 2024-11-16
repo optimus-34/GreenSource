@@ -16,22 +16,47 @@ interface Order extends IOrder {
   _id: string;
 }
 
+interface IDeliveryAgent {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  orderCount: number;
+  serviceLocations: string[]; // Array of city names
+  deliveredOrders: string[]; // Array of order IDs
+  isAvailable: boolean;
+  idProof: {
+    type: "aadhaar" | "pan" | "voter";
+    value: string;
+  };
+  vehicle: {
+    type: "bike" | "van" | "truck";
+    model: string;
+    registrationId: string;
+  };
+}
+
 interface Delivery {
   _id: string;
   orderId: string;
   farmerId: string;
   customerId: string;
   agentId?: string;
-  status: "PENDING" | "ASSIGNED" | "PICKED_UP" | "ON_WAY" | "DELIVERED";
+  status:
+    | "PENDING"
+    | "CONFIRMED"
+    | "ONTHEWAY"
+    | "SHIPPED"
+    | "DELIVERED"
+    | "CANCELLED";
   deliveryLocation: DeliveryLocation;
 }
 
 interface DeliveryStatusUpdate {
   status:
     | "PENDING"
-    | "ASSIGNED"
-    | "PICKED_UP"
-    | "ON_WAY"
+    | "CONFIRMED"
+    | "ONTHEWAY"
+    | "SHIPPED"
     | "DELIVERED"
     | "CANCELLED";
   location?: {
@@ -43,6 +68,12 @@ export default function OrderDetailsPage() {
   const { orderId } = useParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [delivery, setDelivery] = useState<Delivery | null>(null);
+  const [deliveryAgent, setDeliveryAgent] = useState<IDeliveryAgent | null>(
+    null
+  );
+  const [productNames, setProductNames] = useState<{ [key: string]: string }>(
+    {}
+  );
   const { token } = useSelector(selectAuth);
 
   useEffect(() => {
@@ -70,27 +101,43 @@ export default function OrderDetailsPage() {
           }
         );
         const deliveryData = await deliveryResponse.data;
+        console.log("deliveryData", deliveryData);
         setDelivery(deliveryData);
+
+        // Fetch delivery agent details if agentId exists
+        if (deliveryData.deliveryAgentId) {
+          const agentResponse = await axios.get(
+            `http://localhost:3000/api/delivery/agents/${deliveryData.deliveryAgentId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setDeliveryAgent(agentResponse.data);
+        }
+
+        // Fetch product names for all items
+        const names: { [key: string]: string } = {};
+        for (const item of orderData.items) {
+          const response = await axios.get(
+            `http://localhost:3000/api/products/${item.productId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          names[item.productId] = response.data?.name || "Unknown Product";
+        }
+        setProductNames(names);
       } catch (error) {}
     };
 
     if (orderId) {
       fetchOrderDetails();
     }
-    console.log(order);
-  }, [orderId]);
-
-  const getItemDetails = async (productId: string) => {
-    const response = await axios.get(
-      `http://localhost:3000/api/products/${productId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data;
-  };
+  }, [orderId, token]);
 
   const updateDeliveryStatus = async (statusUpdate: DeliveryStatusUpdate) => {
     try {
@@ -116,23 +163,23 @@ export default function OrderDetailsPage() {
       <div className="mt-6 space-y-4">
         <h3 className="font-semibold text-gray-800">Delivery Controls</h3>
         <div className="flex gap-4">
-          {delivery.status === "ASSIGNED" && (
+          {delivery.status === "CONFIRMED" && (
             <button
-              onClick={() => updateDeliveryStatus({ status: "PICKED_UP" })}
+              onClick={() => updateDeliveryStatus({ status: "ONTHEWAY" })}
               className="bg-blue-500 text-white px-4 py-2 rounded"
             >
               Mark as Picked Up
             </button>
           )}
-          {delivery.status === "PICKED_UP" && (
+          {delivery.status === "ONTHEWAY" && (
             <button
-              onClick={() => updateDeliveryStatus({ status: "ON_WAY" })}
+              onClick={() => updateDeliveryStatus({ status: "SHIPPED" })}
               className="bg-blue-500 text-white px-4 py-2 rounded"
             >
               Start Delivery
             </button>
           )}
-          {delivery.status === "ON_WAY" && (
+          {delivery.status === "SHIPPED" && (
             <button
               onClick={() => updateDeliveryStatus({ status: "DELIVERED" })}
               className="bg-green-500 text-white px-4 py-2 rounded"
@@ -149,8 +196,10 @@ export default function OrderDetailsPage() {
     return <div className="p-4">Loading...</div>;
   }
 
+  console.log(order);
+
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 max-w-3xl mx-auto">
+    <div className="bg-white rounded-lg shadow-lg p-6 max-w-5xl mx-auto">
       <div className="border-b pb-4 mb-4">
         <h2 className="text-2xl font-bold text-gray-800">Order #{order._id}</h2>
         <p className="text-gray-600">
@@ -159,7 +208,7 @@ export default function OrderDetailsPage() {
         </p>
       </div>
 
-      <OrderTracker order={order} />
+      <OrderTracker order={order} status={delivery?.status as string} />
 
       <div className="grid md:grid-cols-2 gap-6 mt-6">
         <div className="space-y-4">
@@ -182,26 +231,22 @@ export default function OrderDetailsPage() {
         <div className="space-y-4">
           <h3 className="font-semibold text-gray-800">Order Summary</h3>
           <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-            {order.items.map((item) => {
-              const itemDetails = getItemDetails(item.productId);
-              console.log(itemDetails);
-              return (
-                <div
-                  key={item.productId}
-                  className="flex justify-between items-center"
-                >
-                  <div className="flex items-center">
-                    <Package className="w-4 h-4 text-gray-500 mr-2" />
-                    <span>{item.productId}</span>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">
-                      ₹{item.unitPrice.toFixed(2)} x {item.quantity}
-                    </p>
-                  </div>
+            {order.items.map((item) => (
+              <div
+                key={item.productId}
+                className="flex justify-between items-center"
+              >
+                <div className="flex items-center">
+                  <Package className="w-4 h-4 text-gray-500 mr-2" />
+                  <span>{productNames[item.productId]}</span>
                 </div>
-              );
-            })}
+                <div className="text-right">
+                  <p className="font-medium">
+                    ₹{item.unitPrice.toFixed(2)} x {item.quantity}
+                  </p>
+                </div>
+              </div>
+            ))}
             <div className="border-t pt-3 mt-3">
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
@@ -212,16 +257,16 @@ export default function OrderDetailsPage() {
         </div>
       </div>
 
-      {delivery && delivery.agentId && (
+      {delivery && deliveryAgent && (
         <div className="mt-6 p-4 bg-blue-50 rounded-lg">
           <div className="flex items-center">
             <User className="w-5 h-5 text-blue-500" />
             <div className="ml-3">
               <p className="font-medium">Delivery Agent</p>
+              <p className="text-gray-600">Name: {deliveryAgent.name}</p>
               <p className="text-gray-600">
-                Your order will be delivered by Agent #{delivery.agentId}
+                Contact: {deliveryAgent.phoneNumber}
               </p>
-              <p className="text-gray-600">Status: {delivery.status}</p>
             </div>
           </div>
         </div>

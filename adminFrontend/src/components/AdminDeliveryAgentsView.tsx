@@ -2,13 +2,25 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../store/slices/authSlice";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
 
 interface DeliveryAgent {
   _id: string;
   email: string;
   name: string;
   phoneNumber: string;
+  serviceLocations: string[];
+  orderCount: number;
+  isAvailable: boolean;
+  idProof: {
+    type: "aadhaar" | "pan" | "voter";
+    value: string;
+  };
+  vehicle: {
+    type: "bike" | "van" | "truck";
+    model: string;
+    registrationId: string;
+  };
   deliveries?: {
     _id: string;
     orderId: string;
@@ -22,7 +34,24 @@ export default function AdminDeliveryAgentsView() {
   const [deliveryAgents, setDeliveryAgents] = useState<DeliveryAgent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [expandedSections, setExpandedSections] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newAgent, setNewAgent] = useState<Partial<DeliveryAgent>>({
+    serviceLocations: [],
+    orderCount: 0,
+    isAvailable: true,
+    idProof: {
+      type: "aadhaar",
+      value: "",
+    },
+    vehicle: {
+      type: "bike",
+      model: "",
+      registrationId: "",
+    },
+  });
 
   useEffect(() => {
     fetchDeliveryAgents();
@@ -56,6 +85,14 @@ export default function AdminDeliveryAgentsView() {
       );
 
       setDeliveryAgents(agentsWithDetails);
+      const initialExpandedState = agentsWithDetails.reduce(
+        (acc, agent) => ({
+          ...acc,
+          [agent._id]: false,
+        }),
+        {}
+      );
+      setExpandedSections(initialExpandedState);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching delivery agents:", error);
@@ -64,8 +101,53 @@ export default function AdminDeliveryAgentsView() {
     }
   };
 
-  const toggleSection = (agentEmail: string) => {
-    setExpandedSection(expandedSection === agentEmail ? null : agentEmail);
+  const handleAddAgent = async () => {
+    try {
+      await axios.post("http://localhost:3000/api/delivery/agents", newAgent, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setShowAddModal(false);
+      setNewAgent({
+        serviceLocations: [],
+        orderCount: 0,
+        isAvailable: true,
+        idProof: {
+          type: "aadhaar",
+          value: "",
+        },
+        vehicle: {
+          type: "bike",
+          model: "",
+          registrationId: "",
+        },
+      });
+      fetchDeliveryAgents();
+    } catch (error) {
+      console.error("Error adding delivery agent:", error);
+      setError("Failed to add delivery agent");
+    }
+  };
+
+  const handleDeleteAgent = async (agentId: string) => {
+    try {
+      await axios.delete(
+        `http://localhost:3000/api/delivery/agents/${agentId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      fetchDeliveryAgents();
+    } catch (error) {
+      console.error("Error deleting delivery agent:", error);
+      setError("Failed to delete delivery agent");
+    }
+  };
+
+  const toggleSection = (agentId: string) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [agentId]: !prev[agentId],
+    }));
   };
 
   if (loading) return <div className="p-4 md:p-6 lg:p-8">Loading...</div>;
@@ -74,98 +156,107 @@ export default function AdminDeliveryAgentsView() {
 
   return (
     <div className="p-4 md:p-6 lg:p-8">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800">
-        Delivery Agents Management
-      </h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Delivery Agents Management</h1>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition-colors text-sm"
+        >
+          <Plus size={16} />
+          Add Agent
+        </button>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex flex-wrap gap-4 md:gap-6 items-start justify-start">
         {deliveryAgents.map((agent) => (
           <div
             key={agent.email}
-            className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 border border-gray-100"
+            className="bg-white rounded-lg shadow-md p-4 md:p-6 hover:shadow-lg transition-shadow duration-200 min-w-[400px]"
           >
             <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-              <div className="space-y-3 w-full">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
-                    <span className="text-white font-bold text-lg">
+              <div className="space-y-2 w-full">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <span className="text-blue-600 font-semibold">
                       {agent.name.split(" ")[0].charAt(0)}
                       {agent.name.split(" ")[1]?.charAt(0)}
                     </span>
                   </div>
-                  <h2 className="text-xl font-bold text-gray-800">
-                    {agent.name}
-                  </h2>
+                  <h2 className="text-lg font-semibold">{agent.name}</h2>
                 </div>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p className="flex items-center gap-2 bg-gray-50 p-2 rounded-lg">
-                    <span className="font-semibold text-gray-700">Email:</span>
+                <div className="space-y-1 text-sm text-gray-600">
+                  <p className="flex items-center gap-2">
+                    <span className="font-medium">Email:</span>
                     {agent.email}
                   </p>
-                  <p className="flex items-center gap-2 bg-gray-50 p-2 rounded-lg">
-                    <span className="font-semibold text-gray-700">Phone:</span>
+                  <p className="flex items-center gap-2">
+                    <span className="font-medium">Phone:</span>
                     {agent.phoneNumber}
                   </p>
+                  <p className="flex items-center gap-2">
+                    <span className="font-medium">Status:</span>
+                    <span
+                      className={`${
+                        agent.isAvailable ? "text-green-600" : "text-red-600"
+                      } font-medium`}
+                    >
+                      {agent.isAvailable ? "Available" : "Unavailable"}
+                    </span>
+                  </p>
                 </div>
+              </div>
+
+              <div className="flex flex-col gap-2 w-full md:w-auto">
+                <button
+                  onClick={() => handleDeleteAgent(agent._id)}
+                  className="w-full md:w-auto bg-red-500 hover:bg-red-600 text-white font-medium p-2 rounded-full text-sm transition-colors duration-200"
+                >
+                  <Trash2 size={16} />
+                </button>
               </div>
             </div>
 
-            <div className="mt-6 border-t border-gray-100 pt-4">
+            <div className="mt-4 border-t pt-4">
               <div
-                className="flex justify-between items-center cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors duration-200"
-                onClick={() => toggleSection(agent.email)}
+                className="flex justify-between items-center cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors duration-200"
+                onClick={() => toggleSection(agent._id)}
               >
-                <h3 className="font-semibold text-gray-700">
+                <h3 className="font-medium text-sm">
                   Deliveries ({agent.deliveries?.length || 0})
                 </h3>
-                {expandedSection === agent.email ? (
-                  <ChevronUp className="text-blue-500" size={20} />
+                {expandedSections[agent._id] ? (
+                  <ChevronUp size={16} />
                 ) : (
-                  <ChevronDown className="text-gray-400" size={20} />
+                  <ChevronDown size={16} />
                 )}
               </div>
-              {expandedSection === agent.email && (
-                <div className="mt-3 space-y-3">
+              {expandedSections[agent._id] && (
+                <div className="mt-2 space-y-2">
                   {agent.deliveries && agent.deliveries.length > 0 ? (
                     agent.deliveries.slice(0, 3).map((delivery) => (
                       <div
                         key={delivery._id}
-                        className="bg-gray-50 p-4 rounded-lg text-sm hover:bg-gray-100 transition-colors duration-200"
+                        className="bg-gray-50 p-3 rounded-md text-sm"
                       >
                         <div className="flex justify-between items-start">
                           <div>
-                            <p className="font-semibold text-gray-800">
+                            <p className="font-medium">
                               Delivery #{delivery._id.slice(-6)}
                             </p>
-                            <p className="text-gray-600">
-                              Order: #{delivery.orderId.slice(-6)}
-                            </p>
-                            <p className="text-gray-500">
+                            <p className="text-gray-600 text-xs">
                               {new Date(
                                 delivery.createdAt
                               ).toLocaleDateString()}
                             </p>
                           </div>
                           <div className="text-right">
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                delivery.status === "DELIVERED"
-                                  ? "bg-green-100 text-green-700"
-                                  : delivery.status === "PENDING"
-                                  ? "bg-yellow-100 text-yellow-700"
-                                  : "bg-blue-100 text-blue-700"
-                              }`}
-                            >
-                              {delivery.status}
-                            </span>
+                            <p className="text-xs">{delivery.status}</p>
                           </div>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <p className="text-gray-500 text-sm p-3">
-                      No deliveries yet
-                    </p>
+                    <p className="text-gray-500 text-sm">No deliveries yet</p>
                   )}
                 </div>
               )}
@@ -173,6 +264,132 @@ export default function AdminDeliveryAgentsView() {
           </div>
         ))}
       </div>
+
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+            <h2 className="text-2xl font-bold mb-4">Add New Delivery Agent</h2>
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Name"
+                className="w-full p-2 border rounded"
+                onChange={(e) =>
+                  setNewAgent({ ...newAgent, name: e.target.value })
+                }
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full p-2 border rounded"
+                onChange={(e) =>
+                  setNewAgent({ ...newAgent, email: e.target.value })
+                }
+              />
+              <input
+                type="tel"
+                placeholder="Phone Number"
+                className="w-full p-2 border rounded"
+                onChange={(e) =>
+                  setNewAgent({ ...newAgent, phoneNumber: e.target.value })
+                }
+              />
+              <select
+                className="w-full p-2 border rounded"
+                value={newAgent.idProof?.type}
+                onChange={(e) =>
+                  setNewAgent({
+                    ...newAgent,
+                    idProof: {
+                      ...newAgent.idProof!,
+                      type: e.target.value as "aadhaar" | "pan" | "voter",
+                    },
+                  })
+                }
+              >
+                <option value="">Select ID Proof Type</option>
+                <option value="aadhaar">Aadhaar</option>
+                <option value="pan">PAN</option>
+                <option value="voter">Voter ID</option>
+              </select>
+              <input
+                type="text"
+                placeholder="ID Proof Value"
+                className="w-full p-2 border rounded"
+                onChange={(e) =>
+                  setNewAgent({
+                    ...newAgent,
+                    idProof: {
+                      ...newAgent.idProof!,
+                      value: e.target.value,
+                    },
+                  })
+                }
+              />
+              <select
+                className="w-full p-2 border rounded"
+                value={newAgent.vehicle?.type}
+                onChange={(e) =>
+                  setNewAgent({
+                    ...newAgent,
+                    vehicle: {
+                      ...newAgent.vehicle!,
+                      type: e.target.value as "bike" | "van" | "truck",
+                    },
+                  })
+                }
+              >
+                <option value="">Select Vehicle Type</option>
+                <option value="bike">Bike</option>
+                <option value="van">Van</option>
+                <option value="truck">Truck</option>
+              </select>
+              <input
+                type="text"
+                placeholder="Vehicle Model"
+                className="w-full p-2 border rounded"
+                onChange={(e) =>
+                  setNewAgent({
+                    ...newAgent,
+                    vehicle: {
+                      ...newAgent.vehicle!,
+                      model: e.target.value,
+                    },
+                  })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Vehicle Registration ID"
+                className="w-full p-2 border rounded"
+                onChange={(e) =>
+                  setNewAgent({
+                    ...newAgent,
+                    vehicle: {
+                      ...newAgent.vehicle!,
+                      registrationId: e.target.value,
+                    },
+                  })
+                }
+              />
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAddAgent}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Add Agent
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

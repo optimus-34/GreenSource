@@ -178,15 +178,8 @@ export const getProducts = async (req: Request, res: Response) => {
     }
     res.json(products); // Return the fetched product data
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("Error fetching products:", error.message);
-      res
-        .status(500)
-        .json({ message: "Error fetching products", error: error.message });
-    } else {
-      console.error("Unexpected error:", error);
-      res.status(500).json({ message: "An unexpected error occurred" });
-    }
+    console.error("Error fetching products:", error);
+    res.status(500).json({ message: "Error fetching products", error: error });
   }
 };
 
