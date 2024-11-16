@@ -170,6 +170,13 @@ export default function AdminFarmersView() {
     }));
   };
 
+  const calculateTotalEarnings = (orders: any[]) => {
+    const val = orders
+      .filter((order) => order.status === "DELIVERED")
+      .reduce((total, order) => total + order.totalAmount, 0);
+    return val - (5 * val) / 100;
+  };
+
   if (loading) return <div className="p-4 md:p-6 lg:p-8">Loading...</div>;
   if (error)
     return <div className="p-4 md:p-6 lg:p-8 text-red-500">{error}</div>;
@@ -178,11 +185,11 @@ export default function AdminFarmersView() {
     <div className="p-4 md:p-6 lg:p-8">
       <h1 className="text-2xl font-bold mb-6">Farmers Management</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="flex flex-wrap gap-4 md:gap-6 items-start justify-start">
         {farmers.map((farmer) => (
           <div
             key={farmer.email}
-            className="bg-white rounded-lg shadow-md p-4 md:p-6 hover:shadow-lg transition-shadow duration-200"
+            className="bg-white rounded-lg shadow-md p-4 md:p-6 hover:shadow-lg transition-shadow duration-200 min-w-[400px]"
           >
             <div className="flex flex-col md:flex-row justify-between items-start gap-4">
               <div className="space-y-2 w-full">
@@ -214,6 +221,12 @@ export default function AdminFarmersView() {
                       } font-medium`}
                     >
                       {farmer.is_verified ? "Verified" : "Not Verified"}
+                    </span>
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <span className="font-medium">Total Earnings:</span>
+                    <span className="text-green-600 font-medium">
+                      ${calculateTotalEarnings(farmer.orders || []).toFixed(2)}
                     </span>
                   </p>
                 </div>

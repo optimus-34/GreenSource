@@ -118,17 +118,18 @@ export default function AdminConsumersView() {
   };
 
   if (loading) return <div className="p-4 md:p-6 lg:p-8">Loading...</div>;
-  if (error) return <div className="p-4 md:p-6 lg:p-8 text-red-500">{error}</div>;
+  if (error)
+    return <div className="p-4 md:p-6 lg:p-8 text-red-500">{error}</div>;
 
   return (
     <div className="p-4 md:p-6 lg:p-8">
       <h1 className="text-2xl font-bold mb-6">Consumers Management</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="flex flex-wrap gap-4 md:gap-6 items-start justify-start">
         {consumers.map((consumer) => (
           <div
             key={consumer.email}
-            className="bg-white rounded-lg shadow-md p-4 md:p-6 hover:shadow-lg transition-shadow duration-200"
+            className="bg-white rounded-lg shadow-md p-4 md:p-6 hover:shadow-lg transition-shadow duration-200 min-w-[400px]"
           >
             <div className="flex flex-col md:flex-row justify-between items-start gap-4">
               <div className="space-y-2 w-full">
@@ -195,18 +196,24 @@ export default function AdminConsumersView() {
                       >
                         <div className="flex justify-between items-start">
                           <div>
-                            <p className="font-medium">Order #{order._id.slice(-6)}</p>
+                            <p className="font-medium">
+                              Order #{order._id.slice(-6)}
+                            </p>
                             <p className="text-gray-600 text-xs">
                               {new Date(order.orderDate).toLocaleDateString()}
                             </p>
                           </div>
                           <div className="text-right">
                             <p className="font-medium">${order.totalAmount}</p>
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              order.status === 'DELIVERED' ? 'bg-green-100 text-green-800' :
-                              order.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
-                              'bg-blue-100 text-blue-800'
-                            }`}>
+                            <span
+                              className={`text-xs px-2 py-1 rounded-full ${
+                                order.status === "DELIVERED"
+                                  ? "bg-green-100 text-green-800"
+                                  : order.status === "CANCELLED"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-blue-100 text-blue-800"
+                              }`}
+                            >
                               {order.status}
                             </span>
                           </div>
@@ -214,7 +221,9 @@ export default function AdminConsumersView() {
                       </div>
                     ))
                   ) : (
-                    <p className="text-gray-500 text-sm text-center py-2">No orders yet</p>
+                    <p className="text-gray-500 text-sm text-center py-2">
+                      No orders yet
+                    </p>
                   )}
                 </div>
               )}

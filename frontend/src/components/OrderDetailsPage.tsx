@@ -16,6 +16,25 @@ interface Order extends IOrder {
   _id: string;
 }
 
+interface IDeliveryAgent {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  orderCount: number;
+  serviceLocations: string[]; // Array of city names
+  deliveredOrders: string[]; // Array of order IDs
+  isAvailable: boolean;
+  idProof: {
+    type: "aadhaar" | "pan" | "voter";
+    value: string;
+  };
+  vehicle: {
+    type: "bike" | "van" | "truck";
+    model: string;
+    registrationId: string;
+  };
+}
+
 interface Delivery {
   _id: string;
   orderId: string;
@@ -49,6 +68,9 @@ export default function OrderDetailsPage() {
   const { orderId } = useParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [delivery, setDelivery] = useState<Delivery | null>(null);
+  const [deliveryAgent, setDeliveryAgent] = useState<IDeliveryAgent | null>(
+    null
+  );
   const [productNames, setProductNames] = useState<{ [key: string]: string }>(
     {}
   );
@@ -79,7 +101,21 @@ export default function OrderDetailsPage() {
           }
         );
         const deliveryData = await deliveryResponse.data;
+        console.log("deliveryData", deliveryData);
         setDelivery(deliveryData);
+
+        // Fetch delivery agent details if agentId exists
+        if (deliveryData.deliveryAgentId) {
+          const agentResponse = await axios.get(
+            `http://localhost:3000/api/delivery/agents/${deliveryData.deliveryAgentId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setDeliveryAgent(agentResponse.data);
+        }
 
         // Fetch product names for all items
         const names: { [key: string]: string } = {};
@@ -221,16 +257,16 @@ export default function OrderDetailsPage() {
         </div>
       </div>
 
-      {delivery && delivery.agentId && (
+      {delivery && deliveryAgent && (
         <div className="mt-6 p-4 bg-blue-50 rounded-lg">
           <div className="flex items-center">
             <User className="w-5 h-5 text-blue-500" />
             <div className="ml-3">
               <p className="font-medium">Delivery Agent</p>
+              <p className="text-gray-600">Name: {deliveryAgent.name}</p>
               <p className="text-gray-600">
-                Your order will be delivered by Agent #{delivery.agentId}
+                Contact: {deliveryAgent.phoneNumber}
               </p>
-              <p className="text-gray-600">Status: {delivery.status}</p>
             </div>
           </div>
         </div>

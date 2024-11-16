@@ -24,6 +24,7 @@ interface Delivery {
   agentId?: string;
   status: "PENDING" | "CONFIRMED" | "ONTHEWAY" | "SHIPPED" | "DELIVERED";
   deliveryLocation: DeliveryLocation;
+  pickupAddress?: string;
 }
 
 interface DeliveryStatusUpdate {
@@ -162,13 +163,13 @@ export default function OrderDetailsPage() {
   const renderDeliveryAgentControls = (delivery: Delivery) => {
     console.log(delivery.status);
     return (
-      <div className="mt-6 space-y-4">
-        <h3 className="font-semibold text-gray-800">Delivery Controls</h3>
-        <div className="flex gap-4">
+      <div className="mt-8 space-y-6 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl shadow-sm">
+        <h3 className="text-xl font-bold text-gray-800 border-b pb-3">Delivery Controls</h3>
+        <div className="flex flex-wrap gap-4">
           {delivery.status === "CONFIRMED" && (
             <button
               onClick={() => updateDeliveryStatus({ status: "ONTHEWAY" })}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200"
             >
               Mark as Picked Up
             </button>
@@ -176,7 +177,7 @@ export default function OrderDetailsPage() {
           {delivery.status === "ONTHEWAY" && (
             <button
               onClick={() => updateDeliveryStatus({ status: "SHIPPED" })}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="flex-1 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:from-indigo-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200"
             >
               Start Delivery
             </button>
@@ -184,7 +185,7 @@ export default function OrderDetailsPage() {
           {delivery.status === "SHIPPED" && (
             <button
               onClick={() => updateDeliveryStatus({ status: "DELIVERED" })}
-              className="bg-green-500 text-white px-4 py-2 rounded"
+              className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200"
             >
               Mark as Delivered
             </button>
@@ -195,85 +196,117 @@ export default function OrderDetailsPage() {
   };
 
   if (!order) {
-    return <div className="p-4">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-pulse flex space-x-4">
+          <div className="rounded-full bg-gray-200 h-12 w-12"></div>
+          <div className="flex-1 space-y-4 py-1">
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded"></div>
+              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   console.log(delivery, order);
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 max-w-5xl mx-auto">
-      <div className="border-b pb-4 mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Order #{order._id}</h2>
-        <p className="text-gray-600">
-          <Clock className="inline-block w-4 h-4 mr-1" />
-          Placed on {new Date(order.createdAt).toLocaleDateString()}
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="border-b border-gray-200 pb-6 mb-6">
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Order #{order._id}</h2>
+            <p className="text-gray-600 flex items-center">
+              <Clock className="inline-block w-5 h-5 mr-2 text-blue-500" />
+              Placed on {new Date(order.createdAt).toLocaleDateString()}
+            </p>
+          </div>
 
-      <OrderTracker order={order} status={delivery?.status as string} />
+          <OrderTracker order={order} status={delivery?.status as string} />
 
-      <div className="grid md:grid-cols-2 gap-6 mt-6">
-        <div className="space-y-4">
-          <h3 className="font-semibold text-gray-800">Delivery Details</h3>
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <div className="flex items-start">
-              <MapPin className="w-5 h-5 text-gray-500 mt-1" />
-              <div className="ml-3">
-                <p className="font-medium">Delivery Address</p>
-                <p className="text-gray-600">{order.shippingAddress.street}</p>
-                <p className="text-gray-600">
-                  {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
-                  {order.shippingAddress.zipCode}
-                </p>
+          <div className="grid md:grid-cols-2 gap-8 mt-8">
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold text-gray-800">Delivery Details</h3>
+              <div className="flex flex-col gap-6">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl shadow-sm">
+                  <div className="flex items-start">
+                    <MapPin className="w-6 h-6 text-blue-500 mt-1" />
+                    <div className="ml-4">
+                      <p className="font-semibold text-gray-900">Pickup Address</p>
+                      <p className="text-gray-600 mt-1">
+                        {delivery?.pickupAddress || "Loading pickup address..."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl shadow-sm">
+                  <div className="flex items-start">
+                    <MapPin className="w-6 h-6 text-purple-500 mt-1" />
+                    <div className="ml-4">
+                      <p className="font-semibold text-gray-900">Delivery Address</p>
+                      <p className="text-gray-600 mt-1">{order.shippingAddress.street}</p>
+                      <p className="text-gray-600">
+                        {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
+                        {order.shippingAddress.zipCode}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold text-gray-800">Order Summary</h3>
+              <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm space-y-4">
+                {order.items.map((item) => (
+                  <div
+                    key={item.productId}
+                    className="flex justify-between items-center py-3 border-b border-gray-200 last:border-0"
+                  >
+                    <div className="flex items-center">
+                      <Package className="w-5 h-5 text-gray-500 mr-3" />
+                      <span className="font-medium text-gray-800">{productNames[item.productId]}</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-gray-900">
+                        ₹{item.unitPrice.toFixed(2)} x {item.quantity}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                <div className="pt-4 mt-4 border-t border-gray-200">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-bold text-gray-900">Total</span>
+                    <span className="text-lg font-bold text-blue-600">₹{order.totalAmount.toFixed(2)}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="space-y-4">
-          <h3 className="font-semibold text-gray-800">Order Summary</h3>
-          <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-            {order.items.map((item) => (
-              <div
-                key={item.productId}
-                className="flex justify-between items-center"
-              >
-                <div className="flex items-center">
-                  <Package className="w-4 h-4 text-gray-500 mr-2" />
-                  <span>{productNames[item.productId]}</span>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium">
-                    ₹{item.unitPrice.toFixed(2)} x {item.quantity}
+          {delivery && delivery.agentId && (
+            <div className="mt-8 bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-xl shadow-sm">
+              <div className="flex items-center">
+                <User className="w-8 h-8 text-blue-500" />
+                <div className="ml-4">
+                  <p className="font-semibold text-gray-900 text-lg">Delivery Agent</p>
+                  <p className="text-gray-600 mt-1">
+                    Your order will be delivered by Agent #{delivery.agentId}
+                  </p>
+                  <p className="text-gray-600 mt-1">
+                    Status: <span className="font-medium text-blue-600">{delivery.status}</span>
                   </p>
                 </div>
               </div>
-            ))}
-            <div className="border-t pt-3 mt-3">
-              <div className="flex justify-between font-semibold">
-                <span>Total</span>
-                <span>₹{order.totalAmount.toFixed(2)}</span>
-              </div>
             </div>
-          </div>
+          )}
+
+          {delivery !== null && renderDeliveryAgentControls(delivery)}
         </div>
       </div>
-
-      {delivery && delivery.agentId && (
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <div className="flex items-center">
-            <User className="w-5 h-5 text-blue-500" />
-            <div className="ml-3">
-              <p className="font-medium">Delivery Agent</p>
-              <p className="text-gray-600">
-                Your order will be delivered by Agent #{delivery.agentId}
-              </p>
-              <p className="text-gray-600">Status: {delivery.status}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {delivery !== null && renderDeliveryAgentControls(delivery)}
     </div>
   );
 }
