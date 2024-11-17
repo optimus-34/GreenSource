@@ -21,6 +21,10 @@ router.get("/:email/cart", customerController.getCart);
 router.post("/:email/cart", customerController.addToCart);
 router.delete("/:email/cart", customerController.removeFromCart);
 router.put("/:email/cart/:productId", customerController.updateCart);
+router.delete(
+  "/:email/cart/:productId",
+  customerController.removeProductFromCart
+);
 
 // Address routes
 router.get("/:email/addresses", customerController.getAddresses);

@@ -34,6 +34,10 @@ router.put(
     await deliveryController.addDeliveryAgentIdToDelivery(req, res);
   }
 );
+router.put("/add/:agentId/delivery/:deliveryId", async (req: Request, res: Response) => {
+    await deliveryController.addDeliveryIdToAgent(req, res);
+  }
+);
 
 // Add this route before other agent routes
 router.get("/api/agents/available", async (req: Request, res: Response) => {

@@ -78,7 +78,7 @@ class DeliveryService {
   }
 
   async getAvailableAgents(): Promise<IDeliveryAgent[]> {
-    return DeliveryAgent.find({ orderCount: { $lt: 1 }, isAvailable: true });
+    return DeliveryAgent.find({ orderCount: { $eq: 0 }, isAvailable: true });
   }
 
   async updateDeliveryAgentOrderCount(
@@ -87,6 +87,17 @@ class DeliveryService {
     return await DeliveryAgent.findByIdAndUpdate(
       agentId,
       { $inc: { orderCount: 1 }, isAvailable: false },
+      { new: true }
+    );
+  }
+
+  async addDeliveryIdToAgent(
+    agentId: string,
+    deliveryId: string
+  ): Promise<IDeliveryAgent | null> {
+    return await DeliveryAgent.findByIdAndUpdate(
+      agentId,
+      { $push: { deliveredOrders: deliveryId } },
       { new: true }
     );
   }

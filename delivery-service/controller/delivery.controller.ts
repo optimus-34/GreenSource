@@ -10,21 +10,22 @@ class DeliveryController {
       const { name, email, phoneNumber, idProof, vehicle } = req.body;
       if (!name || !email || !phoneNumber || !idProof || !vehicle) {
         return res.status(400).json({
-          error: "Name, email, phone number, ID proof and vehicle details are required",
+          error:
+            "Name, email, phone number, ID proof and vehicle details are required",
         });
       }
 
       // Validate ID proof type
       if (!["aadhaar", "pan", "voter"].includes(idProof.type)) {
         return res.status(400).json({
-          error: "ID proof type must be either aadhaar, pan or voter"
+          error: "ID proof type must be either aadhaar, pan or voter",
         });
       }
 
       // Validate vehicle type
       if (!["bike", "van", "truck"].includes(vehicle.type)) {
         return res.status(400).json({
-          error: "Vehicle type must be either bike, van or truck"
+          error: "Vehicle type must be either bike, van or truck",
         });
       }
 
@@ -34,7 +35,7 @@ class DeliveryController {
         serviceLocations: req.body.serviceLocations || [],
         orderCount: 0,
         deliveredOrders: [],
-        isAvailable: true
+        isAvailable: true,
       };
 
       const agent = await deliveryService.createDeliveryAgent(agentData);
@@ -162,7 +163,9 @@ class DeliveryController {
         return res.status(404).json({ error: "Delivery agent not found" });
       }
       if (agent.orderCount >= 5) {
-        return res.status(400).json({ error: "Agent has reached maximum order limit" });
+        return res
+          .status(400)
+          .json({ error: "Agent has reached maximum order limit" });
       }
       res.json(agent);
     } catch (error: any) {
@@ -206,6 +209,19 @@ class DeliveryController {
     }
   }
 
+  async addDeliveryIdToAgent(req: Request, res: Response) {
+    try {
+      const { agentId, deliveryId } = req.params;
+      const delivery = await deliveryService.addDeliveryIdToAgent(
+        agentId,
+        deliveryId
+      );
+      res.json(delivery);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
   async getDeliveryById(req: Request, res: Response) {
     try {
       const { deliveryId } = req.params;
@@ -232,7 +248,7 @@ class DeliveryController {
 
       if (serviceLocations.length > 5) {
         return res.status(400).json({
-          error: "Maximum 5 service locations allowed"
+          error: "Maximum 5 service locations allowed",
         });
       }
 

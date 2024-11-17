@@ -210,6 +210,22 @@ export class CustomerController {
     }
   };
 
+  removeProductFromCart = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const customer = await this.customerService.removeProductFromCart(
+        req.params.email,
+        req.params.productId
+      );
+      res.json({ success: true, data: customer });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   removeFromCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const customer = await this.customerService.removeFromCart(

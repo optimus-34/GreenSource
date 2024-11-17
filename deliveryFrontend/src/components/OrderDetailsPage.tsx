@@ -21,7 +21,7 @@ interface Delivery {
   orderId: string;
   farmerId: string;
   customerId: string;
-  agentId?: string;
+  deliveryAgentId?: string;
   status: "PENDING" | "CONFIRMED" | "ONTHEWAY" | "SHIPPED" | "DELIVERED";
   deliveryLocation: DeliveryLocation;
   pickupAddress?: string;
@@ -35,9 +35,6 @@ interface DeliveryStatusUpdate {
     | "SHIPPED"
     | "DELIVERED"
     | "CANCELLED";
-  location?: {
-    coordinates: [number, number];
-  };
 }
 
 export default function OrderDetailsPage() {
@@ -115,6 +112,7 @@ export default function OrderDetailsPage() {
 
   const updateDeliveryStatus = async (statusUpdate: DeliveryStatusUpdate) => {
     try {
+      console.log("statusUpdate", statusUpdate);
       // Update delivery status
       const deliveryResponse = await axios.put(
         `http://localhost:3000/api/delivery/${delivery?._id}/status`,
@@ -125,6 +123,26 @@ export default function OrderDetailsPage() {
           },
         }
       );
+      if (statusUpdate.status === "DELIVERED") {
+        const orderCountUpdate = await axios.put(
+          `http://localhost:3004/agents/${delivery?.deliveryAgentId}/orderCount/decrease`
+          // {
+          //   headers: {
+          //     Authorization: `Bearer ${token}`,
+          //   },
+          // }
+        );
+        const addedDeliveryId = await axios.put(
+          `http://localhost:3004/add/${delivery?.deliveryAgentId}/delivery/${delivery?._id}`
+          // {
+          //   headers: {
+          //     Authorization: `Bearer ${token}`,
+          //   },
+          // }
+        );
+        console.log(addedDeliveryId);
+        console.log(orderCountUpdate);
+      }
       setDelivery(deliveryResponse.data);
 
       // Update order status to match delivery status
@@ -164,7 +182,9 @@ export default function OrderDetailsPage() {
     console.log(delivery.status);
     return (
       <div className="mt-8 space-y-6 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl shadow-sm">
-        <h3 className="text-xl font-bold text-gray-800 border-b pb-3">Delivery Controls</h3>
+        <h3 className="text-xl font-bold text-gray-800 border-b pb-3">
+          Delivery Controls
+        </h3>
         <div className="flex flex-wrap gap-4">
           {delivery.status === "CONFIRMED" && (
             <button
@@ -218,7 +238,9 @@ export default function OrderDetailsPage() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <div className="border-b border-gray-200 pb-6 mb-6">
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Order #{order._id}</h2>
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+              Order #{order._id}
+            </h2>
             <p className="text-gray-600 flex items-center">
               <Clock className="inline-block w-5 h-5 mr-2 text-blue-500" />
               Placed on {new Date(order.createdAt).toLocaleDateString()}
@@ -229,13 +251,17 @@ export default function OrderDetailsPage() {
 
           <div className="grid md:grid-cols-2 gap-8 mt-8">
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-800">Delivery Details</h3>
+              <h3 className="text-xl font-bold text-gray-800">
+                Delivery Details
+              </h3>
               <div className="flex flex-col gap-6">
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl shadow-sm">
                   <div className="flex items-start">
                     <MapPin className="w-6 h-6 text-blue-500 mt-1" />
                     <div className="ml-4">
-                      <p className="font-semibold text-gray-900">Pickup Address</p>
+                      <p className="font-semibold text-gray-900">
+                        Pickup Address
+                      </p>
                       <p className="text-gray-600 mt-1">
                         {delivery?.pickupAddress || "Loading pickup address..."}
                       </p>
@@ -246,10 +272,15 @@ export default function OrderDetailsPage() {
                   <div className="flex items-start">
                     <MapPin className="w-6 h-6 text-purple-500 mt-1" />
                     <div className="ml-4">
-                      <p className="font-semibold text-gray-900">Delivery Address</p>
-                      <p className="text-gray-600 mt-1">{order.shippingAddress.street}</p>
+                      <p className="font-semibold text-gray-900">
+                        Delivery Address
+                      </p>
+                      <p className="text-gray-600 mt-1">
+                        {order.shippingAddress.street}
+                      </p>
                       <p className="text-gray-600">
-                        {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
+                        {order.shippingAddress.city},{" "}
+                        {order.shippingAddress.state}{" "}
                         {order.shippingAddress.zipCode}
                       </p>
                     </div>
@@ -268,7 +299,9 @@ export default function OrderDetailsPage() {
                   >
                     <div className="flex items-center">
                       <Package className="w-5 h-5 text-gray-500 mr-3" />
-                      <span className="font-medium text-gray-800">{productNames[item.productId]}</span>
+                      <span className="font-medium text-gray-800">
+                        {productNames[item.productId]}
+                      </span>
                     </div>
                     <div className="text-right">
                       <p className="font-semibold text-gray-900">
@@ -279,25 +312,35 @@ export default function OrderDetailsPage() {
                 ))}
                 <div className="pt-4 mt-4 border-t border-gray-200">
                   <div className="flex justify-between items-center">
-                    <span className="text-lg font-bold text-gray-900">Total</span>
-                    <span className="text-lg font-bold text-blue-600">₹{order.totalAmount.toFixed(2)}</span>
+                    <span className="text-lg font-bold text-gray-900">
+                      Total
+                    </span>
+                    <span className="text-lg font-bold text-blue-600">
+                      ₹{order.totalAmount.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {delivery && delivery.agentId && (
+          {delivery && delivery.deliveryAgentId && (
             <div className="mt-8 bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-xl shadow-sm">
               <div className="flex items-center">
                 <User className="w-8 h-8 text-blue-500" />
                 <div className="ml-4">
-                  <p className="font-semibold text-gray-900 text-lg">Delivery Agent</p>
-                  <p className="text-gray-600 mt-1">
-                    Your order will be delivered by Agent #{delivery.agentId}
+                  <p className="font-semibold text-gray-900 text-lg">
+                    Delivery Agent
                   </p>
                   <p className="text-gray-600 mt-1">
-                    Status: <span className="font-medium text-blue-600">{delivery.status}</span>
+                    Your order will be delivered by Agent #
+                    {delivery.deliveryAgentId}
+                  </p>
+                  <p className="text-gray-600 mt-1">
+                    Status:{" "}
+                    <span className="font-medium text-blue-600">
+                      {delivery.status}
+                    </span>
                   </p>
                 </div>
               </div>

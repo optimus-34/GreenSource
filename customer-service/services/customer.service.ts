@@ -170,6 +170,21 @@ export class CustomerService {
     return customer;
   }
 
+  async removeProductFromCart(
+    email: string,
+    productId: string
+  ): Promise<Customer> {
+    const customer = await CustomerModel.findOneAndUpdate(
+      { email: email, "cart.productId": productId },
+      { $pull: { cart: { productId: productId } } },
+      { new: true }
+    );
+    if (!customer) {
+      throw new AppError(404, "Customer not found");
+    }
+    return customer;
+  }
+
   async removeFromCart(email: string): Promise<Customer> {
     const customer = await CustomerModel.findOneAndUpdate(
       { email: email },
