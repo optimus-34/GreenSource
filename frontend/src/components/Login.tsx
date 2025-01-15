@@ -72,7 +72,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
+        "http://localhost:3800/api/auth/login",
         loginData,
         {
           headers: {
@@ -81,7 +81,7 @@ const Login = () => {
         }
       );
       const validateResponse = await axios.get(
-        "http://localhost:3000/api/auth/validate",
+        "http://localhost:3800/api/auth/validate",
         {
           headers: {
             "Content-Type": "application/json",
@@ -92,10 +92,10 @@ const Login = () => {
       console.log(response.data, validateResponse.data);
       let url;
       if (formData.userType === "consumer") {
-        url = `http://localhost:3001/api/customers/login`;
+        url = `http://localhost:3806/api/customers/login`;
       } 
       else if (formData.userType === "farmer") {
-        url = `http://localhost:3002/api/login`;
+        url = `http://localhost:3805/api/login`;
       }
 
       let responseData: AxiosResponse<never, never>;

@@ -4,7 +4,7 @@ import { IProductImage } from "../types/Product";
 import { IOrder } from "../types/Order";
 
 export const getProducts = async (token: string) => {
-  const response = await axios.get("http://localhost:3000/api/products", {
+  const response = await axios.get("http://localhost:3800/api/products", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -16,7 +16,7 @@ export const createProduct = async (token: string, productData: any) => {
   try {
     // Then add the product to farmer's list_products
     const productResponse = await axios.post(
-      `http://localhost:3000/api/farmers/api/farmers/${productData.farmerId}/add/product`,
+      `http://localhost:3800/api/farmers/api/farmers/${productData.farmerId}/add/product`,
       { ...productData },
       {
         headers: {
@@ -41,7 +41,7 @@ export const getFarmerProducts = async (token: string, email: string) => {
   console.log("email", email);
   console.log("token", token);
   const response = await axios.get(
-    `http://localhost:3000/api/farmers/api/farmers/${email}/get/products`,
+    `http://localhost:3800/api/farmers/api/farmers/${email}/get/products`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export const addToCartService = async (
     console.log(token, email, productId);
     const productData = { productId: productId, quantity: 1 };
     const response = await axios.post(
-      `http://localhost:3000/api/customers/api/customers/${email}/cart`,
+      `http://localhost:3800/api/customers/api/customers/${email}/cart`,
       productData,
       {
         headers: {
@@ -88,7 +88,7 @@ export const addToWishlistService = async (
     console.log(token, email, productId);
     const productData = { productId: productId };
     const response = await axios.post(
-      `http://localhost:3000/api/customers/api/customers/${email}/wishlist`,
+      `http://localhost:3800/api/customers/api/customers/${email}/wishlist`,
       productData,
       {
         headers: {
@@ -110,7 +110,7 @@ export const getCartItems = async (token: string) => {
   try {
     const response = await axios({
       method: "GET",
-      url: `http://localhost:3000/api/customers/api/customers/cart`,
+      url: `http://localhost:3800/api/customers/api/customers/cart`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -133,7 +133,7 @@ export const addProductImage = async (
 ) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/api/products/${productId}/images`,
+      `http://localhost:3800/api/products/${productId}/images`,
       imageData,
       {
         headers: {
@@ -156,7 +156,7 @@ export const addProductImage = async (
 export const getCustomerCart = async (token: string, email: string) => {
   try {
     const response = await axios.get(
-      `http://localhost:3000/api/customers/api/customers/${email}/cart`,
+      `http://localhost:3800/api/customers/api/customers/${email}/cart`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -180,7 +180,7 @@ export const removeFromCart = async (
 ) => {
   try {
     const response = await axios.delete(
-      `http://localhost:3000/api/customers/api/customers/${email}/cart/${productId}`,
+      `http://localhost:3800/api/customers/api/customers/${email}/cart/${productId}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -206,7 +206,7 @@ export const createOrder = async (
   console.log("orderData", orderData);
   try {
     const response = await axios.post(
-      `http://localhost:3000/api/orders/api/orders`,
+      `http://localhost:3800/api/orders/api/orders`,
       orderData,
       {
         headers: {

@@ -81,7 +81,7 @@ export default function OrderDetailsPage() {
       try {
         // Fetch order details from order service
         const orderResponse = await axios.get(
-          `http://localhost:3000/api/orders/api/orders/${orderId}`,
+          `http://localhost:3800/api/orders/api/orders/${orderId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -93,7 +93,7 @@ export default function OrderDetailsPage() {
 
         // Fetch delivery details from delivery service
         const deliveryResponse = await axios.get(
-          `http://localhost:3000/api/delivery/order/${orderId}`,
+          `http://localhost:3800/api/delivery/order/${orderId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -107,7 +107,7 @@ export default function OrderDetailsPage() {
         // Fetch delivery agent details if agentId exists
         if (deliveryData.deliveryAgentId) {
           const agentResponse = await axios.get(
-            `http://localhost:3000/api/delivery/agents/${deliveryData.deliveryAgentId}`,
+            `http://localhost:3800/api/delivery/agents/${deliveryData.deliveryAgentId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -121,7 +121,7 @@ export default function OrderDetailsPage() {
         const names: { [key: string]: string } = {};
         for (const item of orderData.items) {
           const response = await axios.get(
-            `http://localhost:3000/api/products/${item.productId}`,
+            `http://localhost:3800/api/products/${item.productId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -142,7 +142,7 @@ export default function OrderDetailsPage() {
   const updateDeliveryStatus = async (statusUpdate: DeliveryStatusUpdate) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/delivery/${delivery?._id}/status`,
+        `http://localhost:3800/api/delivery/${delivery?._id}/status`,
         statusUpdate,
         {
           headers: {

@@ -40,7 +40,7 @@ export default function AdminFarmersView() {
   const fetchFarmers = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/farmers/api/farmers",
+        "http://localhost:3800/api/farmers/api/farmers",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -52,13 +52,13 @@ export default function AdminFarmersView() {
         response.data.map(async (farmer: Farmer) => {
           const [productsRes, ordersRes] = await Promise.all([
             axios.get(
-              `http://localhost:3000/api/farmers/api/farmers/${farmer.email}/get/products`,
+              `http://localhost:3800/api/farmers/api/farmers/${farmer.email}/get/products`,
               {
                 headers: { Authorization: `Bearer ${token}` },
               }
             ),
             axios.get(
-              `http://localhost:3000/api/orders/api/orders/${farmer.email}/farmers`,
+              `http://localhost:3800/api/orders/api/orders/${farmer.email}/farmers`,
               {
                 headers: { Authorization: `Bearer ${token}` },
               }
@@ -93,7 +93,7 @@ export default function AdminFarmersView() {
   const handleVerifyFarmer = async (email: string, verify: boolean) => {
     try {
       await axios.put(
-        `http://localhost:3000/api/farmers/api/farmers/${email}/update/is_verified`,
+        `http://localhost:3800/api/farmers/api/farmers/${email}/update/is_verified`,
         { is_verified: verify },
         {
           headers: {
@@ -109,14 +109,14 @@ export default function AdminFarmersView() {
 
   const handleDeleteFarmer = async (email: string) => {
     try {
-      await axios.delete(`http://localhost:3000/api/user/${email}`, {
+      await axios.delete(`http://localhost:3800/api/user/${email}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       const productsResponse = await axios.get(
-        `http://localhost:3000/api/farmers/api/farmers/${email}/get/products`,
+        `http://localhost:3800/api/farmers/api/farmers/${email}/get/products`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -126,7 +126,7 @@ export default function AdminFarmersView() {
       const products = productsResponse.data;
 
       for (const product of products) {
-        await axios.delete(`http://localhost:3000/api/products/${product.id}`, {
+        await axios.delete(`http://localhost:3800/api/products/${product.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -134,7 +134,7 @@ export default function AdminFarmersView() {
       }
 
       await axios.delete(
-        `http://localhost:3000/api/orders/api/orders/${email}/farmers`,
+        `http://localhost:3800/api/orders/api/orders/${email}/farmers`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@ export default function AdminFarmersView() {
       );
 
       await axios.delete(
-        `http://localhost:3000/api/farmers/api/farmers/${email}`,
+        `http://localhost:3800/api/farmers/api/farmers/${email}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -46,7 +46,7 @@ const FarmerProfile: React.FC = () => {
 
   const fetchAddressDetails = async (addressId: string) => {
     try {
-      const response = await axios.get(`http://localhost:3002/api/address/${addressId}`);
+      const response = await axios.get(`http://localhost:3805/api/address/${addressId}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching address ${addressId}:`, error);
@@ -56,7 +56,7 @@ const FarmerProfile: React.FC = () => {
 
   const fetchFarmerProfile = async () => {
     try {
-      const response = await axios.get(`http://localhost:3002/api/farmers/${user.email}`);
+      const response = await axios.get(`http://localhost:3805/api/farmers/${user.email}`);
       const profileData = response.data;
       console.log("Profile Data:", profileData);
       
@@ -87,12 +87,12 @@ const FarmerProfile: React.FC = () => {
 
   const handleProfileUpdate = async () => {
     try {
-      await axios.put(`http://localhost:3002/api/farmers/${user.email}/update/name`, {
+      await axios.put(`http://localhost:3805/api/farmers/${user.email}/update/name`, {
         firstName: farmerData.firstName,
         lastName: farmerData.lastName
       });
       
-      await axios.put(`http://localhost:3002/api/farmers/${user.email}/update/phone`, {
+      await axios.put(`http://localhost:3805/api/farmers/${user.email}/update/phone`, {
         phone: farmerData.phone
       });
       
@@ -104,7 +104,7 @@ const FarmerProfile: React.FC = () => {
 
   const handleAddAddress = async () => {
     try {
-      const response = await axios.put(`http://localhost:3002/api/farmers/${user.email}/addAddress`, newAddress);
+      const response = await axios.put(`http://localhost:3805/api/farmers/${user.email}/addAddress`, newAddress);
       console.log("Add Address Response:", response.data);
       await fetchFarmerProfile();
       setIsAddingAddress(false);
@@ -129,7 +129,7 @@ const FarmerProfile: React.FC = () => {
         return;
       }
 
-      const url = `http://localhost:3002/api/farmers/${user.email}/delete/address/${addressId}`;
+      const url = `http://localhost:3805/api/farmers/${user.email}/delete/address/${addressId}`;
       console.log('Deleting address with URL:', url);
       
       const response = await axios.delete(url);

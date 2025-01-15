@@ -125,7 +125,7 @@ const Signup = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/register",
+        "http://localhost:3800/api/auth/register",
         signupData,
         {
           headers: {
@@ -136,7 +136,7 @@ const Signup = () => {
       let responseData;
       if (userType === "farmer") {
         responseData = await axios.post(
-          "http://localhost:3002/api/farmers",
+          "http://localhost:3805/api/farmers",
           {
             addresses: showAddressForm ? [formData.address] : [],
             email: formData.email,
@@ -156,7 +156,7 @@ const Signup = () => {
         );
       } else {
         responseData = await axios.post(
-          "http://localhost:3001/api/customers",
+          "http://localhost:3806/api/customers",
           {
             email: formData.email,
             firstName: formData.firstName,

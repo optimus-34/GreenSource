@@ -198,7 +198,7 @@ class DeliveryController {
         return res.status(404).json({ error: "Delivery not found" });
       }
       await axios.put(
-        `http://localhost:3003/api/orders/${delivery.orderId}/cancel`,
+        `http://localhost:3808/api/orders/${delivery.orderId}/cancel`,
         {
           status: "CANCELLED",
         }

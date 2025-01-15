@@ -71,7 +71,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
+        "http://localhost:3800/api/auth/login",
         loginData,
         {
           headers: {
@@ -81,7 +81,7 @@ const Login = () => {
       );
       
       const validateResponse = await axios.get(
-        "http://localhost:3000/api/auth/validate",
+        "http://localhost:3800/api/auth/validate",
         {
           headers: {
             "Content-Type": "application/json",

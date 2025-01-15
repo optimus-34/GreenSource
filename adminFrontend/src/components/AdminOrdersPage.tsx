@@ -27,7 +27,7 @@ export default function AdminOrdersPage() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/orders/api/orders",
+        "http://localhost:3800/api/orders/api/orders",
         {
           headers: {
             Authorization: `Bearer ${token}`,

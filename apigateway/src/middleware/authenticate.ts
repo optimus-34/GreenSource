@@ -19,7 +19,7 @@ export const authenticate = (allowedRoles: string[]) => {
       }
 
       // Validate token by calling auth service
-      const response = await axios.get('http://localhost:8082/validate', {
+      const response = await axios.get('http://localhost:3804/validate', {
         headers: { Authorization: `Bearer ${token}` }
       });
 

@@ -45,16 +45,16 @@ export default function AdminAnalytics() {
     try {
       // Fetch data from all services in parallel
       const [customers, farmers, products, orders] = await Promise.all([
-        axios.get("http://localhost:3000/api/customers/api/customers", {
+        axios.get("http://localhost:3800/api/customers/api/customers", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://localhost:3000/api/farmers/api/farmers", {
+        axios.get("http://localhost:3800/api/farmers/api/farmers", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://localhost:3000/api/products", {
+        axios.get("http://localhost:3800/api/products", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://localhost:3000/api/orders/api/orders", {
+        axios.get("http://localhost:3800/api/orders/api/orders", {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);

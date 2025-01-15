@@ -27,7 +27,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     const fetchProductImages = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/products/${product._id}/images`,
+          `http://localhost:3800/api/products/${product._id}/images`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -54,7 +54,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/customers/api/customers/${user.email}`,
+          `http://localhost:3800/api/customers/api/customers/${user.email}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     const fetchProductReviews = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/products/${product._id}/reviews`,
+          `http://localhost:3800/api/products/${product._id}/reviews`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -107,7 +107,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       if (response) {
         toast.success(`${product.name} added to cart successfully!`, {
           position: "bottom-right",
-          duration: 3000,
+          duration: 3800,
           style: {
             fontSize: '1.2rem',
             padding: '16px',
@@ -121,7 +121,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       console.error(errorMessage);
       toast.error(errorMessage, {
         position: "bottom-right",
-        duration: 3000,
+        duration: 3800,
         style: {
           fontSize: '1.2rem',
           padding: '16px',
@@ -140,7 +140,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       if (wishlist.includes(product._id)) {
         // Remove from wishlist
         const response = await axios.delete(
-          `http://localhost:3000/api/customers/api/customers/${user.email}/wishlist/${product._id}`,
+          `http://localhost:3800/api/customers/api/customers/${user.email}/wishlist/${product._id}`,
           {
             headers: {
               "Content-Type": "application/json",

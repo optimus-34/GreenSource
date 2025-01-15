@@ -137,7 +137,7 @@ export const addProduct = async (req: Request, res: Response) => {
     productData.farmerName = farmerName;
 
     // Send POST request to product service
-    const response = await axios.post("http://localhost:3005/", productData);
+    const response = await axios.post("http://localhost:3807/", productData);
 
     // Update the Farmer's list_products with the new product ID
     const productId = response.data._id; // Assuming the product ID is returned in the response
@@ -173,7 +173,7 @@ export const getProducts = async (req: Request, res: Response) => {
     const products = [];
     // Fetch products one by one
     for (const productId of productIds) {
-      const response = await axios.get(`http://localhost:3005/${productId}`);
+      const response = await axios.get(`http://localhost:3807/${productId}`);
       products.push(response.data); // Collect product data
     }
     res.json(products); // Return the fetched product data
@@ -188,7 +188,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
     const { email, productId } = req.params;
 
     // Send DELETE request to product service
-    await axios.delete(`http://localhost:3005/${productId}`);
+    await axios.delete(`http://localhost:3807/${productId}`);
 
     // Remove product ID from the farmer's list_products
     await Farmer.findOneAndUpdate(
@@ -294,7 +294,7 @@ export const updateFarmerName = async (req: Request, res: Response) => {
 
 export const getEarnings = async (req: Request, res: Response) => {
   const response = await axios.get(
-    `http://localhost:3003/api/orders/${req.params.email}/farmers`
+    `http://localhost:3808/api/orders/${req.params.email}/farmers`
   );
   try {
     const orders = response.data;

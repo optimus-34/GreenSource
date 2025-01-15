@@ -60,7 +60,7 @@ export default function AdminDeliveryAgentsView() {
   const fetchDeliveryAgents = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/delivery/agents",
+        "http://localhost:3800/api/delivery/agents",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ export default function AdminDeliveryAgentsView() {
       const agentsWithDetails = await Promise.all(
         response.data.map(async (agent: DeliveryAgent) => {
           const deliveriesRes = await axios.get(
-            `http://localhost:3000/api/delivery/agents/${agent._id}/deliveries`,
+            `http://localhost:3800/api/delivery/agents/${agent._id}/deliveries`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -103,7 +103,7 @@ export default function AdminDeliveryAgentsView() {
 
   const handleAddAgent = async () => {
     try {
-      await axios.post("http://localhost:3000/api/delivery/agents", newAgent, {
+      await axios.post("http://localhost:3800/api/delivery/agents", newAgent, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setShowAddModal(false);
@@ -131,7 +131,7 @@ export default function AdminDeliveryAgentsView() {
   const handleDeleteAgent = async (agentId: string) => {
     try {
       await axios.delete(
-        `http://localhost:3000/api/delivery/agents/${agentId}`,
+        `http://localhost:3800/api/delivery/agents/${agentId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

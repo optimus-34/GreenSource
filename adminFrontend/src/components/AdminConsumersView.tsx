@@ -34,7 +34,7 @@ export default function AdminConsumersView() {
   const fetchConsumers = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/customers/api/customers",
+        "http://localhost:3800/api/customers/api/customers",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -45,7 +45,7 @@ export default function AdminConsumersView() {
       const consumersWithDetails = await Promise.all(
         response.data.data.map(async (consumer: Consumer) => {
           const ordersRes = await axios.get(
-            `http://localhost:3000/api/orders/api/orders/${consumer.email}/customers`,
+            `http://localhost:3800/api/orders/api/orders/${consumer.email}/customers`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -77,14 +77,14 @@ export default function AdminConsumersView() {
 
   const handleDeleteConsumer = async (email: string) => {
     try {
-      await axios.delete(`http://localhost:3000/api/user/${email}`, {
+      await axios.delete(`http://localhost:3800/api/user/${email}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       await axios.delete(
-        `http://localhost:3000/api/orders/api/orders/${email}/customers`,
+        `http://localhost:3800/api/orders/api/orders/${email}/customers`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -93,7 +93,7 @@ export default function AdminConsumersView() {
       );
 
       await axios.delete(
-        `http://localhost:3000/api/customers/api/customers/${email}`,
+        `http://localhost:3800/api/customers/api/customers/${email}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

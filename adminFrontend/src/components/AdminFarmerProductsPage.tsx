@@ -51,7 +51,7 @@ export default function AdminFarmerProductsPage() {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/farmers/api/farmers/${farmerId}/get/products`,
+        `http://localhost:3800/api/farmers/api/farmers/${farmerId}/get/products`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -62,7 +62,7 @@ export default function AdminFarmerProductsPage() {
       const imagePromises = response.data.map(async (product: IProduct) => {
         try {
           const imageResponse = await axios.get(
-            `http://localhost:3000/api/products/${product._id}/images`,
+            `http://localhost:3800/api/products/${product._id}/images`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -92,7 +92,7 @@ export default function AdminFarmerProductsPage() {
       return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/products/${productId}`, {
+      await axios.delete(`http://localhost:3800/api/products/${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchProducts();

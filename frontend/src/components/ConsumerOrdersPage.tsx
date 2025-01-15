@@ -22,7 +22,7 @@ export default function ConsumerOrdersPage() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/orders/api/orders/${user.email}/customers`,
+        `http://localhost:3800/api/orders/api/orders/${user.email}/customers`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -65,7 +65,7 @@ export default function ConsumerOrdersPage() {
           const itemDetails = await Promise.all(
             order.items.map(async (item) => {
               const response = await axios.get(
-                `http://localhost:3000/api/products/${item.productId}`,
+                `http://localhost:3800/api/products/${item.productId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -100,7 +100,7 @@ export default function ConsumerOrdersPage() {
       try {
         // Get the order details first
         const orderResponse = await axios.get(
-          `http://localhost:3000/api/orders/api/orders/${orderId}`,
+          `http://localhost:3800/api/orders/api/orders/${orderId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -116,7 +116,7 @@ export default function ConsumerOrdersPage() {
           // Only restore quantities if cancelling a confirmed order
           for (const item of order.items) {
             const productResponse = await axios.get(
-              `http://localhost:3000/api/products/${item.productId}`,
+              `http://localhost:3800/api/products/${item.productId}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -126,7 +126,7 @@ export default function ConsumerOrdersPage() {
             const product = productResponse.data;
 
             await axios.put(
-              `http://localhost:3000/api/products/${item.productId}`,
+              `http://localhost:3800/api/products/${item.productId}`,
               {
                 quantityAvailable: product.quantityAvailable + item.quantity,
               },
@@ -141,7 +141,7 @@ export default function ConsumerOrdersPage() {
 
         // Update order status
         await axios.put(
-          `http://localhost:3000/api/orders/api/orders/${orderId}`,
+          `http://localhost:3800/api/orders/api/orders/${orderId}`,
           { status },
           {
             headers: {

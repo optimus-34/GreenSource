@@ -45,7 +45,7 @@ export default function FarmerProducts() {
       try {
         // Fetch farmer details first
         const farmerResponse = await axios.get(
-          `http://localhost:3000/api/farmers/api/farmers/${user.email}`,
+          `http://localhost:3800/api/farmers/api/farmers/${user.email}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

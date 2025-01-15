@@ -24,7 +24,7 @@ export class OrderController {
       try {
         // Update farmer's orders
         await axios.post(
-          `http://localhost:3002/api/farmers/${order.farmerId}/add/order`,
+          `http://localhost:3805/api/farmers/${order.farmerId}/add/order`,
           {
             orderId: order._id,
             amount: order.totalAmount,
@@ -33,7 +33,7 @@ export class OrderController {
 
         // Update consumer's orders
         await axios.post(
-          `http://localhost:3001/api/customers/${order.consumerId}/orders`,
+          `http://localhost:3806/api/customers/${order.consumerId}/orders`,
           { orderId: order._id }
         );
 

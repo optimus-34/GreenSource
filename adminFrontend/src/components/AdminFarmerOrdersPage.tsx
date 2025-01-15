@@ -39,7 +39,7 @@ export default function AdminFarmerOrdersPage() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/orders/api/orders/${farmerId}/farmers`,
+        `http://localhost:3800/api/orders/api/orders/${farmerId}/farmers`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

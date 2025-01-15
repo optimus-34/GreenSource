@@ -20,7 +20,7 @@ export default function ConsumerSavedPage() {
       try {
         // First, get the wishlist product IDs
         const wishlistResponse = await axios.get(
-          `http://localhost:3000/api/customers/api/customers/${user.email}/wishlist`,
+          `http://localhost:3800/api/customers/api/customers/${user.email}/wishlist`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -36,7 +36,7 @@ export default function ConsumerSavedPage() {
           productIds.map(async (productId: string) => {
             try {
               const response = await axios.get(
-                `http://localhost:3000/api/products/${productId}`,
+                `http://localhost:3800/api/products/${productId}`,
                 {
                   headers: {
                     "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export default function ConsumerSavedPage() {
   const handleWishlistUpdate = async (product: IProduct) => {
     try {
       await axios.delete(
-        `http://localhost:3000/api/customers/api/customers/${user.email}/wishlist/${product._id}`,
+        `http://localhost:3800/api/customers/api/customers/${user.email}/wishlist/${product._id}`,
         {
           headers: {
             "Content-Type": "application/json",

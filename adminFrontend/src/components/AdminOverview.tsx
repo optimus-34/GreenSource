@@ -15,8 +15,8 @@ import { MapPin, Users, ShoppingBag, Truck, DollarSign } from "react-feather";
 const monthlyIncomeData = [
   { month: "Jan", income: 2500 },
   { month: "Feb", income: 15000 },
-  { month: "Mar", income: 30000 },
-  { month: "Apr", income: 30000 },
+  { month: "Mar", income: 38000 },
+  { month: "Apr", income: 38000 },
   { month: "May", income: 35000 },
   { month: "Jun", income: 40000 },
 ];

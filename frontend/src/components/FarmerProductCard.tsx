@@ -29,7 +29,7 @@ const FarmerProductCard: React.FC<FarmerProductCardProps> = ({
     const fetchProductImages = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/products/${product._id}/images`,
+          `http://localhost:3800/api/products/${product._id}/images`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -54,7 +54,7 @@ const FarmerProductCard: React.FC<FarmerProductCardProps> = ({
   const handleDelete = async () => {
     try {
       await axios.delete(
-        `http://localhost:3000/api/farmers/api/farmers/${user.email}/delete/product/${product._id}`,
+        `http://localhost:3800/api/farmers/api/farmers/${user.email}/delete/product/${product._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -75,7 +75,7 @@ const FarmerProductCard: React.FC<FarmerProductCardProps> = ({
   const handleSave = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/products/${product._id}`,
+        `http://localhost:3800/api/products/${product._id}`,
         editedProduct,
         {
           headers: {

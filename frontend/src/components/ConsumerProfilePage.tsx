@@ -48,7 +48,7 @@ const ConsumerProfilePage: React.FC = () => {
   const fetchCustomerProfile = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/api/customers/${userEmail}`
+        `http://localhost:3806/api/customers/${userEmail}`
       );
       const profileData = response.data.data;
       setCustomerData({
@@ -72,7 +72,7 @@ const ConsumerProfilePage: React.FC = () => {
   const handleProfileUpdate = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:3001/api/customers/${userEmail}`,
+        `http://localhost:3806/api/customers/${userEmail}`,
         {
           firstName: customerData.firstName,
           lastName: customerData.lastName,
@@ -93,7 +93,7 @@ const ConsumerProfilePage: React.FC = () => {
   const handleAddAddress = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:3001/api/customers/${userEmail}/addresses`,
+        `http://localhost:3806/api/customers/${userEmail}/addresses`,
         newAddress
       );
       const newAddressWithId = response.data.data;
@@ -128,7 +128,7 @@ const ConsumerProfilePage: React.FC = () => {
     try {
       // Call the delete address endpoint
       await axios.delete(
-        `http://localhost:3001/api/customers/${userEmail}/addresses/${addressId}`
+        `http://localhost:3806/api/customers/${userEmail}/addresses/${addressId}`
       );
 
       // Fetch updated profile data to ensure we have the latest state

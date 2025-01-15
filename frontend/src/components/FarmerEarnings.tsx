@@ -25,7 +25,7 @@ export default function FarmerEarnings() {
     const fetchEarnings = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/farmers/api/farmers/${user.email}/get/earnings`,
+          `http://localhost:3800/api/farmers/api/farmers/${user.email}/get/earnings`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

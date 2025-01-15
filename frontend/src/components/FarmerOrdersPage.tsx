@@ -22,7 +22,7 @@ export default function FarmerOrdersPage() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/orders/api/orders/${user.email}/farmers`,
+        `http://localhost:3800/api/orders/api/orders/${user.email}/farmers`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -49,7 +49,7 @@ export default function FarmerOrdersPage() {
   ) => {
     try {
       const orderResponse = await axios.get(
-        `http://localhost:3000/api/orders/api/orders/${orderId}`,
+        `http://localhost:3800/api/orders/api/orders/${orderId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -62,7 +62,7 @@ export default function FarmerOrdersPage() {
         // Decrease product quantities when accepting order
         for (const item of order.items) {
           const productResponse = await axios.get(
-            `http://localhost:3000/api/products/${item.productId}`,
+            `http://localhost:3800/api/products/${item.productId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -72,7 +72,7 @@ export default function FarmerOrdersPage() {
           const product = productResponse.data;
 
           await axios.put(
-            `http://localhost:3000/api/products/${item.productId}`,
+            `http://localhost:3800/api/products/${item.productId}`,
             {
               quantityAvailable: product.quantityAvailable - item.quantity,
             },
@@ -87,7 +87,7 @@ export default function FarmerOrdersPage() {
         const [farmerAddressRes, farmerDetailsRes, consumerDetailsRes] =
           await Promise.all([
             axios.get(
-              `http://localhost:3000/api/farmers/api/farmers/${order.farmerId}/get/address`,
+              `http://localhost:3800/api/farmers/api/farmers/${order.farmerId}/get/address`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -95,7 +95,7 @@ export default function FarmerOrdersPage() {
               }
             ),
             axios.get(
-              `http://localhost:3000/api/farmers/api/farmers/${order.farmerId}`,
+              `http://localhost:3800/api/farmers/api/farmers/${order.farmerId}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -103,7 +103,7 @@ export default function FarmerOrdersPage() {
               }
             ),
             axios.get(
-              `http://localhost:3001/api/customers/${order.consumerId}`,
+              `http://localhost:3806/api/customers/${order.consumerId}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -121,7 +121,7 @@ export default function FarmerOrdersPage() {
         const consumerAddress = `${consumerAddressData.street}, ${consumerAddressData.city}, ${consumerAddressData.state}, ${consumerAddressData.country}, ${consumerAddressData.zipcode}`;
         // get delivery agents with order count less than 5
         const deliveryAgents = await axios.get(
-          `http://localhost:3000/api/delivery/api/agents/available`,
+          `http://localhost:3800/api/delivery/api/agents/available`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -152,7 +152,7 @@ export default function FarmerOrdersPage() {
 
         // Create delivery entry
         try {
-          await axios.post("http://localhost:3000/api/delivery", deliveryData, {
+          await axios.post("http://localhost:3800/api/delivery", deliveryData, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -160,7 +160,7 @@ export default function FarmerOrdersPage() {
           console.log("deliveryData added", deliveryData);
           try {
             await axios.put(
-              `http://localhost:3004/agents/${agentId}/orderCount/increase`
+              `http://localhost:3809/agents/${agentId}/orderCount/increase`
             );
             console.log("orderCount increased");
           } catch (error) {
@@ -176,7 +176,7 @@ export default function FarmerOrdersPage() {
         // Restore quantities if cancelling a confirmed order
         for (const item of order.items) {
           const productResponse = await axios.get(
-            `http://localhost:3000/api/products/${item.productId}`,
+            `http://localhost:3800/api/products/${item.productId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -186,7 +186,7 @@ export default function FarmerOrdersPage() {
           const product = productResponse.data;
 
           await axios.put(
-            `http://localhost:3000/api/products/${item.productId}`,
+            `http://localhost:3800/api/products/${item.productId}`,
             {
               quantityAvailable: product.quantityAvailable + item.quantity,
             },
@@ -201,7 +201,7 @@ export default function FarmerOrdersPage() {
 
       // Update order status
       await axios.put(
-        `http://localhost:3000/api/orders/api/orders/${orderId}`,
+        `http://localhost:3800/api/orders/api/orders/${orderId}`,
         { status },
         {
           headers: {
@@ -239,7 +239,7 @@ export default function FarmerOrdersPage() {
           const itemDetails = await Promise.all(
             order.items.map(async (item) => {
               const response = await axios.get(
-                `http://localhost:3000/api/products/${item.productId}`,
+                `http://localhost:3800/api/products/${item.productId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,

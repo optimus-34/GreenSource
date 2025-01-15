@@ -51,7 +51,7 @@ export default function OrderDetailsPage() {
     const fetchOrderDetails = async () => {
       try {
         const deliveryRes = await axios.get(
-          `http://localhost:3000/api/delivery/${deliveryId}`,
+          `http://localhost:3800/api/delivery/${deliveryId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -65,7 +65,7 @@ export default function OrderDetailsPage() {
 
         // Fetch order details from order service
         const orderResponse = await axios.get(
-          `http://localhost:3000/api/orders/api/orders/${orderId}`,
+          `http://localhost:3800/api/orders/api/orders/${orderId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -78,7 +78,7 @@ export default function OrderDetailsPage() {
 
         // Fetch delivery details from delivery service
         const deliveryResponse = await axios.get(
-          `http://localhost:3000/api/delivery/order/${orderId}`,
+          `http://localhost:3800/api/delivery/order/${orderId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -92,7 +92,7 @@ export default function OrderDetailsPage() {
         const names: { [key: string]: string } = {};
         for (const item of orderData.items) {
           const response = await axios.get(
-            `http://localhost:3000/api/products/${item.productId}`,
+            `http://localhost:3800/api/products/${item.productId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -115,7 +115,7 @@ export default function OrderDetailsPage() {
       console.log("statusUpdate", statusUpdate);
       // Update delivery status
       const deliveryResponse = await axios.put(
-        `http://localhost:3000/api/delivery/${delivery?._id}/status`,
+        `http://localhost:3800/api/delivery/${delivery?._id}/status`,
         statusUpdate,
         {
           headers: {
@@ -125,7 +125,7 @@ export default function OrderDetailsPage() {
       );
       if (statusUpdate.status === "DELIVERED") {
         const orderCountUpdate = await axios.put(
-          `http://localhost:3004/agents/${delivery?.deliveryAgentId}/orderCount/decrease`
+          `http://localhost:3809/agents/${delivery?.deliveryAgentId}/orderCount/decrease`
           // {
           //   headers: {
           //     Authorization: `Bearer ${token}`,
@@ -133,7 +133,7 @@ export default function OrderDetailsPage() {
           // }
         );
         const addedDeliveryId = await axios.put(
-          `http://localhost:3004/add/${delivery?.deliveryAgentId}/delivery/${delivery?._id}`
+          `http://localhost:3809/add/${delivery?.deliveryAgentId}/delivery/${delivery?._id}`
           // {
           //   headers: {
           //     Authorization: `Bearer ${token}`,
@@ -153,7 +153,7 @@ export default function OrderDetailsPage() {
         }
 
         await axios.put(
-          `http://localhost:3000/api/orders/api/orders/${order._id}`,
+          `http://localhost:3800/api/orders/api/orders/${order._id}`,
           { status: orderStatus },
           {
             headers: {
@@ -164,7 +164,7 @@ export default function OrderDetailsPage() {
 
         // Refresh order data
         const orderResponse = await axios.get(
-          `http://localhost:3000/api/orders/api/orders/${order._id}`,
+          `http://localhost:3800/api/orders/api/orders/${order._id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -39,7 +39,7 @@ export default function AdminConsumerOrdersPage() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/orders/api/orders/${consumerEmail}/customers`,
+        `http://localhost:3800/api/orders/api/orders/${consumerEmail}/customers`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

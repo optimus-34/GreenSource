@@ -12,9 +12,9 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://localhost:5175",
+      "http://localhost:3800", // 3801
+      "http://localhost:3801", // 3802
+      "http://localhost:3802", // 3803
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -25,7 +25,7 @@ app.use(
 app.use(
   "/api/auth",
   createProxyMiddleware({
-    target: "http://localhost:8082",
+    target: "http://localhost:3804", // 3804
     changeOrigin: true,
   })
 );
@@ -35,7 +35,7 @@ app.use(
   "/api/farmers",
   authenticateMultipleRoles(["admin", "farmer", "consumer", "delivery_agent"]),
   createProxyMiddleware({
-    target: "http://localhost:3002",
+    target: "http://localhost:3805", // 3805
     changeOrigin: true,
   })
 );
@@ -44,7 +44,7 @@ app.use(
   "/api/customers",
   authenticateMultipleRoles(["admin", "farmer", "consumer", "delivery_agent"]),
   createProxyMiddleware({
-    target: "http://localhost:3001",
+    target: "http://localhost:3806", // 3806
     changeOrigin: true,
   })
 );
@@ -53,7 +53,7 @@ app.use(
   "/api/products",
   authenticateMultipleRoles(["admin", "farmer", "consumer", "delivery_agent"]),
   createProxyMiddleware({
-    target: "http://localhost:3005",
+    target: "http://localhost:3807", // 3807
     changeOrigin: true,
   })
 );
@@ -62,7 +62,7 @@ app.use(
   "/api/orders",
   authenticateMultipleRoles(["admin", "farmer", "consumer", "delivery_agent"]),
   createProxyMiddleware({
-    target: "http://localhost:3003",
+    target: "http://localhost:3808", // 3808
     changeOrigin: true,
   })
 );
@@ -71,11 +71,11 @@ app.use(
   "/api/delivery",
   authenticateMultipleRoles(["admin", "farmer", "consumer", "delivery_agent"]),
   createProxyMiddleware({
-    target: "http://localhost:3004",
+    target: "http://localhost:3809", // 3809
     changeOrigin: true,
   })
 );
 
-app.listen(3000, () => {
-  console.log("API Gateway running on port 3000");
+app.listen(3800, () => { // 3800
+  console.log("API Gateway running on port 3800"); // 3800
 });

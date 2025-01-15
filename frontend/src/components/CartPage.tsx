@@ -81,7 +81,7 @@ const CartPage: React.FC = () => {
         uniqueProductIds.map(async (productId) => {
           try {
             const productResponse = await axios.get(
-              `http://localhost:3000/api/products/${productId}`,
+              `http://localhost:3800/api/products/${productId}`,
               {
                 headers: {
                   "Content-Type": "application/json",
@@ -117,7 +117,7 @@ const CartPage: React.FC = () => {
   const fetchAddresses = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/customers/api/customers/${user.email}/addresses`,
+        `http://localhost:3800/api/customers/api/customers/${user.email}/addresses`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -151,7 +151,7 @@ const CartPage: React.FC = () => {
     async function updateCartInBackend(productId: string, newQuantity: number) {
       try {
         await axios.put(
-          `http://localhost:3000/api/customers/api/customers/${user.email}/cart/${productId}`,
+          `http://localhost:3800/api/customers/api/customers/${user.email}/cart/${productId}`,
           { quantity: newQuantity },
           {
             headers: {
@@ -225,7 +225,7 @@ const CartPage: React.FC = () => {
 
       // Add order ID to customer's orders
       await axios.post(
-        `http://localhost:3000/api/customers/api/customers/${user.email}/orders`,
+        `http://localhost:3800/api/customers/api/customers/${user.email}/orders`,
         { orderId },
         {
           headers: {
@@ -236,7 +236,7 @@ const CartPage: React.FC = () => {
 
       // Clear cart in customer service
       await axios.delete(
-        `http://localhost:3000/api/customers/api/customers/${user.email}/cart`,
+        `http://localhost:3800/api/customers/api/customers/${user.email}/cart`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
