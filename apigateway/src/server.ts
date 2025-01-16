@@ -12,9 +12,9 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:3800", // 3801
-      "http://localhost:3801", // 3802
-      "http://localhost:3802", // 3803
+      "http://localhost:3801", // 3801
+      "http://localhost:3802", // 3802
+      "http://localhost:3803", // 3803
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],

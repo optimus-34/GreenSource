@@ -15,7 +15,7 @@ connectDB()
 
 app.use(
   cors({
-    origin: ["http://localhost:3800", "http://localhost:3801","http://localhost:3802"],
+    origin: ["http://localhost:", "http://localhost:3801","http://localhost:3802"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,

@@ -121,6 +121,12 @@ export default function AdminDeliveryAgentsView() {
           registrationId: "",
         },
       });
+      await axios.post("http://localhost:3800/api/auth/register", {
+        name: newAgent.name,
+        email: newAgent.email,
+        password: "agent@123",
+        role: "delivery_agent",
+      }, { headers: { "Content-Type": "application/json" } });
       fetchDeliveryAgents();
     } catch (error) {
       console.error("Error adding delivery agent:", error);
@@ -150,30 +156,30 @@ export default function AdminDeliveryAgentsView() {
     }));
   };
 
-  if (loading) return <div className="p-4 md:p-6 lg:p-8">Loading...</div>;
+  if (loading) return <div className="p-4">Loading...</div>;
   if (error)
-    return <div className="p-4 md:p-6 lg:p-8 text-red-500">{error}</div>;
+    return <div className="p-4 text-red-500">{error}</div>;
 
   return (
-    <div className="p-4 md:p-6 lg:p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Delivery Agents Management</h1>
+    <div className="p-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+        <h1 className="text-xl sm:text-2xl font-bold">Delivery Agents Management</h1>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition-colors text-sm"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition-colors text-sm"
         >
           <Plus size={16} />
           Add Agent
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-4 md:gap-6 items-start justify-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {deliveryAgents.map((agent) => (
           <div
             key={agent.email}
-            className="bg-white rounded-lg shadow-md p-4 md:p-6 hover:shadow-lg transition-shadow duration-200 min-w-[400px]"
+            className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200 w-full"
           >
-            <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+            <div className="flex flex-col gap-4">
               <div className="space-y-2 w-full">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -182,12 +188,12 @@ export default function AdminDeliveryAgentsView() {
                       {agent.name.split(" ")[1]?.charAt(0)}
                     </span>
                   </div>
-                  <h2 className="text-lg font-semibold">{agent.name}</h2>
+                  <h2 className="text-base sm:text-lg font-semibold">{agent.name}</h2>
                 </div>
-                <div className="space-y-1 text-sm text-gray-600">
+                <div className="space-y-1 text-xs sm:text-sm text-gray-600">
                   <p className="flex items-center gap-2">
                     <span className="font-medium">Email:</span>
-                    {agent.email}
+                    <span className="break-all">{agent.email}</span>
                   </p>
                   <p className="flex items-center gap-2">
                     <span className="font-medium">Phone:</span>
@@ -206,10 +212,10 @@ export default function AdminDeliveryAgentsView() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 w-full md:w-auto">
+              <div className="flex justify-end">
                 <button
                   onClick={() => handleDeleteAgent(agent._id)}
-                  className="w-full md:w-auto bg-red-500 hover:bg-red-600 text-white font-medium p-2 rounded-full text-sm transition-colors duration-200"
+                  className="bg-red-500 hover:bg-red-600 text-white font-medium p-2 rounded-full text-sm transition-colors duration-200"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -221,7 +227,7 @@ export default function AdminDeliveryAgentsView() {
                 className="flex justify-between items-center cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors duration-200"
                 onClick={() => toggleSection(agent._id)}
               >
-                <h3 className="font-medium text-sm">
+                <h3 className="font-medium text-xs sm:text-sm">
                   Deliveries ({agent.deliveries?.length || 0})
                 </h3>
                 {expandedSections[agent._id] ? (
@@ -236,7 +242,7 @@ export default function AdminDeliveryAgentsView() {
                     agent.deliveries.slice(0, 3).map((delivery) => (
                       <div
                         key={delivery._id}
-                        className="bg-gray-50 p-3 rounded-md text-sm"
+                        className="bg-gray-50 p-2 sm:p-3 rounded-md text-xs sm:text-sm"
                       >
                         <div className="flex justify-between items-start">
                           <div>
@@ -256,7 +262,7 @@ export default function AdminDeliveryAgentsView() {
                       </div>
                     ))
                   ) : (
-                    <p className="text-gray-500 text-sm">No deliveries yet</p>
+                    <p className="text-gray-500 text-xs sm:text-sm">No deliveries yet</p>
                   )}
                 </div>
               )}
@@ -266,14 +272,14 @@ export default function AdminDeliveryAgentsView() {
       </div>
 
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-4">Add New Delivery Agent</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white p-4 sm:p-6 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4">Add New Delivery Agent</h2>
             <div className="space-y-4">
               <input
                 type="text"
                 placeholder="Name"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded text-sm"
                 onChange={(e) =>
                   setNewAgent({ ...newAgent, name: e.target.value })
                 }
@@ -281,7 +287,7 @@ export default function AdminDeliveryAgentsView() {
               <input
                 type="email"
                 placeholder="Email"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded text-sm"
                 onChange={(e) =>
                   setNewAgent({ ...newAgent, email: e.target.value })
                 }
@@ -289,13 +295,13 @@ export default function AdminDeliveryAgentsView() {
               <input
                 type="tel"
                 placeholder="Phone Number"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded text-sm"
                 onChange={(e) =>
                   setNewAgent({ ...newAgent, phoneNumber: e.target.value })
                 }
               />
               <select
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded text-sm"
                 value={newAgent.idProof?.type}
                 onChange={(e) =>
                   setNewAgent({
@@ -315,7 +321,7 @@ export default function AdminDeliveryAgentsView() {
               <input
                 type="text"
                 placeholder="ID Proof Value"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded text-sm"
                 onChange={(e) =>
                   setNewAgent({
                     ...newAgent,
@@ -327,7 +333,7 @@ export default function AdminDeliveryAgentsView() {
                 }
               />
               <select
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded text-sm"
                 value={newAgent.vehicle?.type}
                 onChange={(e) =>
                   setNewAgent({
@@ -347,7 +353,7 @@ export default function AdminDeliveryAgentsView() {
               <input
                 type="text"
                 placeholder="Vehicle Model"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded text-sm"
                 onChange={(e) =>
                   setNewAgent({
                     ...newAgent,
@@ -361,7 +367,7 @@ export default function AdminDeliveryAgentsView() {
               <input
                 type="text"
                 placeholder="Vehicle Registration ID"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded text-sm"
                 onChange={(e) =>
                   setNewAgent({
                     ...newAgent,
@@ -372,16 +378,16 @@ export default function AdminDeliveryAgentsView() {
                   })
                 }
               />
-              <div className="flex justify-end gap-4">
+              <div className="flex flex-col sm:flex-row justify-end gap-4">
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  className="w-full sm:w-auto px-4 py-2 text-gray-600 hover:text-gray-800 text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleAddAgent}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
                 >
                   Add Agent
                 </button>

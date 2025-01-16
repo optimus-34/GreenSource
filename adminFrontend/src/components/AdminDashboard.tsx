@@ -49,6 +49,10 @@ const AdminDashboard = ({ children }: { children: React.ReactNode }) => {
           label: "Delivery Agents",
           path: "/admin/users/delivery-agents",
         },
+        {
+          label: "Admins",
+          path: "/admin/users/admins",
+        }
       ],
     },
     {

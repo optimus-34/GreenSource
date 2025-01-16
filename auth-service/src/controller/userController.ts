@@ -156,3 +156,15 @@ export const validateToken = (req: Request, res: Response): void => {
     res.status(200).json({ message: "Token validation successful", id, role });
   });
 };
+
+export const deleteUserByEmail = async (req: Request, res: Response) => {
+  const { email } = req.params;
+  const user = await User.findOne({ email });
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  } else {
+    await user.deleteOne();
+    res.status(200).json({ message: "User deleted successfully" });
+  }
+}

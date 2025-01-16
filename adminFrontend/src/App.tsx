@@ -15,6 +15,7 @@ import AdminFarmerProductsPage from "./components/AdminFarmerProductsPage";
 import AdminFarmerOrdersPage from "./components/AdminFarmerOrdersPage";
 import AdminConsumerOrdersPage from "./components/AdminConsumerOrdersPage";
 import AdminOrdersPage from "./components/AdminOrdersPage";
+import AdminAdminsView from "./components/AdminAdminsView";
 
 function App() {
   return (
@@ -52,6 +53,14 @@ function App() {
             element={
               <AdminDashboard>
                 <AdminConsumersView />
+              </AdminDashboard>
+            }
+          />
+          <Route
+            path="/admin/users/admins"
+            element={
+              <AdminDashboard>
+                <AdminAdminsView />
               </AdminDashboard>
             }
           />
